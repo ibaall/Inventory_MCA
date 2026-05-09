@@ -1,0 +1,228 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Product;
+use App\Models\Order;
+use Illuminate\Support\Facades\Auth;
+
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\LaporanExport;
+
+class CartController extends Controller
+{
+    // Menampilkan isi keranjang
+    public function index()
+    {
+        $cart = session()->get('cart', []);
+        return view('cart.index', compact('cart'));
+    }
+
+    // Menambahkan produk ke keranjang
+    public function addToCart(Request $request, $productId)
+{
+    $product  = Product::findOrFail($productId);
+    $quantity = $request->input('quantity', 1);
+
+    // Jika ada variant_id, gunakan stok varian
+    if ($request->filled('variant_id')) {
+        $variant = \App\Models\ProductVariant::findOrFail($request->variant_id);
+
+        if ($variant->stock < $quantity) {
+            return redirect()->back()->with('error', 'Stok varian tidak mencukupi!');
+        }
+
+        $cart      = session()->get('cart', []);
+        $cartKey   = $productId . '_' . $variant->id; // key unik per varian
+
+        if (isset($cart[$cartKey])) {
+            $cart[$cartKey]['quantity'] += $quantity;
+        } else {
+            $cart[$cartKey] = [
+                "name"        => $product->name . ' - ' . $variant->nama_varian,
+                "kode_barang" => $product->kode_barang,
+                "vendor"      => $product->vendor,
+                "quantity"    => $quantity,
+                "satuan"      => $product->satuan ?? 'Pcs',  // ← tambah ini
+                "price"       => $variant->price ?? $product->price,
+                "image"       => $product->image,
+                "category"    => $product->category,
+                "variant_id"  => $variant->id,
+                "nama_varian" => $variant->nama_varian,
+            ];
+        }
+
+        session()->put('cart', $cart);
+
+        // Kurangi stok varian & produk
+        $variant->decrement('stock', $quantity);
+        $product->decrement('stock', $quantity);
+
+        return redirect()->back()->with('success', 'Produk berhasil ditambahkan ke keranjang!');
+    }
+
+    // Tidak ada varian: proses normal
+    if ($product->stock < $quantity) {
+        return redirect()->back()->with('error', 'Stok tidak mencukupi!');
+    }
+
+    $cart = session()->get('cart', []);
+
+    if (isset($cart[$productId])) {
+        $cart[$productId]['quantity'] += $quantity;
+    } else {
+        $cart[$productId] = [
+            "name"        => $product->name,
+            "kode_barang" => $product->kode_barang,
+            "vendor"      => $product->vendor,
+            "quantity"    => $quantity,
+            "price"       => $product->price,
+            "image"       => $product->image,
+            "category"    => $product->category,
+            "variant_id"  => null,
+            "nama_varian" => null,
+        ];
+    }
+
+    session()->put('cart', $cart);
+    $product->decrement('stock', $quantity);
+
+    return redirect()->back()->with('success', 'Produk berhasil ditambahkan ke keranjang!');
+}
+
+    // Menghapus produk dari keranjang & mengembalikan stok
+    public function removeFromCart($cartKey)
+{
+    $cart = session()->get('cart', []);
+
+    if (isset($cart[$cartKey])) {
+        $item     = $cart[$cartKey];
+        $quantity = $item['quantity'];
+
+        // Kembalikan stok varian jika ada
+        if (!empty($item['variant_id'])) {
+            \App\Models\ProductVariant::where('id', $item['variant_id'])
+                ->increment('stock', $quantity);
+        }
+
+        // Kembalikan stok produk
+        // Ambil product_id dari cartKey (format: productId_variantId atau productId)
+        $productId = explode('_', $cartKey)[0];
+        Product::where('id', $productId)->increment('stock', $quantity);
+
+        unset($cart[$cartKey]);
+        session()->put('cart', $cart);
+    }
+
+    return redirect()->route('cart.index')->with('success', 'Produk dihapus dari keranjang!');
+}
+
+    // Mengosongkan seluruh keranjang belanja
+    public function clearCart()
+    {
+        $cart = session()->get('cart', []);
+
+        foreach ($cart as $productId => $item) {
+            Product::where('id', $productId)->increment('stock', $item['quantity']);
+        }
+
+        session()->forget('cart');
+
+        return redirect()->route('cart.index')->with('success', 'Keranjang berhasil dikosongkan!');
+    }
+
+    // Menghapus beberapa item sekaligus dari keranjang (bulk remove)
+    public function bulkRemove(Request $request)
+    {
+        $cartKeys = $request->input('cart_keys', '');
+        $keys = array_filter(explode(',', $cartKeys));
+
+        if (empty($keys)) {
+            return redirect()->route('cart.index')->with('error', 'Tidak ada item yang dipilih.');
+        }
+
+        $cart = session()->get('cart', []);
+        $removedCount = 0;
+
+        foreach ($keys as $cartKey) {
+            if (isset($cart[$cartKey])) {
+                $item = $cart[$cartKey];
+                $quantity = $item['quantity'];
+
+                // Kembalikan stok varian jika ada
+                if (!empty($item['variant_id'])) {
+                    \App\Models\ProductVariant::where('id', $item['variant_id'])
+                        ->increment('stock', $quantity);
+                }
+
+                // Kembalikan stok produk
+                $productId = (int) explode('_', $cartKey)[0];
+                Product::where('id', $productId)->increment('stock', $quantity);
+
+                unset($cart[$cartKey]);
+                $removedCount++;
+            }
+        }
+
+        session()->put('cart', $cart);
+
+        return redirect()->route('cart.index')->with('success', $removedCount . ' item berhasil dihapus dari keranjang!');
+    }
+
+    // Method baru: Checkout dan simpan pesanan, dengan metode pembayaran
+    public function checkout(Request $request)
+    {
+        $request->validate([
+            'customer_name'     => 'required|string|max:255',
+            'status_pembayaran' => 'required|in:lunas,belum dibayar',
+            'metode_pembayaran' => 'required|in:qris,tunai,transfer,ewallet',
+        ]);
+
+        $cart = session()->get('cart', []);
+
+        if (empty($cart)) {
+            return redirect()->route('cart.index')->with('error', 'Keranjang kosong.');
+        }
+
+        $totalPrice = 0;
+        foreach ($cart as $item) {
+            $totalPrice += $item['price'] * $item['quantity'];
+        }
+
+        $order = Order::create([
+            'user_id'           => Auth::id(),
+            'customer_name'     => $request->customer_name,
+            'total_price'       => $totalPrice,
+            'ordered_at'        => now(),
+            'status_pembayaran' => $request->status_pembayaran,
+            'metode_pembayaran' => $request->metode_pembayaran,
+        ]);
+
+        foreach ($cart as $cartKey => $item) {
+            // ✅ Ambil product_id murni dari cartKey
+            // Format cartKey: "63" (tanpa varian) atau "63_3" (dengan varian)
+            $productId = (int) explode('_', $cartKey)[0];
+
+            $order->items()->create([
+                'product_id' => $productId,               // ✅ integer bukan "63_3"
+                'quantity'   => $item['quantity'],
+                'price'      => $item['price'],
+                'subtotal'   => $item['price'] * $item['quantity'],
+            ]);
+        }
+
+        session()->forget('cart');
+
+        return redirect()->route('orders.index')->with('success', 'Pesanan berhasil dibuat.');
+    }
+
+    // Method tambahan: Export laporan keuangan
+    public function exportLaporan(Request $request)
+    {
+        $bulan = $request->query('bulan');
+        $tahun = $request->query('tahun');
+
+        return Excel::download(new LaporanExport($bulan, $tahun), 'laporan_keuangan.xlsx');
+    }
+}
