@@ -2,15 +2,11 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Invoice {{ $nomorInvoice }}</title>
+    <title>Purchase Order {{ $nomorPO }}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 11px;
-            color: #000;
-            padding: 20px 30px;
-        }
+        body { font-family: Arial, sans-serif; font-size: 11px; color: #000; padding: 20px 30px; }
+
         .header-table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
         .header-table td { vertical-align: middle; padding: 0; }
         .company-name { font-size: 20px; font-weight: bold; }
@@ -26,14 +22,14 @@
         .items-table { width: 100%; border-collapse: collapse; }
         .items-table th { background-color: #d9d9d9; border: 1px solid #888; text-align: center; padding: 5px 4px; font-size: 11px; font-weight: bold; }
         .items-table td { border: 1px solid #888; padding: 4px 6px; font-size: 11px; }
-        .items-table .col-no { width: 4%; text-align: center; }
-        .items-table .col-kode { width: 12%; text-align: center; }
-        .items-table .col-desc { width: 34%; }
-        .items-table .col-qty { width: 6%; text-align: center; }
-        .items-table .col-sat { width: 7%; text-align: center; }
-        .items-table .col-price { width: 18%; text-align: right; }
-        .items-table .col-total { width: 19%; text-align: right; }
-        .items-table .empty-row td { height: 18px; }
+        .col-no { width: 4%; text-align: center; }
+        .col-kode { width: 12%; text-align: center; }
+        .col-desc { width: 34%; }
+        .col-qty { width: 6%; text-align: center; }
+        .col-sat { width: 7%; text-align: center; }
+        .col-price { width: 18%; text-align: right; }
+        .col-total { width: 19%; text-align: right; }
+        .empty-row td { height: 18px; }
 
         .footer-table { width: 100%; border-collapse: collapse; }
         .footer-table td { border: 1px solid #888; padding: 4px 8px; font-size: 11px; }
@@ -53,26 +49,41 @@
     </style>
 </head>
 <body>
+
     <table class="header-table">
         <tr>
             <td class="company-name">PT. MEGAH CATUR ABADI</td>
-            <td class="doc-title">INVOICE</td>
+            <td class="doc-title">PURCHASE ORDER</td>
         </tr>
     </table>
 
     <table class="info-section">
         <tr>
-            <td class="info-left" rowspan="4">
+            <td class="info-left" rowspan="2">
                 <div><strong>Kepada yth,</strong></div>
-                <div style="font-size: 12px; font-weight: bold; margin-top: 4px;">{{ $order->customer_name }}</div>
+                <div style="font-size: 12px; font-weight: bold; margin-top: 4px;">{{ $po->supplier_name }}</div>
             </td>
             <td class="info-right">
-                <table><tr><td style="width:42%; font-weight:bold;">Tanggal</td><td style="width:3%;">:</td><td>{{ $tanggal->translatedFormat('d F Y') }}</td></tr></table>
+                <table>
+                    <tr>
+                        <td style="width:42%; font-weight:bold;">Tanggal</td>
+                        <td style="width:3%;">:</td>
+                        <td>{{ $tanggal->translatedFormat('d F Y') }}</td>
+                    </tr>
+                </table>
             </td>
         </tr>
-        <tr><td class="info-right"><table><tr><td style="width:42%; font-weight:bold;">Nomer Invoice</td><td style="width:3%;">:</td><td>{{ $nomorInvoice }}</td></tr></table></td></tr>
-        <tr><td class="info-right"><table><tr><td style="width:42%; font-weight:bold;">Nomer Surat Jalan</td><td style="width:3%;">:</td><td>{{ $nomorSJ }}</td></tr></table></td></tr>
-        <tr><td class="info-right"><table><tr><td style="width:42%; font-weight:bold;">Tanggal Jatuh Tempo</td><td style="width:3%;">:</td><td>{{ $order->status_pembayaran === 'lunas' ? '-' : $tanggal->copy()->addDays(30)->translatedFormat('d F Y') }}</td></tr></table></td></tr>
+        <tr>
+            <td class="info-right">
+                <table>
+                    <tr>
+                        <td style="width:42%; font-weight:bold;">No. Purchase Order</td>
+                        <td style="width:3%;">:</td>
+                        <td>{{ $nomorPO }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
     </table>
 
     <table class="items-table">
@@ -88,18 +99,18 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($allItems as $i => $item)
+            @foreach($po->items as $i => $item)
             <tr>
                 <td class="col-no">{{ $i + 1 }}</td>
                 <td class="col-kode" style="font-size:10px;">{{ $item->product->kode_barang ?? '-' }}</td>
-                <td class="col-desc">{{ $item->product->name ?? 'Produk tidak ditemukan' }}@if(!empty($item->nama_varian))<br><small style="color:#555;">{{ $item->nama_varian }}</small>@endif</td>
+                <td class="col-desc">{{ $item->product->name ?? 'Produk tidak ditemukan' }}@if($item->nama_varian)<br><small style="color:#555;">{{ $item->nama_varian }}</small>@endif</td>
                 <td class="col-qty">{{ $item->quantity }}</td>
                 <td class="col-sat">{{ $item->product->satuan ?? 'Pcs' }}</td>
                 <td class="col-price">{{ number_format($item->price, 0, '.', ',') }}</td>
                 <td class="col-total">{{ number_format($item->subtotal, 0, '.', ',') }}</td>
             </tr>
             @endforeach
-            @for($e = $allItems->count(); $e < 12; $e++)
+            @for($e = $po->items->count(); $e < 12; $e++)
             <tr class="empty-row"><td class="col-no"></td><td class="col-kode"></td><td class="col-desc"></td><td class="col-qty"></td><td class="col-sat"></td><td class="col-price"></td><td class="col-total"></td></tr>
             @endfor
         </tbody>
@@ -107,16 +118,16 @@
 
     <table class="footer-table">
         <tr>
-            <td class="footer-left" rowspan="{{ ($usePpn ?? true) ? 3 : 2 }}" style="font-size:11px;">
-                {{ $tanggal->translatedFormat('d F Y') }} / PX : {{ $order->user->name ?? '-' }}
+            <td class="footer-left" rowspan="{{ $usePpn ? 3 : 2 }}" style="font-size:11px;">
+                {{ $tanggal->translatedFormat('d F Y') }} / PX : {{ $po->user->name ?? '-' }}
             </td>
             <td class="footer-label">DPP</td>
             <td class="footer-value">{{ number_format($dpp, 0, '.', ',') }}</td>
         </tr>
-        @if($usePpn ?? true)
+        @if($usePpn)
         <tr><td class="footer-label">PPN 11%</td><td class="footer-value">{{ number_format($ppn, 0, '.', ',') }}</td></tr>
         @endif
-        <tr><td class="footer-label footer-total">JUMLAH</td><td class="footer-value footer-total">{{ number_format($jumlah, 0, '.', ',') }}</td></tr>
+        <tr><td class="footer-label footer-total">TOTAL</td><td class="footer-value footer-total">{{ number_format($jumlah, 0, '.', ',') }}</td></tr>
     </table>
 
     <div class="bottom-section">
@@ -136,5 +147,6 @@
             </tr>
         </table>
     </div>
+
 </body>
 </html>

@@ -10,6 +10,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\PurchaseOrderController;
 
 // ===== LAPORAN & ORDER (tidak butuh auth karena sudah di resource) =====
 Route::get('/laporan/export', [OrderController::class, 'exportExcel'])->name('laporan.export');
@@ -17,8 +18,9 @@ Route::get('/laporan-keuangan', [OrderController::class, 'laporanKeuangan'])->na
 
 // ← TAMBAHAN BARU: Export Invoice PDF
 Route::get('/orders/{id}/invoice/pdf', [OrderController::class, 'exportInvoicePdf'])->name('orders.invoice.pdf');
-// Tambah route print view (HTML, bukan PDF)
 Route::get('/orders/{id}/invoice/print', [OrderController::class, 'printInvoice'])->name('orders.invoice.print');
+Route::get('/orders/{id}/surat-jalan/pdf', [OrderController::class, 'exportSuratJalanPdf'])->name('orders.sj.pdf');
+Route::get('/orders/{id}/surat-jalan/print', [OrderController::class, 'printSuratJalan'])->name('orders.sj.print');
 // Bulk PDF export (gabung beberapa invoice ke satu PDF)
 Route::get('/orders/bulk-pdf', [OrderController::class, 'exportBulkInvoicePdf'])->name('orders.bulk.pdf');
 // Bulk detail (detail gabungan beberapa pesanan)
@@ -93,6 +95,18 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [InvoiceController::class, 'store'])->name('invoices.store');
         Route::get('/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
         Route::get('/{invoice}/print', [InvoiceController::class, 'print'])->name('invoices.print');
+    });
+
+    // Purchase Order
+    Route::prefix('/purchase-orders')->group(function () {
+        Route::get('/', [PurchaseOrderController::class, 'index'])->name('purchase-orders.index');
+        Route::get('/create', [PurchaseOrderController::class, 'create'])->name('purchase-orders.create');
+        Route::post('/', [PurchaseOrderController::class, 'store'])->name('purchase-orders.store');
+        Route::get('/{id}', [PurchaseOrderController::class, 'show'])->name('purchase-orders.show');
+        Route::post('/{id}/terima', [PurchaseOrderController::class, 'terima'])->name('purchase-orders.terima');
+        Route::delete('/{id}', [PurchaseOrderController::class, 'destroy'])->name('purchase-orders.destroy');
+        Route::get('/{id}/pdf', [PurchaseOrderController::class, 'exportPdf'])->name('purchase-orders.pdf');
+        Route::get('/{id}/print', [PurchaseOrderController::class, 'printPo'])->name('purchase-orders.print');
     });
 });
 

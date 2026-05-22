@@ -12,6 +12,7 @@
         <thead class="table-dark">
             <tr>
                 <th>No</th>
+                <th>Kode Barang</th>
                 <th>Nama Produk</th>
                 <th>Jumlah</th>
                 <th>Harga</th>
@@ -22,6 +23,7 @@
             @foreach($order->items as $index => $item)
             <tr>
                 <td>{{ $loop->iteration }}</td>
+                <td>{{ $item->product->kode_barang ?? '-' }}</td>
                 <td>{{ $item->product->name }}</td>
                 <td>{{ $item->quantity }}</td>
                 <td>Rp {{ number_format($item->price, 0, ',', '.') }}</td>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice {{ $nomorInvoice }}</title>
+    <title>Purchase Order {{ $nomorPO }}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; font-size: 11px; color: #000; background: #f0f0f0; }
@@ -11,13 +11,12 @@
         .toolbar { background: #2d3748; color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 999; }
         .toolbar span { font-size: 14px; font-weight: bold; }
         .toolbar .btn-group { display: flex; gap: 10px; }
-        .btn-print { background: #38a169; color: white; border: none; padding: 8px 20px; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 6px; }
+        .btn-print { background: #38a169; color: white; border: none; padding: 8px 20px; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: bold; }
         .btn-print:hover { background: #276749; }
         .btn-close-tab { background: #718096; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
-        .btn-close-tab:hover { background: #4a5568; }
 
         .page-wrapper { display: flex; justify-content: center; padding: 24px; }
-        .invoice-paper { background: white; width: 210mm; min-height: 297mm; padding: 20px 28px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+        .po-paper { background: white; width: 210mm; min-height: 297mm; padding: 20px 28px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
 
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
         .company-name { font-size: 22px; font-weight: bold; }
@@ -26,7 +25,7 @@
         .info-section { display: flex; border: 1px solid #888; margin-bottom: 14px; }
         .info-left { width: 50%; padding: 8px 12px; border-right: 1px solid #888; }
         .info-right { width: 50%; padding: 0; }
-        .info-right .info-row { display: flex; padding: 5px 12px; border-bottom: 1px solid #888; font-size: 11px; }
+        .info-right .info-row { display: flex; padding: 6px 12px; border-bottom: 1px solid #888; font-size: 11px; }
         .info-right .info-row:last-child { border-bottom: none; }
         .info-right .info-label { width: 45%; font-weight: bold; }
         .info-right .info-sep { width: 5%; }
@@ -65,14 +64,14 @@
             body { background: white; }
             .toolbar { display: none !important; }
             .page-wrapper { padding: 0; display: block; }
-            .invoice-paper { width: 100%; min-height: auto; box-shadow: none; padding: 10mm 14mm; }
-            .items-table th, .total-row, .footer-table .label-col { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .po-paper { width: 100%; min-height: auto; box-shadow: none; padding: 10mm 14mm; }
+            .items-table th, .total-row { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
 </head>
 <body>
     <div class="toolbar">
-        <span>🧾 Preview Invoice — {{ $nomorInvoice }}</span>
+        <span>📋 Preview Purchase Order — {{ $nomorPO }}</span>
         <div class="btn-group">
             <button class="btn-print" onclick="window.print()">🖨️ Cetak Sekarang</button>
             <button class="btn-close-tab" onclick="window.close()">✕ Tutup</button>
@@ -80,22 +79,28 @@
     </div>
 
     <div class="page-wrapper">
-        <div class="invoice-paper">
+        <div class="po-paper">
             <div class="header-row">
                 <div class="company-name">PT. MEGAH CATUR ABADI</div>
-                <div class="doc-title">INVOICE</div>
+                <div class="doc-title">PURCHASE ORDER</div>
             </div>
 
             <div class="info-section">
                 <div class="info-left">
                     <div><strong>Kepada yth,</strong></div>
-                    <div class="recipient-name">{{ $order->customer_name }}</div>
+                    <div class="recipient-name">{{ $po->supplier_name }}</div>
                 </div>
                 <div class="info-right">
-                    <div class="info-row"><span class="info-label">Tanggal</span><span class="info-sep">:</span><span class="info-val">{{ $tanggal->translatedFormat('d F Y') }}</span></div>
-                    <div class="info-row"><span class="info-label">Nomer Invoice</span><span class="info-sep">:</span><span class="info-val">{{ $nomorInvoice }}</span></div>
-                    <div class="info-row"><span class="info-label">Nomer Surat Jalan</span><span class="info-sep">:</span><span class="info-val">{{ $nomorSJ }}</span></div>
-                    <div class="info-row"><span class="info-label">Tanggal Jatuh Tempo</span><span class="info-sep">:</span><span class="info-val">{{ $order->status_pembayaran === 'lunas' ? '-' : $tanggal->copy()->addDays(30)->translatedFormat('d F Y') }}</span></div>
+                    <div class="info-row">
+                        <span class="info-label">Tanggal</span>
+                        <span class="info-sep">:</span>
+                        <span class="info-val">{{ $tanggal->translatedFormat('d F Y') }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">No. Purchase Order</span>
+                        <span class="info-sep">:</span>
+                        <span class="info-val">{{ $nomorPO }}</span>
+                    </div>
                 </div>
             </div>
 
@@ -112,35 +117,35 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($allItems as $i => $item)
+                    @foreach($po->items as $i => $item)
                     <tr>
                         <td class="col-no">{{ $i + 1 }}</td>
                         <td class="col-kode" style="font-size:10px;">{{ $item->product->kode_barang ?? '-' }}</td>
-                        <td class="col-desc">{{ $item->product->name ?? 'Produk tidak ditemukan' }}@if(!empty($item->nama_varian))<br><small style="color:#555;">— {{ $item->nama_varian }}</small>@endif</td>
+                        <td class="col-desc">{{ $item->product->name ?? 'Produk tidak ditemukan' }}@if($item->nama_varian)<br><small style="color:#555;">— {{ $item->nama_varian }}</small>@endif</td>
                         <td class="col-qty">{{ $item->quantity }}</td>
                         <td class="col-sat">{{ $item->product->satuan ?? 'Pcs' }}</td>
                         <td class="col-price">{{ number_format($item->price, 0, '.', ',') }}</td>
                         <td class="col-total">{{ number_format($item->subtotal, 0, '.', ',') }}</td>
                     </tr>
                     @endforeach
-                    @for($e = $allItems->count(); $e < 12; $e++)
-                    <tr class="empty-row"><td class="col-no"></td><td class="col-kode"></td><td class="col-desc"></td><td class="col-qty"></td><td class="col-sat"></td><td class="col-price"></td><td class="col-total"></td></tr>
+                    @for($e = $po->items->count(); $e < 12; $e++)
+                    <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                     @endfor
                 </tbody>
             </table>
 
             <table class="footer-table">
                 <tr>
-                    <td class="footer-px" rowspan="{{ ($usePpn ?? true) ? 3 : 2 }}">
-                        {{ $tanggal->translatedFormat('d F Y') }} / PX : {{ $order->user->name ?? '-' }}
+                    <td class="footer-px" rowspan="{{ $usePpn ? 3 : 2 }}">
+                        {{ $tanggal->translatedFormat('d F Y') }} / PX : {{ $po->user->name ?? '-' }}
                     </td>
                     <td class="label-col">DPP</td>
                     <td class="value-col">{{ number_format($dpp, 0, '.', ',') }}</td>
                 </tr>
-                @if($usePpn ?? true)
+                @if($usePpn)
                 <tr><td class="label-col">PPN 11%</td><td class="value-col">{{ number_format($ppn, 0, '.', ',') }}</td></tr>
                 @endif
-                <tr><td class="label-col total-row">JUMLAH</td><td class="value-col total-row">{{ number_format($jumlah, 0, '.', ',') }}</td></tr>
+                <tr><td class="label-col total-row">TOTAL</td><td class="value-col total-row">{{ number_format($jumlah, 0, '.', ',') }}</td></tr>
             </table>
 
             <div class="bottom">

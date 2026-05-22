@@ -7,8 +7,8 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Detail Pesanan</h2>
-        <div class="d-flex gap-2">
-            {{-- Tombol Print Preview HTML --}}
+        <div class="d-flex gap-2 flex-wrap">
+            {{-- Invoice --}}
             <button onclick="cetakInvoice({{ $order->id }})" class="btn btn-success">
                 🖨️ Cetak Invoice
             </button>
@@ -16,8 +16,16 @@
                 ⬇️ Download PDF
             </a>
 
-            <a href="{{ route('orders.edit', $order->id) }}" class="btn btn-warning">Edit</a>
-            <a href="{{ route('orders.index') }}" class="btn btn-secondary">← Kembali</a>
+            {{-- Surat Jalan --}}
+            <button onclick="cetakSuratJalan({{ $order->id }})" class="btn btn-warning">
+                📄 Cetak Surat Jalan
+            </button>
+            <a href="{{ route('orders.sj.pdf', $order->id) }}" class="btn btn-outline-warning" target="_blank">
+                ⬇️ Download SJ
+            </a>
+
+            <a href="{{ route('orders.edit', $order->id) }}" class="btn btn-secondary">Edit</a>
+            <a href="{{ route('orders.index') }}" class="btn btn-outline-secondary">← Kembali</a>
         </div>
     </div>
 
@@ -43,6 +51,26 @@
                         <tr>
                             <td class="text-muted">Tanggal Pesanan</td>
                             <td>{{ \Carbon\Carbon::parse($order->ordered_at)->translatedFormat('d F Y, H:i') }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">No. Invoice</td>
+                            <td>
+                                @if($order->invoice_number)
+                                    <span class="badge bg-dark">{{ $order->invoice_number }}</span>
+                                @else
+                                    <span class="text-secondary">- (belum dicetak)</span>
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">No. Surat Jalan</td>
+                            <td>
+                                @if($order->surat_jalan_number)
+                                    <span class="badge bg-warning text-dark">{{ $order->surat_jalan_number }}</span>
+                                @else
+                                    <span class="text-secondary">- (belum dicetak)</span>
+                                @endif
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -72,14 +100,19 @@
                             <td class="text-muted">DPP</td>
                             <td>Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
                         </tr>
+                        @if($order->use_ppn ?? true)
                         <tr>
                             <td class="text-muted">PPN 11%</td>
                             <td>Rp {{ number_format(round($order->total_price * 0.11), 0, ',', '.') }}</td>
                         </tr>
+                        @endif
                         <tr class="fw-bold">
                             <td class="text-muted">Total Bayar</td>
                             <td class="text-danger fs-5">
-                                Rp {{ number_format($order->total_price + round($order->total_price * 0.11), 0, ',', '.') }}
+                                @php
+                                    $ppnAmount = ($order->use_ppn ?? true) ? round($order->total_price * 0.11) : 0;
+                                @endphp
+                                Rp {{ number_format($order->total_price + $ppnAmount, 0, ',', '.') }}
                             </td>
                         </tr>
                     </table>
@@ -126,14 +159,16 @@
                             <td colspan="5" class="text-end fw-semibold">DPP</td>
                             <td class="text-end">Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
                         </tr>
+                        @if($order->use_ppn ?? true)
                         <tr>
                             <td colspan="5" class="text-end fw-semibold">PPN 11%</td>
                             <td class="text-end">Rp {{ number_format(round($order->total_price * 0.11), 0, ',', '.') }}</td>
                         </tr>
+                        @endif
                         <tr class="fw-bold table-warning">
                             <td colspan="5" class="text-end">JUMLAH</td>
                             <td class="text-end text-danger">
-                                Rp {{ number_format($order->total_price + round($order->total_price * 0.11), 0, ',', '.') }}
+                                Rp {{ number_format($order->total_price + $ppnAmount, 0, ',', '.') }}
                             </td>
                         </tr>
                     </tfoot>
@@ -146,6 +181,9 @@
 <script>
     function cetakInvoice(orderId) {
         window.open(`/orders/${orderId}/invoice/print`, '_blank');
+    }
+    function cetakSuratJalan(orderId) {
+        window.open(`/orders/${orderId}/surat-jalan/print`, '_blank');
     }
 </script>
 @endsection

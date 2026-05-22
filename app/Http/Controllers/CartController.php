@@ -185,10 +185,35 @@ class CartController extends Controller
             return redirect()->route('cart.index')->with('error', 'Keranjang kosong.');
         }
 
+        // Determine which items to checkout
+        $selectedItemsInput = $request->input('selected_items', '');
+        $selectedKeys = array_filter(explode(',', $selectedItemsInput));
+
+        // If no items selected, checkout all items
+        if (empty($selectedKeys)) {
+            $selectedKeys = array_keys($cart);
+        }
+
+        // Filter cart to only selected items
+        $checkoutItems = [];
+        foreach ($selectedKeys as $key) {
+            if (isset($cart[$key])) {
+                $checkoutItems[$key] = $cart[$key];
+            }
+        }
+
+        if (empty($checkoutItems)) {
+            return redirect()->route('cart.index')->with('error', 'Item yang dipilih tidak ditemukan.');
+        }
+
+        // Calculate total from selected items only
         $totalPrice = 0;
-        foreach ($cart as $item) {
+        foreach ($checkoutItems as $item) {
             $totalPrice += $item['price'] * $item['quantity'];
         }
+
+        // Check PPN toggle
+        $usePpn = $request->has('use_ppn') ? 1 : 0;
 
         $order = Order::create([
             'user_id'           => Auth::id(),
@@ -197,9 +222,10 @@ class CartController extends Controller
             'ordered_at'        => now(),
             'status_pembayaran' => $request->status_pembayaran,
             'metode_pembayaran' => $request->metode_pembayaran,
+            'use_ppn'           => $usePpn,
         ]);
 
-        foreach ($cart as $cartKey => $item) {
+        foreach ($checkoutItems as $cartKey => $item) {
             // ✅ Ambil product_id murni dari cartKey
             // Format cartKey: "63" (tanpa varian) atau "63_3" (dengan varian)
             $productId = (int) explode('_', $cartKey)[0];
@@ -212,7 +238,16 @@ class CartController extends Controller
             ]);
         }
 
-        session()->forget('cart');
+        // Only remove checked-out items from cart, keep the rest
+        foreach ($selectedKeys as $key) {
+            unset($cart[$key]);
+        }
+
+        if (empty($cart)) {
+            session()->forget('cart');
+        } else {
+            session()->put('cart', $cart);
+        }
 
         return redirect()->route('orders.index')->with('success', 'Pesanan berhasil dibuat.');
     }

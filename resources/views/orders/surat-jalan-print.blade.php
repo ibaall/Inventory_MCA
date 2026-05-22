@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice {{ $nomorInvoice }}</title>
+    <title>Surat Jalan {{ $nomorSJ }}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -47,7 +47,7 @@
             justify-content: center;
             padding: 24px;
         }
-        .invoice-paper {
+        .sj-paper {
             background: white;
             width: 210mm;
             min-height: 297mm;
@@ -60,7 +60,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 14px;
+            border: 1px solid #888;
+            padding: 10px 14px;
+            margin-bottom: 4px;
         }
         .company-name {
             font-size: 22px;
@@ -76,7 +78,7 @@
         .info-section {
             display: flex;
             border: 1px solid #888;
-            margin-bottom: 14px;
+            margin-bottom: 10px;
         }
         .info-left {
             width: 50%;
@@ -89,7 +91,7 @@
         }
         .info-right .info-row {
             display: flex;
-            padding: 5px 12px;
+            padding: 6px 12px;
             border-bottom: 1px solid #888;
             font-size: 11px;
         }
@@ -99,6 +101,8 @@
         .info-right .info-val { width: 50%; }
 
         .recipient-name { font-weight: bold; font-size: 13px; margin-top: 4px; }
+
+        .intro { font-size: 11px; margin-bottom: 8px; }
 
         /* ===== TABLE ===== */
         .items-table {
@@ -117,45 +121,33 @@
             padding: 4px 6px;
             font-size: 11px;
         }
-        .col-no    { width: 4%;  text-align: center; }
-        .col-kode  { width: 12%; text-align: center; }
-        .col-desc  { width: 34%; }
-        .col-qty   { width: 6%;  text-align: center; }
-        .col-sat   { width: 7%;  text-align: center; }
-        .col-price { width: 18%; text-align: right; }
-        .col-total { width: 19%; text-align: right; }
+        .col-no   { width: 5%;  text-align: center; }
+        .col-qty  { width: 7%;  text-align: center; }
+        .col-sat  { width: 7%;  text-align: center; }
+        .col-kode { width: 18%; text-align: center; }
+        .col-desc { width: 63%; }
         .empty-row td { height: 18px; }
 
-        /* ===== FOOTER TABLE ===== */
-        .footer-table {
-            width: 100%;
-            border-collapse: collapse;
+        /* ===== SIGNATURE ===== */
+        .signature-section {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-around;
         }
-        .footer-table td {
-            border: 1px solid #888;
-            padding: 4px 8px;
+        .sig-box {
+            text-align: center;
+            width: 40%;
+        }
+        .sig-label {
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 70px;
+        }
+        .sig-line {
+            border-bottom: 1px dotted #000;
+            padding-bottom: 4px;
             font-size: 11px;
         }
-        .footer-px   { width: 55%; vertical-align: middle; }
-        .label-col   { font-weight: bold; text-align: right; }
-        .value-col   { text-align: right; }
-        .total-row   { background: #d9d9d9; font-weight: bold; }
-
-        /* ===== BOTTOM ===== */
-        .bottom { margin-top: 14px; font-size: 11px; }
-        .bottom-note { margin-bottom: 12px; }
-        .bottom-flex { display: flex; justify-content: space-between; align-items: flex-start; }
-
-        .signature-table { border-collapse: collapse; }
-        .signature-table td {
-            border: 1px solid #666;
-            width: 130px; height: 72px;
-            text-align: center; vertical-align: top;
-            padding: 5px 8px; font-size: 11px;
-        }
-
-        .bank-info { padding-left: 24px; line-height: 2; }
-        .bank-name { font-weight: bold; font-size: 12px; }
 
         /* ===== PRINT ===== */
         @page {
@@ -166,13 +158,13 @@
             body { background: white; }
             .toolbar { display: none !important; }
             .page-wrapper { padding: 0; display: block; }
-            .invoice-paper {
+            .sj-paper {
                 width: 100%; min-height: auto;
                 box-shadow: none; padding: 10mm 14mm;
             }
             table { page-break-inside: auto; }
             tr    { page-break-inside: avoid; }
-            .items-table th, .total-row, .footer-table .label-col {
+            .items-table th {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
@@ -183,7 +175,7 @@
 
     {{-- TOOLBAR --}}
     <div class="toolbar">
-        <span>🧾 Preview Invoice — {{ $nomorInvoice }}</span>
+        <span>📄 Preview Surat Jalan — {{ $nomorSJ }}</span>
         <div class="btn-group">
             <button class="btn-print" onclick="window.print()">🖨️ Cetak Sekarang</button>
             <button class="btn-close-tab" onclick="window.close()">✕ Tutup</button>
@@ -191,12 +183,12 @@
     </div>
 
     <div class="page-wrapper">
-        <div class="invoice-paper">
+        <div class="sj-paper">
 
             {{-- Header --}}
             <div class="header-row">
                 <div class="company-name">PT. MEGAH CATUR ABADI</div>
-                <div class="doc-title">INVOICE</div>
+                <div class="doc-title">SURAT JALAN</div>
             </div>
 
             {{-- Info --}}
@@ -212,40 +204,32 @@
                         <span class="info-val">{{ $tanggal->translatedFormat('d F Y') }}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Nomer Invoice</span>
-                        <span class="info-sep">:</span>
-                        <span class="info-val">{{ $nomorInvoice }}</span>
-                    </div>
-                    <div class="info-row">
                         <span class="info-label">Nomer Surat Jalan</span>
                         <span class="info-sep">:</span>
                         <span class="info-val">{{ $nomorSJ }}</span>
                     </div>
-                    <div class="info-row">
-                        <span class="info-label">Tanggal Jatuh Tempo</span>
-                        <span class="info-sep">:</span>
-                        <span class="info-val">{{ $order->status_pembayaran === 'lunas' ? '-' : $tanggal->copy()->addDays(30)->translatedFormat('d F Y') }}</span>
-                    </div>
                 </div>
             </div>
+
+            <div class="intro">Bersama ini kami kirimkan sejumlah barang berikut ini :</div>
 
             {{-- Table --}}
             <table class="items-table">
                 <thead>
                     <tr>
                         <th class="col-no">NO</th>
-                        <th class="col-kode">KODE BARANG</th>
-                        <th class="col-desc">KETERANGAN</th>
                         <th class="col-qty">QTY</th>
                         <th class="col-sat">SAT.</th>
-                        <th class="col-price">HARGA</th>
-                        <th class="col-total">SUB. TOTAL</th>
+                        <th class="col-kode">KODE BARANG</th>
+                        <th class="col-desc">KETERANGAN</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($order->items as $i => $item)
                     <tr>
                         <td class="col-no">{{ $i + 1 }}</td>
+                        <td class="col-qty">{{ $item->quantity }}</td>
+                        <td class="col-sat">{{ $item->product->satuan ?? 'Pcs' }}</td>
                         <td class="col-kode" style="font-size:10px;">{{ $item->product->kode_barang ?? '-' }}</td>
                         <td class="col-desc">
                             {{ $item->product->name ?? 'Produk tidak ditemukan' }}
@@ -253,63 +237,30 @@
                                 <br><small style="color:#555;">— {{ $item->nama_varian }}</small>
                             @endif
                         </td>
-                        <td class="col-qty">{{ $item->quantity }}</td>
-                        <td class="col-sat">{{ $item->product->satuan ?? 'Pcs' }}</td>
-                        <td class="col-price">{{ number_format($item->price, 0, '.', ',') }}</td>
-                        <td class="col-total">{{ number_format($item->subtotal, 0, '.', ',') }}</td>
                     </tr>
                     @endforeach
 
                     @for($e = $order->items->count(); $e < 12; $e++)
                     <tr class="empty-row">
                         <td class="col-no"></td>
-                        <td class="col-kode"></td>
-                        <td class="col-desc"></td>
                         <td class="col-qty"></td>
                         <td class="col-sat"></td>
-                        <td class="col-price"></td>
-                        <td class="col-total"></td>
+                        <td class="col-kode"></td>
+                        <td class="col-desc"></td>
                     </tr>
                     @endfor
                 </tbody>
             </table>
 
-            {{-- Footer --}}
-            <table class="footer-table">
-                <tr>
-                    <td class="footer-px" rowspan="{{ ($usePpn ?? true) ? 3 : 2 }}">
-                        {{ $tanggal->translatedFormat('d F Y') }} / PX : {{ $order->user->name ?? '-' }}
-                    </td>
-                    <td class="label-col">DPP</td>
-                    <td class="value-col">{{ number_format($dpp, 0, '.', ',') }}</td>
-                </tr>
-                @if($usePpn ?? true)
-                <tr>
-                    <td class="label-col">PPN 11%</td>
-                    <td class="value-col">{{ number_format($ppn, 0, '.', ',') }}</td>
-                </tr>
-                @endif
-                <tr>
-                    <td class="label-col total-row">JUMLAH</td>
-                    <td class="value-col total-row">{{ number_format($jumlah, 0, '.', ',') }}</td>
-                </tr>
-            </table>
-
-            {{-- Bottom --}}
-            <div class="bottom">
-                <div class="bottom-note">Mohon untuk dicek dan diterima,</div>
-                <div class="bottom-flex">
-                    <table class="signature-table">
-                        <tr>
-                            <td>Mengetahui</td>
-                            <td>Penerima</td>
-                        </tr>
-                    </table>
-                    <div class="bank-info">
-                        <div class="bank-name">BANK MANDIRI</div>
-                        <div>A/C ( IDR ) : 1420025406918</div>
-                        <div>a/n PT. MEGAH CATUR ABADI</div>
-                    </div>
+            {{-- Signature --}}
+            <div class="signature-section">
+                <div class="sig-box">
+                    <div class="sig-label">Menyerahkan,</div>
+                    <div class="sig-line">(.........................................)</div>
+                </div>
+                <div class="sig-box">
+                    <div class="sig-label">Menerima,</div>
+                    <div class="sig-line">(.........................................)</div>
                 </div>
             </div>
 

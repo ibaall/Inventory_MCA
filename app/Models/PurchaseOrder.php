@@ -5,31 +5,28 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Order extends Model
+class PurchaseOrder extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'customer_name',
+        'supplier_name',
         'total_price',
         'ordered_at',
-        'status_pembayaran',
-        'metode_pembayaran',
+        'status',
         'use_ppn',
-        'invoice_number',
-        'surat_jalan_number',
+        'po_number',
+        'catatan',
     ];
 
-    // Relasi ke User
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Relasi ke OrderItem
     public function items()
     {
-        return $this->hasMany(OrderItem::class);
+        return $this->hasMany(PurchaseOrderItem::class);
     }
 }

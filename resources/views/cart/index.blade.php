@@ -174,8 +174,9 @@
 
         <a href="{{ route('products.index') }}" class="btn btn-secondary mb-3">Kembali Belanja</a>
 
-        <form action="{{ route('checkout.store') }}" method="POST">
+        <form action="{{ route('checkout.store') }}" method="POST" id="checkoutForm">
             @csrf
+            <input type="hidden" name="selected_items" id="checkoutSelectedItems" value="">
             <div class="mb-3">
                 <label for="customer_name" class="form-label">Nama Pelanggan</label>
                 <input type="text" name="customer_name" id="customer_name"
@@ -197,7 +198,17 @@
                     <option value="ewallet">E-Wallet</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Checkout</button>
+            <div class="mb-3">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="ppnToggle" name="use_ppn" value="1" checked
+                           style="width: 42px; height: 22px; cursor: pointer;">
+                    <label class="form-check-label fw-semibold" for="ppnToggle" style="cursor: pointer; margin-left: 8px;">
+                        Gunakan PPN 11%
+                    </label>
+                </div>
+                <small class="text-muted">Centang untuk menambahkan PPN 11% pada invoice.</small>
+            </div>
+            <button type="submit" class="btn btn-primary" onclick="return prepareCheckout()">Checkout</button>
         </form>
 
     @else
@@ -303,6 +314,14 @@
             keys.push(cb.getAttribute('data-cart-key'));
         });
         return keys;
+    }
+
+    function prepareCheckout() {
+        const selectedKeys = getSelectedKeys();
+        // If some items are selected, only checkout those items
+        // If no items are selected, checkout all items (empty string = all)
+        document.getElementById('checkoutSelectedItems').value = selectedKeys.join(',');
+        return true;
     }
 
     function bulkRemoveSelected() {

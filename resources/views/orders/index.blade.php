@@ -56,6 +56,17 @@
             ">
                 🖨️ Cetak Invoice
             </button>
+            <button type="button" onclick="printBulkSuratJalan()" class="btn btn-warning btn-sm" style="
+                padding: 8px 18px;
+                border-radius: 10px;
+                font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                color: #000;
+            ">
+                📄 Cetak Surat Jalan
+            </button>
             <button type="button" onclick="downloadBulkPdf()" class="btn btn-danger btn-sm" style="
                 padding: 8px 18px;
                 border-radius: 10px;
@@ -91,7 +102,6 @@
                         <th>Nama Pelanggan</th>
                         <th>Penjual</th>
                         <th class="text-end">Total (DPP)</th>
-                        <th class="text-end">Total + PPN</th>
                         <th>Tanggal</th>
                         <th class="text-center">Status</th>
                         <th class="text-center">Metode</th>
@@ -100,10 +110,6 @@
                 </thead>
                 <tbody>
                     @foreach($orders as $index => $order)
-                    @php
-                        $ppn   = round($order->total_price * 0.11);
-                        $total = $order->total_price + $ppn;
-                    @endphp
                     <tr id="row-{{ $order->id }}" class="order-row">
                         <td class="text-center">
                             <input type="checkbox" data-order-id="{{ $order->id }}"
@@ -115,7 +121,6 @@
                         <td>{{ $order->customer_name ?? '-' }}</td>
                         <td>{{ $order->user->name ?? '-' }}</td>
                         <td class="text-end">Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
-                        <td class="text-end fw-semibold text-danger">Rp {{ number_format($total, 0, ',', '.') }}</td>
                         <td>{{ \Carbon\Carbon::parse($order->ordered_at)->format('d/m/Y') }}</td>
                         <td class="text-center">
                             @if($order->status_pembayaran === 'lunas')
@@ -127,13 +132,14 @@
                         <td class="text-center">
                             <span class="badge bg-info text-dark">{{ ucfirst($order->metode_pembayaran) }}</span>
                         </td>
-                        <td class="text-center">
+                        <td class="text-center" style="white-space: nowrap;">
                             <a href="{{ route('orders.show', $order->id) }}"
                                class="btn btn-info btn-sm mb-1">Detail</a>
                             <a href="{{ route('orders.invoice.pdf', $order->id) }}"
                                class="btn btn-danger btn-sm mb-1">PDF</a>
+                            <button onclick="cetakSuratJalan({{ $order->id }})" class="btn btn-warning btn-sm mb-1" title="Cetak Surat Jalan">SJ</button>
                             <a href="{{ route('orders.edit', $order->id) }}"
-                               class="btn btn-warning btn-sm mb-1">Edit</a>
+                               class="btn btn-secondary btn-sm mb-1">Edit</a>
                             <form action="{{ route('orders.destroy', $order->id) }}"
                                   method="POST" class="d-inline">
                                 @csrf
@@ -150,9 +156,6 @@
                         <td></td>
                         <td colspan="4" class="text-end">Total Semua Pesanan:</td>
                         <td class="text-end">Rp {{ number_format($orders->sum('total_price'), 0, ',', '.') }}</td>
-                        <td class="text-end text-danger">
-                            Rp {{ number_format($orders->sum(fn($o) => $o->total_price + round($o->total_price * 0.11)), 0, ',', '.') }}
-                        </td>
                         <td colspan="4"></td>
                     </tr>
                 </tfoot>
@@ -283,6 +286,19 @@
 
     function cetakInvoice(orderId) {
         window.open(`/orders/${orderId}/invoice/print`, '_blank');
+    }
+
+    function cetakSuratJalan(orderId) {
+        window.open(`/orders/${orderId}/surat-jalan/print`, '_blank');
+    }
+
+    function printBulkSuratJalan() {
+        const ids = getSelectedIds();
+        if (ids.length === 0) { alert('Pilih minimal 1 pesanan!'); return; }
+        // Open surat jalan for each selected order (first one)
+        ids.forEach(id => {
+            window.open(`/orders/${id}/surat-jalan/print`, '_blank');
+        });
     }
 </script>
 @endsection

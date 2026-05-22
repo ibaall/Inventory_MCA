@@ -12,6 +12,88 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
+    // ===== HELPER: Bulan Romawi =====
+    private function bulanRomawi($bulan)
+    {
+        return ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][$bulan - 1];
+    }
+
+    // ===== HELPER: Generate & assign invoice number =====
+    private function assignInvoiceNumber(Order $order)
+    {
+        if ($order->invoice_number) {
+            return $order->invoice_number;
+        }
+
+        $tanggal = \Carbon\Carbon::parse($order->ordered_at);
+        $bulan   = $tanggal->format('n');
+        $tahun   = $tanggal->format('Y');
+        $romawi  = $this->bulanRomawi($bulan);
+
+        // Hitung urutan: berapa invoice sudah terbit di bulan+tahun ini
+        $count = Order::whereNotNull('invoice_number')
+            ->whereMonth('ordered_at', $bulan)
+            ->whereYear('ordered_at', $tahun)
+            ->count();
+
+        $seq = str_pad($count + 1, 2, '0', STR_PAD_LEFT);
+        $nomorInvoice = "{$seq}/INV/MCA/{$romawi}/{$tahun}";
+
+        $order->update(['invoice_number' => $nomorInvoice]);
+
+        return $nomorInvoice;
+    }
+
+    // ===== HELPER: Generate & assign surat jalan number =====
+    private function assignSuratJalanNumber(Order $order)
+    {
+        if ($order->surat_jalan_number) {
+            return $order->surat_jalan_number;
+        }
+
+        $tanggal = \Carbon\Carbon::parse($order->ordered_at);
+        $bulan   = $tanggal->format('n');
+        $tahun   = $tanggal->format('Y');
+        $romawi  = $this->bulanRomawi($bulan);
+
+        // Hitung urutan: berapa surat jalan sudah terbit di bulan+tahun ini
+        $count = Order::whereNotNull('surat_jalan_number')
+            ->whereMonth('ordered_at', $bulan)
+            ->whereYear('ordered_at', $tahun)
+            ->count();
+
+        $seq = str_pad($count + 1, 2, '0', STR_PAD_LEFT);
+
+        // Dengan PPN: N-XX/SJ/MCA/V/2026, Tanpa PPN: XX/SJ/MCA/V/2026
+        $usePpn = $order->use_ppn ?? true;
+        if ($usePpn) {
+            $nomorSJ = "N-{$seq}/SJ/MCA/{$romawi}/{$tahun}";
+        } else {
+            $nomorSJ = "{$seq}/SJ/MCA/{$romawi}/{$tahun}";
+        }
+
+        $order->update(['surat_jalan_number' => $nomorSJ]);
+
+        return $nomorSJ;
+    }
+
+    // ===== HELPER: Prepare invoice data =====
+    private function prepareInvoiceData(Order $order)
+    {
+        $nomorInvoice = $this->assignInvoiceNumber($order);
+        $nomorSJ      = $order->surat_jalan_number ?? '-';
+
+        $dpp    = $order->total_price;
+        $usePpn = $order->use_ppn ?? true;
+        $ppn    = $usePpn ? round($dpp * 0.11) : 0;
+        $jumlah = $dpp + $ppn;
+
+        $tanggal = \Carbon\Carbon::parse($order->ordered_at);
+
+        return compact('nomorInvoice', 'nomorSJ', 'dpp', 'ppn', 'jumlah', 'usePpn', 'tanggal');
+    }
+
+    // ===== CRUD =====
     public function store(Request $request)
     {
         $cart = session()->get('cart', []);
@@ -22,14 +104,12 @@ class OrderController extends Controller
 
         $totalPrice = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
 
-        // Simpan order ke database
         $order = Order::create([
             'user_id' => Auth::id(),
             'total_price' => $totalPrice,
             'ordered_at' => now(),
         ]);
 
-        // Simpan setiap item ke dalam order_items
         foreach ($cart as $productId => $item) {
             OrderItem::create([
                 'order_id' => $order->id,
@@ -66,14 +146,12 @@ class OrderController extends Controller
         return redirect()->route('orders.index')->with('success', 'Pesanan berhasil dihapus.');
     }
 
-    // Method untuk menampilkan form edit
     public function edit($id)
     {
         $order = Order::findOrFail($id);
         return view('orders.edit', compact('order'));
     }
 
-    // Method untuk proses update data pesanan
     public function update(Request $request, $id)
     {
         $order = Order::findOrFail($id);
@@ -91,206 +169,224 @@ class OrderController extends Controller
         return redirect()->route('orders.index')->with('success', 'Pesanan berhasil diperbarui.');
     }
 
-    // Tambahan untuk laporan keuangan
+    // ===== LAPORAN =====
     public function laporanKeuangan()
     {
-        $laporan = DB::table('orders')
+        // Ringkasan penjualan per bulan
+        $laporanPenjualan = DB::table('orders')
             ->select(
                 DB::raw('MONTH(ordered_at) as bulan'),
                 DB::raw('YEAR(ordered_at) as tahun'),
                 DB::raw('COUNT(*) as jumlah_transaksi'),
-                DB::raw('SUM(total_price) as total_pendapatan')
+                DB::raw('SUM(total_price) as total')
             )
             ->groupBy(DB::raw('YEAR(ordered_at)'), DB::raw('MONTH(ordered_at)'))
             ->orderBy(DB::raw('YEAR(ordered_at)'), 'desc')
             ->orderBy(DB::raw('MONTH(ordered_at)'), 'desc')
             ->get();
 
-        return view('laporan.index', compact('laporan'));
+        // Ringkasan pembelian (PO) per bulan
+        $laporanPembelian = DB::table('purchase_orders')
+            ->select(
+                DB::raw('MONTH(ordered_at) as bulan'),
+                DB::raw('YEAR(ordered_at) as tahun'),
+                DB::raw('COUNT(*) as jumlah_transaksi'),
+                DB::raw('SUM(total_price) as total')
+            )
+            ->groupBy(DB::raw('YEAR(ordered_at)'), DB::raw('MONTH(ordered_at)'))
+            ->orderBy(DB::raw('YEAR(ordered_at)'), 'desc')
+            ->orderBy(DB::raw('MONTH(ordered_at)'), 'desc')
+            ->get();
+
+        // Transaksi penjualan terbaru (detail)
+        $recentOrders = Order::with('user')->latest('ordered_at')->take(20)->get();
+
+        // Transaksi PO terbaru (detail)
+        $recentPOs = \App\Models\PurchaseOrder::with('user')->latest('ordered_at')->take(20)->get();
+
+        // Grand totals
+        $totalPenjualan = DB::table('orders')->sum('total_price');
+        $totalPembelian = DB::table('purchase_orders')->sum('total_price');
+
+        // Backward compat: keep $laporan for old export
+        $laporan = $laporanPenjualan;
+
+        return view('laporan.index', compact(
+            'laporanPenjualan', 'laporanPembelian',
+            'recentOrders', 'recentPOs',
+            'totalPenjualan', 'totalPembelian',
+            'laporan'
+        ));
     }
 
+    public function exportExcel(Request $request)
+    {
+        $bulan = $request->query('bulan');
+        $tahun = $request->query('tahun');
 
-public function exportExcel(Request $request)
-{
-    $bulan = $request->query('bulan');
-    $tahun = $request->query('tahun');
-
-    return Excel::download(new LaporanKeuanganExport($bulan, $tahun), 'laporan_keuangan_' . $bulan . '_' . $tahun . '.xlsx');
-}
-public function exportInvoicePdf($id)
-{
-    $order = Order::with(['items.product', 'user'])->findOrFail($id);
-
-    $bulan       = \Carbon\Carbon::parse($order->ordered_at)->format('n');
-    $tahun       = \Carbon\Carbon::parse($order->ordered_at)->format('Y');
-    $bulanRomawi = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][$bulan - 1];
-    $nomorInvoice = str_pad($order->id, 3, '0', STR_PAD_LEFT) . '/INV/MCA/' . $bulanRomawi . '/' . $tahun;
-
-    $dpp    = $order->total_price;
-    $ppn    = round($dpp * 0.11);
-    $jumlah = $dpp + $ppn;
-
-    $pdf = Pdf::loadView('orders.invoice-pdf', compact('order', 'nomorInvoice', 'dpp', 'ppn', 'jumlah'))
-               ->setPaper('a4', 'portrait');
-
-    // ✅ Ganti "/" dengan "-" di nama file agar tidak error
-    $namaFile = 'Invoice-' . str_replace('/', '-', $nomorInvoice) . '.pdf';
-
-    return $pdf->download($namaFile);
-}
-public function printInvoice($id)
-{
-    $order = Order::with(['items.product', 'user'])->findOrFail($id);
-
-    $bulan        = \Carbon\Carbon::parse($order->ordered_at)->format('n');
-    $tahun        = \Carbon\Carbon::parse($order->ordered_at)->format('Y');
-    $bulanRomawi  = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][$bulan - 1];
-    $nomorInvoice = str_pad($order->id, 3, '0', STR_PAD_LEFT) . '/INV/MCA/' . $bulanRomawi . '/' . $tahun;
-
-    $dpp    = $order->total_price;
-    $ppn    = round($dpp * 0.11);
-    $jumlah = $dpp + $ppn;
-
-    return view('orders.invoice-print', compact('order', 'nomorInvoice', 'dpp', 'ppn', 'jumlah'));
-}
-
-/**
- * Export multiple orders into a single combined PDF (struk gabungan).
- * All items from selected orders are merged into one table.
- * Layout identical to single invoice.
- */
-public function exportBulkInvoicePdf(Request $request)
-{
-    $orderIds = $request->query('order_ids', []);
-
-    // Support comma-separated string: ?order_ids=1,2,3
-    if (is_string($orderIds)) {
-        $orderIds = array_filter(explode(',', $orderIds));
+        return Excel::download(new LaporanKeuanganExport($bulan, $tahun), 'laporan_keuangan_' . $bulan . '_' . $tahun . '.xlsx');
     }
 
-    if (empty($orderIds)) {
-        abort(400, 'Pilih minimal 1 pesanan!');
+    // ===== INVOICE PDF =====
+    public function exportInvoicePdf($id)
+    {
+        $order = Order::with(['items.product', 'user'])->findOrFail($id);
+        $data  = $this->prepareInvoiceData($order);
+
+        $pdf = Pdf::loadView('orders.invoice-pdf', array_merge(['order' => $order], $data))
+                   ->setPaper('a4', 'portrait');
+
+        $namaFile = 'Invoice-' . str_replace('/', '-', $data['nomorInvoice']) . '.pdf';
+        return $pdf->download($namaFile);
     }
 
-    $orders = Order::with(['items.product', 'user'])
-        ->whereIn('id', $orderIds)
-        ->orderBy('id')
-        ->get();
+    // ===== INVOICE PRINT =====
+    public function printInvoice($id)
+    {
+        $order = Order::with(['items.product', 'user'])->findOrFail($id);
+        $data  = $this->prepareInvoiceData($order);
 
-    if ($orders->isEmpty()) {
-        abort(404, 'Pesanan tidak ditemukan.');
+        return view('orders.invoice-print', array_merge(['order' => $order], $data));
     }
 
-    // Gunakan order pertama untuk info pelanggan, tanggal, user
-    $order = $orders->first();
+    // ===== SURAT JALAN PDF =====
+    public function exportSuratJalanPdf($id)
+    {
+        $order   = Order::with(['items.product', 'user'])->findOrFail($id);
+        $nomorSJ = $this->assignSuratJalanNumber($order);
+        $tanggal = \Carbon\Carbon::parse($order->ordered_at);
 
-    // Gabungkan semua item dari semua order ke dalam satu list
-    $allItems = collect();
-    foreach ($orders as $o) {
-        foreach ($o->items as $item) {
-            $allItems->push($item);
+        $pdf = Pdf::loadView('orders.surat-jalan-pdf', compact('order', 'nomorSJ', 'tanggal'))
+                   ->setPaper('a4', 'portrait');
+
+        $namaFile = 'SuratJalan-' . str_replace('/', '-', $nomorSJ) . '.pdf';
+        return $pdf->download($namaFile);
+    }
+
+    // ===== SURAT JALAN PRINT =====
+    public function printSuratJalan($id)
+    {
+        $order   = Order::with(['items.product', 'user'])->findOrFail($id);
+        $nomorSJ = $this->assignSuratJalanNumber($order);
+        $tanggal = \Carbon\Carbon::parse($order->ordered_at);
+
+        return view('orders.surat-jalan-print', compact('order', 'nomorSJ', 'tanggal'));
+    }
+
+    // ===== BULK INVOICE PDF =====
+    public function exportBulkInvoicePdf(Request $request)
+    {
+        $orderIds = $request->query('order_ids', []);
+        if (is_string($orderIds)) {
+            $orderIds = array_filter(explode(',', $orderIds));
         }
-    }
-
-    // Generate nomor invoice berdasarkan order pertama
-    $bulan       = \Carbon\Carbon::parse($order->ordered_at)->format('n');
-    $tahun       = \Carbon\Carbon::parse($order->ordered_at)->format('Y');
-    $bulanRomawi = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][$bulan - 1];
-    $nomorInvoice = str_pad($order->id, 3, '0', STR_PAD_LEFT) . '/INV/MCA/' . $bulanRomawi . '/' . $tahun;
-
-    // Hitung total gabungan
-    $dpp    = $orders->sum('total_price');
-    $ppn    = round($dpp * 0.11);
-    $jumlah = $dpp + $ppn;
-
-    $pdf = Pdf::loadView('orders.bulk-invoice-pdf', compact(
-        'order', 'allItems', 'nomorInvoice', 'dpp', 'ppn', 'jumlah'
-    ))->setPaper('a4', 'portrait');
-
-    $namaFile = 'Invoice-' . str_replace('/', '-', $nomorInvoice) . '.pdf';
-
-    return $pdf->download($namaFile);
-}
-
-/**
- * Show combined detail page for multiple selected orders.
- */
-public function bulkDetail(Request $request)
-{
-    $orderIds = $request->query('order_ids', []);
-    if (is_string($orderIds)) {
-        $orderIds = array_filter(explode(',', $orderIds));
-    }
-    if (empty($orderIds)) {
-        abort(400, 'Pilih minimal 1 pesanan!');
-    }
-
-    $orders = Order::with(['items.product', 'user'])
-        ->whereIn('id', $orderIds)
-        ->orderBy('id')
-        ->get();
-
-    if ($orders->isEmpty()) {
-        abort(404, 'Pesanan tidak ditemukan.');
-    }
-
-    // Gabungkan semua item
-    $allItems = collect();
-    foreach ($orders as $o) {
-        foreach ($o->items as $item) {
-            $allItems->push($item);
+        if (empty($orderIds)) {
+            abort(400, 'Pilih minimal 1 pesanan!');
         }
-    }
 
-    // Total gabungan
-    $dpp    = $orders->sum('total_price');
-    $ppn    = round($dpp * 0.11);
-    $jumlah = $dpp + $ppn;
+        $orders = Order::with(['items.product', 'user'])
+            ->whereIn('id', $orderIds)->orderBy('id')->get();
 
-    return view('orders.bulk-detail', compact('orders', 'allItems', 'dpp', 'ppn', 'jumlah'));
-}
-
-/**
- * Print preview for combined invoice of multiple orders.
- */
-public function bulkPrint(Request $request)
-{
-    $orderIds = $request->query('order_ids', []);
-    if (is_string($orderIds)) {
-        $orderIds = array_filter(explode(',', $orderIds));
-    }
-    if (empty($orderIds)) {
-        abort(400, 'Pilih minimal 1 pesanan!');
-    }
-
-    $orders = Order::with(['items.product', 'user'])
-        ->whereIn('id', $orderIds)
-        ->orderBy('id')
-        ->get();
-
-    if ($orders->isEmpty()) {
-        abort(404, 'Pesanan tidak ditemukan.');
-    }
-
-    $order = $orders->first();
-
-    $allItems = collect();
-    foreach ($orders as $o) {
-        foreach ($o->items as $item) {
-            $allItems->push($item);
+        if ($orders->isEmpty()) {
+            abort(404, 'Pesanan tidak ditemukan.');
         }
+
+        $order = $orders->first();
+
+        $allItems = collect();
+        foreach ($orders as $o) {
+            foreach ($o->items as $item) {
+                $allItems->push($item);
+            }
+        }
+
+        $nomorInvoice = $this->assignInvoiceNumber($order);
+        $nomorSJ      = $order->surat_jalan_number ?? '-';
+
+        $dpp    = $orders->sum('total_price');
+        $usePpn = $order->use_ppn ?? true;
+        $ppn    = $usePpn ? round($dpp * 0.11) : 0;
+        $jumlah = $dpp + $ppn;
+        $tanggal = \Carbon\Carbon::parse($order->ordered_at);
+
+        $pdf = Pdf::loadView('orders.bulk-invoice-pdf', compact(
+            'order', 'allItems', 'nomorInvoice', 'nomorSJ', 'dpp', 'ppn', 'jumlah', 'usePpn', 'tanggal'
+        ))->setPaper('a4', 'portrait');
+
+        $namaFile = 'Invoice-' . str_replace('/', '-', $nomorInvoice) . '.pdf';
+        return $pdf->download($namaFile);
     }
 
-    $bulan       = \Carbon\Carbon::parse($order->ordered_at)->format('n');
-    $tahun       = \Carbon\Carbon::parse($order->ordered_at)->format('Y');
-    $bulanRomawi = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][$bulan - 1];
-    $nomorInvoice = str_pad($order->id, 3, '0', STR_PAD_LEFT) . '/INV/MCA/' . $bulanRomawi . '/' . $tahun;
+    // ===== BULK DETAIL =====
+    public function bulkDetail(Request $request)
+    {
+        $orderIds = $request->query('order_ids', []);
+        if (is_string($orderIds)) {
+            $orderIds = array_filter(explode(',', $orderIds));
+        }
+        if (empty($orderIds)) {
+            abort(400, 'Pilih minimal 1 pesanan!');
+        }
 
-    $dpp    = $orders->sum('total_price');
-    $ppn    = round($dpp * 0.11);
-    $jumlah = $dpp + $ppn;
+        $orders = Order::with(['items.product', 'user'])
+            ->whereIn('id', $orderIds)->orderBy('id')->get();
 
-    return view('orders.bulk-invoice-print', compact('order', 'allItems', 'nomorInvoice', 'dpp', 'ppn', 'jumlah'));
-}
+        if ($orders->isEmpty()) {
+            abort(404, 'Pesanan tidak ditemukan.');
+        }
+
+        $allItems = collect();
+        foreach ($orders as $o) {
+            foreach ($o->items as $item) {
+                $allItems->push($item);
+            }
+        }
+
+        $dpp    = $orders->sum('total_price');
+        $usePpn = $orders->first()->use_ppn ?? true;
+        $ppn    = $usePpn ? round($dpp * 0.11) : 0;
+        $jumlah = $dpp + $ppn;
+
+        return view('orders.bulk-detail', compact('orders', 'allItems', 'dpp', 'ppn', 'jumlah', 'usePpn'));
+    }
+
+    // ===== BULK PRINT =====
+    public function bulkPrint(Request $request)
+    {
+        $orderIds = $request->query('order_ids', []);
+        if (is_string($orderIds)) {
+            $orderIds = array_filter(explode(',', $orderIds));
+        }
+        if (empty($orderIds)) {
+            abort(400, 'Pilih minimal 1 pesanan!');
+        }
+
+        $orders = Order::with(['items.product', 'user'])
+            ->whereIn('id', $orderIds)->orderBy('id')->get();
+
+        if ($orders->isEmpty()) {
+            abort(404, 'Pesanan tidak ditemukan.');
+        }
+
+        $order = $orders->first();
+
+        $allItems = collect();
+        foreach ($orders as $o) {
+            foreach ($o->items as $item) {
+                $allItems->push($item);
+            }
+        }
+
+        $nomorInvoice = $this->assignInvoiceNumber($order);
+        $nomorSJ      = $order->surat_jalan_number ?? '-';
+
+        $dpp    = $orders->sum('total_price');
+        $usePpn = $order->use_ppn ?? true;
+        $ppn    = $usePpn ? round($dpp * 0.11) : 0;
+        $jumlah = $dpp + $ppn;
+        $tanggal = \Carbon\Carbon::parse($order->ordered_at);
+
+        return view('orders.bulk-invoice-print', compact('order', 'allItems', 'nomorInvoice', 'nomorSJ', 'dpp', 'ppn', 'jumlah', 'usePpn', 'tanggal'));
+    }
 
 }
