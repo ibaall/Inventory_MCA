@@ -11,6 +11,8 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\FinancialReportController;
+use App\Http\Controllers\PaymentController;
 
 // ===== LAPORAN & ORDER (tidak butuh auth karena sudah di resource) =====
 Route::get('/laporan/export', [OrderController::class, 'exportExcel'])->name('laporan.export');
@@ -85,6 +87,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/add/{product}', [CartController::class, 'addToCart'])->name('cart.add');
         Route::delete('/remove/{productId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
         Route::delete('/bulk-remove', [CartController::class, 'bulkRemove'])->name('cart.bulkRemove');
+        Route::patch('/discount', [CartController::class, 'updateDiscount'])->name('cart.updateDiscount');
         Route::delete('/clear', [CartController::class, 'clearCart'])->name('cart.clear');
         Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('checkout.store');
     });
@@ -108,6 +111,30 @@ Route::middleware('auth')->group(function () {
         Route::get('/{id}/pdf', [PurchaseOrderController::class, 'exportPdf'])->name('purchase-orders.pdf');
         Route::get('/{id}/print', [PurchaseOrderController::class, 'printPo'])->name('purchase-orders.print');
     });
+
+    // Laporan Keuangan (Financial Reports)
+    Route::prefix('/laporan-keuangan-detail')->group(function () {
+        Route::get('/', [FinancialReportController::class, 'index'])->name('financial-reports.index');
+        Route::get('/cetak', [FinancialReportController::class, 'cetak'])->name('financial-reports.cetak');
+        Route::get('/pdf', [FinancialReportController::class, 'pdf'])->name('financial-reports.pdf');
+    });
+
+    // Pembayaran (Payments)
+    Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
+    Route::delete('/payments/{id}', [PaymentController::class, 'destroy'])->name('payments.destroy');
+
+    // API: Daftar alamat tersimpan (autocomplete)
+    Route::get('/api/addresses', function () {
+        $orderAddresses = \App\Models\Order::whereNotNull('alamat')
+            ->where('alamat', '!=', '')
+            ->pluck('alamat');
+        $poAddresses = \App\Models\PurchaseOrder::whereNotNull('alamat')
+            ->where('alamat', '!=', '')
+            ->pluck('alamat');
+
+        $all = $orderAddresses->merge($poAddresses)->unique()->values();
+        return response()->json($all);
+    })->name('api.addresses');
 });
 
 require __DIR__.'/auth.php';

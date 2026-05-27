@@ -149,25 +149,35 @@ class OrderController extends Controller
     public function edit($id)
     {
         $order = Order::findOrFail($id);
-        return view('orders.edit', compact('order'));
+        $addresses = Order::whereNotNull('alamat')->where('alamat', '!=', '')->pluck('alamat')
+            ->merge(\App\Models\PurchaseOrder::whereNotNull('alamat')->where('alamat', '!=', '')->pluck('alamat'))
+            ->unique()
+            ->values();
+        return view('orders.edit', compact('order', 'addresses'));
     }
 
-    public function update(Request $request, $id)
-    {
-        $order = Order::findOrFail($id);
+   public function update(Request $request, Order $order)
+{
+    $request->validate([
+        'status_pembayaran'  => 'required|in:lunas,belum dibayar',
+        'metode_pembayaran'  => 'required|in:qris,tunai,transfer,ewallet',
+        'alamat'             => 'nullable|string|max:500',
+        'tanggal_operasi'    => 'nullable|date',
+        'nama_pasien'        => 'nullable|string|max:255',
+        'operator'           => 'nullable|string|max:255',
+    ]);
 
-        $request->validate([
-            'status_pembayaran' => 'required|in:lunas,belum dibayar',
-            'metode_pembayaran' => 'required|string|max:255',
-        ]);
+    $order->update([
+        'status_pembayaran'  => $request->status_pembayaran,
+        'metode_pembayaran'  => $request->metode_pembayaran,
+        'alamat'             => $request->alamat,
+        'tanggal_operasi'    => $request->tanggal_operasi,
+        'nama_pasien'        => $request->nama_pasien,
+        'operator'           => $request->operator,
+    ]);
 
-        $order->update([
-            'status_pembayaran' => $request->status_pembayaran,
-            'metode_pembayaran' => $request->metode_pembayaran,
-        ]);
-
-        return redirect()->route('orders.index')->with('success', 'Pesanan berhasil diperbarui.');
-    }
+    return redirect()->route('orders.index')->with('success', 'Pesanan berhasil diupdate.');
+}
 
     // ===== LAPORAN =====
     public function laporanKeuangan()
