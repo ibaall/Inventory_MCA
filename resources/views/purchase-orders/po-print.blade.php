@@ -131,21 +131,23 @@
                     @for($e = $po->items->count(); $e < 12; $e++)
                     <tr class="empty-row"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                     @endfor
-                </tbody>
-            </table>
 
-            <table class="footer-table">
-                <tr>
-                    <td class="footer-px" rowspan="{{ $usePpn ? 3 : 2 }}">
-                        {{ $tanggal->translatedFormat('d F Y') }} / PX : {{ $po->user->name ?? '-' }}
-                    </td>
-                    <td class="label-col">DPP</td>
-                    <td class="value-col">{{ number_format($dpp, 0, '.', ',') }}</td>
-                </tr>
-                @if($usePpn)
-                <tr><td class="label-col">PPN 11%</td><td class="value-col">{{ number_format($ppn, 0, '.', ',') }}</td></tr>
-                @endif
-                <tr><td class="label-col total-row">TOTAL</td><td class="value-col total-row">{{ number_format($jumlah, 0, '.', ',') }}</td></tr>
+                    {{-- DPP / PPN / TOTAL rows merged into items table --}}
+                    <tr>
+                        <td colspan="6" style="text-align: right; font-weight: bold; padding: 4px 8px;">DPP</td>
+                        <td class="col-total" style="text-align: right; padding: 4px 8px;">{{ number_format($dpp, 0, '.', ',') }}</td>
+                    </tr>
+                    @if($usePpn)
+                    <tr>
+                        <td colspan="6" style="text-align: right; font-weight: bold; padding: 4px 8px;">PPN 11%</td>
+                        <td class="col-total" style="text-align: right; padding: 4px 8px;">{{ number_format($ppn, 0, '.', ',') }}</td>
+                    </tr>
+                    @endif
+                    <tr class="total-row">
+                        <td colspan="6" style="text-align: right; font-weight: bold; padding: 4px 8px; background: #d9d9d9;">TOTAL</td>
+                        <td class="col-total" style="text-align: right; font-weight: bold; padding: 4px 8px; background: #d9d9d9;">{{ number_format($jumlah, 0, '.', ',') }}</td>
+                    </tr>
+                </tbody>
             </table>
 
             <div class="bottom">

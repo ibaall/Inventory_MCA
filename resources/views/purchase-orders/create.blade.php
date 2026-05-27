@@ -37,6 +37,21 @@
                                placeholder="Catatan tambahan (opsional)" value="{{ old('catatan') }}">
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="alamat_history" class="form-label">Pilih dari Alamat Tersimpan (Opsional)</label>
+                        <select id="alamat_history" class="form-select" onchange="useSavedAddress(this.value)">
+                            <option value="">-- Gunakan Alamat Baru / Ketik Manual --</option>
+                            @foreach($savedAddresses as $savedAddr)
+                                <option value="{{ $savedAddr }}">{{ $savedAddr }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="alamat" class="form-label">Alamat Supplier</label>
+                        <textarea name="alamat" id="alamat" class="form-control" rows="2" placeholder="Masukkan alamat supplier (opsional)">{{ old('alamat') }}</textarea>
+                    </div>
+                </div>
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="ppnToggle" name="use_ppn" value="1" checked
                            style="width: 42px; height: 22px; cursor: pointer;">
@@ -251,5 +266,9 @@
 
     // Start with one row
     addRow();
+
+    function useSavedAddress(value) {
+        document.getElementById('alamat').value = value;
+    }
 </script>
 @endsection

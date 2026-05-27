@@ -38,8 +38,50 @@
             </select>
         </div>
 
+        <hr>
+        <h4>Data Pasien & Pengiriman</h4>
+
+        <div class="mb-3">
+            <label for="nama_pasien" class="form-label">Nama Pasien</label>
+            <input type="text" name="nama_pasien" id="nama_pasien" class="form-control"
+                   value="{{ old('nama_pasien', $order->nama_pasien) }}" placeholder="Contoh: Budi Santoso">
+        </div>
+
+        <div class="mb-3">
+            <label for="operator" class="form-label">Operator (Dokter)</label>
+            <input type="text" name="operator" id="operator" class="form-control"
+                   value="{{ old('operator', $order->operator) }}" placeholder="Contoh: dr. Setiawan, Sp.B">
+        </div>
+
+        <div class="mb-3">
+            <label for="tanggal_operasi" class="form-label">Tanggal Operasi</label>
+            <input type="date" name="tanggal_operasi" id="tanggal_operasi" class="form-control"
+                   value="{{ old('tanggal_operasi', $order->tanggal_operasi ? \Carbon\Carbon::parse($order->tanggal_operasi)->format('Y-m-d') : '') }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="alamat_history" class="form-label">Pilih dari Alamat Tersimpan (Opsional)</label>
+            <select id="alamat_history" class="form-select" onchange="useSavedAddress(this.value)">
+                <option value="">-- Gunakan Alamat Baru / Ketik Manual --</option>
+                @foreach($savedAddresses as $savedAddr)
+                    <option value="{{ $savedAddr }}">{{ $savedAddr }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="alamat" class="form-label">Alamat</label>
+            <textarea name="alamat" id="alamat" class="form-control" rows="3" placeholder="Masukkan alamat lengkap">{{ old('alamat', $order->alamat) }}</textarea>
+        </div>
+
         <button type="submit" class="btn btn-success">Update Pesanan</button>
         <a href="{{ route('orders.index') }}" class="btn btn-secondary">Batal</a>
     </form>
 </div>
+
+<script>
+    function useSavedAddress(value) {
+        document.getElementById('alamat').value = value;
+    }
+</script>
 @endsection

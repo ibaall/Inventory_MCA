@@ -52,7 +52,11 @@ class PurchaseOrderController extends Controller
     public function create()
     {
         $products = Product::with('variants')->orderBy('name')->get();
-        return view('purchase-orders.create', compact('products'));
+        $savedAddresses = PurchaseOrder::whereNotNull('alamat')
+            ->where('alamat', '!=', '')
+            ->distinct()
+            ->pluck('alamat');
+        return view('purchase-orders.create', compact('products', 'savedAddresses'));
     }
 
     // ===== STORE =====
@@ -60,6 +64,7 @@ class PurchaseOrderController extends Controller
     {
         $request->validate([
             'supplier_name' => 'required|string|max:255',
+            'alamat'        => 'nullable|string|max:1000',
             'items'         => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity'   => 'required|integer|min:1',
@@ -76,6 +81,7 @@ class PurchaseOrderController extends Controller
         $po = PurchaseOrder::create([
             'user_id'       => Auth::id(),
             'supplier_name' => $request->supplier_name,
+            'alamat'        => $request->alamat,
             'total_price'   => $totalPrice,
             'ordered_at'    => now(),
             'status'        => 'pending',

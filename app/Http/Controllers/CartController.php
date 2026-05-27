@@ -16,7 +16,11 @@ class CartController extends Controller
     public function index()
     {
         $cart = session()->get('cart', []);
-        return view('cart.index', compact('cart'));
+        $savedAddresses = Order::whereNotNull('alamat')
+            ->where('alamat', '!=', '')
+            ->distinct()
+            ->pluck('alamat');
+        return view('cart.index', compact('cart', 'savedAddresses'));
     }
 
     // Menambahkan produk ke keranjang
@@ -175,6 +179,7 @@ class CartController extends Controller
     {
         $request->validate([
             'customer_name'     => 'required|string|max:255',
+            'alamat'            => 'nullable|string|max:1000',
             'status_pembayaran' => 'required|in:lunas,belum dibayar',
             'metode_pembayaran' => 'required|in:qris,tunai,transfer,ewallet',
         ]);
@@ -218,6 +223,7 @@ class CartController extends Controller
         $order = Order::create([
             'user_id'           => Auth::id(),
             'customer_name'     => $request->customer_name,
+            'alamat'            => $request->alamat,
             'total_price'       => $totalPrice,
             'ordered_at'        => now(),
             'status_pembayaran' => $request->status_pembayaran,

@@ -183,6 +183,19 @@
                        class="form-control" required placeholder="Masukkan nama pelanggan">
             </div>
             <div class="mb-3">
+                <label for="alamat_history" class="form-label">Pilih dari Alamat Tersimpan (Opsional)</label>
+                <select id="alamat_history" class="form-select" onchange="useSavedAddress(this.value)">
+                    <option value="">-- Gunakan Alamat Baru / Ketik Manual --</option>
+                    @foreach($savedAddresses as $savedAddr)
+                        <option value="{{ $savedAddr }}">{{ $savedAddr }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="alamat" class="form-label">Alamat</label>
+                <textarea name="alamat" id="alamat" class="form-control" rows="3" placeholder="Masukkan alamat lengkap"></textarea>
+            </div>
+            <div class="mb-3">
                 <label for="status_pembayaran" class="form-label">Status Pembayaran</label>
                 <select name="status_pembayaran" id="status_pembayaran" class="form-select" required>
                     <option value="belum dibayar" selected>Belum Dibayar</option>
@@ -346,7 +359,10 @@
         selectAll.checked = false;
         selectAll.indeterminate = false;
         document.getElementById('bulkActionBar').style.display = 'none';
-        document.getElementById('selectedCount').textContent = '0';
+    }
+
+    function useSavedAddress(value) {
+        document.getElementById('alamat').value = value;
     }
 </script>
 @endsection

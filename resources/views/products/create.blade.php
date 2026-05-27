@@ -31,12 +31,7 @@
 
         <div class="mb-3">
             <label class="form-label">Kategori</label>
-            <select class="form-select" name="category">
-                <option value="">-- Pilih Kategori --</option>
-                @foreach(['Alat Diagnostik','Alat Terapi','Alat Bantu Mobilitas','Perawatan Luka','APD','Lainnya'] as $cat)
-                    <option value="{{ $cat }}" {{ old('category') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
-                @endforeach
-            </select>
+            <input type="text" class="form-control" name="category" value="{{ old('category') }}" placeholder="Contoh: Alat Diagnostik">
         </div>
 
         <div class="mb-3">

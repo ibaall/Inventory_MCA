@@ -271,40 +271,39 @@
                         <td class="col-total"></td>
                     </tr>
                     @endfor
+                    {{-- DPP / PPN / JUMLAH rows merged into items table --}}
+                    <tr>
+                        <td colspan="6" style="text-align: right; font-weight: bold; padding: 4px 8px;">DPP</td>
+                        <td class="col-total" style="text-align: right; padding: 4px 8px;">{{ number_format($dpp, 0, '.', ',') }}</td>
+                    </tr>
+                    @if($usePpn ?? true)
+                    <tr>
+                        <td colspan="6" style="text-align: right; font-weight: bold; padding: 4px 8px;">PPN 11%</td>
+                        <td class="col-total" style="text-align: right; padding: 4px 8px;">{{ number_format($ppn, 0, '.', ',') }}</td>
+                    </tr>
+                    @endif
+                    <tr class="total-row">
+                        <td colspan="6" style="text-align: right; font-weight: bold; padding: 4px 8px; background: #d9d9d9;">JUMLAH</td>
+                        <td class="col-total" style="text-align: right; font-weight: bold; padding: 4px 8px; background: #d9d9d9;">{{ number_format($jumlah, 0, '.', ',') }}</td>
+                    </tr>
                 </tbody>
-            </table>
-
-            {{-- Footer --}}
-            <table class="footer-table">
-                <tr>
-                    <td class="footer-px" rowspan="{{ ($usePpn ?? true) ? 3 : 2 }}">
-                        {{ $tanggal->translatedFormat('d F Y') }} / PX : {{ $order->user->name ?? '-' }}
-                    </td>
-                    <td class="label-col">DPP</td>
-                    <td class="value-col">{{ number_format($dpp, 0, '.', ',') }}</td>
-                </tr>
-                @if($usePpn ?? true)
-                <tr>
-                    <td class="label-col">PPN 11%</td>
-                    <td class="value-col">{{ number_format($ppn, 0, '.', ',') }}</td>
-                </tr>
-                @endif
-                <tr>
-                    <td class="label-col total-row">JUMLAH</td>
-                    <td class="value-col total-row">{{ number_format($jumlah, 0, '.', ',') }}</td>
-                </tr>
             </table>
 
             {{-- Bottom --}}
             <div class="bottom">
                 <div class="bottom-note">Mohon untuk dicek dan diterima,</div>
                 <div class="bottom-flex">
-                    <table class="signature-table">
-                        <tr>
-                            <td>Mengetahui</td>
-                            <td>Penerima</td>
-                        </tr>
-                    </table>
+                    <div>
+                        <div style="margin-bottom: 8px; font-size: 11px;">
+                            {{ $tanggal->translatedFormat('d F Y') }} / PX : {{ $order->user->name ?? '-' }}
+                        </div>
+                        <table class="signature-table">
+                            <tr>
+                                <td>Mengetahui</td>
+                                <td>Penerima</td>
+                            </tr>
+                        </table>
+                    </div>
                     <div class="bank-info">
                         <div class="bank-name">BANK MANDIRI</div>
                         <div>A/C ( IDR ) : 1420025406918</div>

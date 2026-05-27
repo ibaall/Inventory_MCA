@@ -230,28 +230,23 @@
                 <td class="col-total"></td>
             </tr>
             @endfor
-        </tbody>
-    </table>
 
-    {{-- ===== FOOTER TABEL (DPP, PPN, JUMLAH) ===== --}}
-    <table class="footer-table">
-        <tr>
-            <td class="footer-left" rowspan="{{ ($usePpn ?? true) ? 3 : 2 }}" style="font-size:11px;">
-                {{ $tanggal->translatedFormat('d F Y') }} / PX : {{ $order->user->name ?? '-' }}
-            </td>
-            <td class="footer-label">DPP</td>
-            <td class="footer-value">{{ number_format($dpp, 0, '.', ',') }}</td>
-        </tr>
-        @if($usePpn ?? true)
-        <tr>
-            <td class="footer-label">PPN 11%</td>
-            <td class="footer-value">{{ number_format($ppn, 0, '.', ',') }}</td>
-        </tr>
-        @endif
-        <tr>
-            <td class="footer-label footer-total">JUMLAH</td>
-            <td class="footer-value footer-total">{{ number_format($jumlah, 0, '.', ',') }}</td>
-        </tr>
+            {{-- DPP / PPN / JUMLAH --}}
+            <tr>
+                <td colspan="6" style="text-align: right; font-weight: bold; padding: 4px 8px; border: 1px solid #888;">DPP</td>
+                <td class="col-total" style="text-align: right; padding: 4px 8px; border: 1px solid #888;">{{ number_format($dpp, 0, '.', ',') }}</td>
+            </tr>
+            @if($usePpn ?? true)
+            <tr>
+                <td colspan="6" style="text-align: right; font-weight: bold; padding: 4px 8px; border: 1px solid #888;">PPN 11%</td>
+                <td class="col-total" style="text-align: right; padding: 4px 8px; border: 1px solid #888;">{{ number_format($ppn, 0, '.', ',') }}</td>
+            </tr>
+            @endif
+            <tr>
+                <td colspan="6" style="text-align: right; font-weight: bold; padding: 4px 8px; background-color: #d9d9d9; border: 1px solid #888;">JUMLAH</td>
+                <td class="col-total" style="text-align: right; font-weight: bold; padding: 4px 8px; background-color: #d9d9d9; border: 1px solid #888;">{{ number_format($jumlah, 0, '.', ',') }}</td>
+            </tr>
+        </tbody>
     </table>
 
     {{-- ===== BAGIAN BAWAH ===== --}}
@@ -261,6 +256,9 @@
         <table class="bottom-table">
             <tr>
                 <td style="width:50%;">
+                    <div style="margin-bottom: 6px; font-size: 11px;">
+                        {{ $tanggal->translatedFormat('d F Y') }} / PX : {{ $order->user->name ?? '-' }}
+                    </div>
                     <table class="signature-table">
                         <tr>
                             <td style="width:130px; height:70px;">Mengetahui</td>

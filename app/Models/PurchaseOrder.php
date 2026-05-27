@@ -12,6 +12,7 @@ class PurchaseOrder extends Model
     protected $fillable = [
         'user_id',
         'supplier_name',
+        'alamat',
         'total_price',
         'ordered_at',
         'status',
@@ -28,5 +29,35 @@ class PurchaseOrder extends Model
     public function items()
     {
         return $this->hasMany(PurchaseOrderItem::class);
+    }
+
+    // Relasi ke Payments (pembayaran)
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'transaction_id')->where('transaction_type', 'purchase');
+    }
+
+    public function getGrandTotalAttribute()
+    {
+        return $this->total_price;
+    }
+
+    public function getTotalPaidAttribute()
+    {
+        return $this->payments()->sum('amount');
+    }
+
+    public function getRemainingAttribute()
+    {
+        return max(0, $this->grand_total - $this->total_paid);
+    }
+
+    public function getPaymentStatusAttribute()
+    {
+        $paid = $this->total_paid;
+        if ($paid >= $this->grand_total) {
+            return 'lunas';
+        }
+        return $paid > 0 ? 'belum lunas' : 'belum dibayar';
     }
 }
