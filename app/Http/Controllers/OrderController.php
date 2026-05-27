@@ -149,35 +149,37 @@ class OrderController extends Controller
     public function edit($id)
     {
         $order = Order::findOrFail($id);
-        $addresses = Order::whereNotNull('alamat')->where('alamat', '!=', '')->pluck('alamat')
-            ->merge(\App\Models\PurchaseOrder::whereNotNull('alamat')->where('alamat', '!=', '')->pluck('alamat'))
-            ->unique()
-            ->values();
-        return view('orders.edit', compact('order', 'addresses'));
+        $savedAddresses = Order::whereNotNull('alamat')
+            ->where('alamat', '!=', '')
+            ->distinct()
+            ->pluck('alamat');
+        return view('orders.edit', compact('order', 'savedAddresses'));
     }
 
-   public function update(Request $request, Order $order)
-{
-    $request->validate([
-        'status_pembayaran'  => 'required|in:lunas,belum dibayar',
-        'metode_pembayaran'  => 'required|in:qris,tunai,transfer,ewallet',
-        'alamat'             => 'nullable|string|max:500',
-        'tanggal_operasi'    => 'nullable|date',
-        'nama_pasien'        => 'nullable|string|max:255',
-        'operator'           => 'nullable|string|max:255',
-    ]);
+    public function update(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
 
-    $order->update([
-        'status_pembayaran'  => $request->status_pembayaran,
-        'metode_pembayaran'  => $request->metode_pembayaran,
-        'alamat'             => $request->alamat,
-        'tanggal_operasi'    => $request->tanggal_operasi,
-        'nama_pasien'        => $request->nama_pasien,
-        'operator'           => $request->operator,
-    ]);
+        $request->validate([
+            'status_pembayaran' => 'required|in:lunas,belum dibayar',
+            'metode_pembayaran' => 'required|string|max:255',
+            'nama_pasien'       => 'nullable|string|max:255',
+            'operator'          => 'nullable|string|max:255',
+            'tanggal_operasi'   => 'nullable|date',
+            'alamat'            => 'nullable|string|max:1000',
+        ]);
 
-    return redirect()->route('orders.index')->with('success', 'Pesanan berhasil diupdate.');
-}
+        $order->update([
+            'status_pembayaran' => $request->status_pembayaran,
+            'metode_pembayaran' => $request->metode_pembayaran,
+            'nama_pasien'       => $request->nama_pasien,
+            'operator'          => $request->operator,
+            'tanggal_operasi'   => $request->tanggal_operasi,
+            'alamat'            => $request->alamat,
+        ]);
+
+        return redirect()->route('orders.index')->with('success', 'Pesanan berhasil diperbarui.');
+    }
 
     // ===== LAPORAN =====
     public function laporanKeuangan()
