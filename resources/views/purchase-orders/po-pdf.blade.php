@@ -62,26 +62,17 @@
             <td class="info-left" rowspan="2">
                 <div><strong>Kepada yth,</strong></div>
                 <div style="font-size: 12px; font-weight: bold; margin-top: 4px;">{{ $po->supplier_name }}</div>
+                @if($po->alamat)
+                    <div style="margin-top: 2px;">{{ $po->alamat }}</div>
+                @endif
             </td>
             <td class="info-right">
-                <table>
-                    <tr>
-                        <td style="width:42%; font-weight:bold;">Tanggal</td>
-                        <td style="width:3%;">:</td>
-                        <td>{{ $tanggal->translatedFormat('d F Y') }}</td>
-                    </tr>
-                </table>
+                <table><tr><td style="width:42%; font-weight:bold;">Tanggal</td><td style="width:3%;">:</td><td>{{ $tanggal->translatedFormat('d F Y') }}</td></tr></table>
             </td>
         </tr>
         <tr>
             <td class="info-right">
-                <table>
-                    <tr>
-                        <td style="width:42%; font-weight:bold;">No. Purchase Order</td>
-                        <td style="width:3%;">:</td>
-                        <td>{{ $nomorPO }}</td>
-                    </tr>
-                </table>
+                <table><tr><td style="width:42%; font-weight:bold;">No. Purchase Order</td><td style="width:3%;">:</td><td>{{ $nomorPO }}</td></tr></table>
             </td>
         </tr>
     </table>
@@ -137,6 +128,9 @@
         <table class="bottom-table">
             <tr>
                 <td style="width:50%;">
+                    <div style="margin-bottom: 6px; font-size: 11px;">
+                        {{ $tanggal->translatedFormat('d F Y') }} / PX : {{ $po->user->name ?? '-' }}
+                    </div>
                     <table class="signature-table"><tr><td>Mengetahui</td><td>Penerima</td></tr></table>
                 </td>
                 <td style="width:50%; vertical-align:top;">

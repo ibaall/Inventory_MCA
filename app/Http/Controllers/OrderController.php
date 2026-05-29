@@ -161,31 +161,95 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
 
         $request->validate([
-            'status_pembayaran' => 'required|in:lunas,belum dibayar',
-            'metode_pembayaran' => 'required|string|max:255',
-            'nama_pasien'       => 'nullable|string|max:255',
-            'operator'          => 'nullable|string|max:255',
-            'tanggal_operasi'   => 'nullable|date',
-            'alamat'            => 'nullable|string|max:1000',
+            'status_pembayaran'   => 'required|in:lunas,belum dibayar',
+            'metode_pembayaran'   => 'required|string|max:255',
+            'nama_pasien'         => 'nullable|string|max:255',
+            'operator'            => 'nullable|string|max:255',
+            'tanggal_operasi'     => 'nullable|date',
+            'alamat'              => 'nullable|string|max:1000',
+            'surat_jalan_number'  => 'nullable|string|max:255',
+            'tanggal_jatuh_tempo' => 'nullable|date',
         ]);
 
         $order->update([
-            'status_pembayaran' => $request->status_pembayaran,
-            'metode_pembayaran' => $request->metode_pembayaran,
-            'nama_pasien'       => $request->nama_pasien,
-            'operator'          => $request->operator,
-            'tanggal_operasi'   => $request->tanggal_operasi,
-            'alamat'            => $request->alamat,
+            'status_pembayaran'   => $request->status_pembayaran,
+            'metode_pembayaran'   => $request->metode_pembayaran,
+            'nama_pasien'         => $request->nama_pasien,
+            'operator'            => $request->operator,
+            'tanggal_operasi'     => $request->tanggal_operasi,
+            'alamat'              => $request->alamat,
+            'surat_jalan_number'  => $request->surat_jalan_number,
+            'tanggal_jatuh_tempo' => $request->tanggal_jatuh_tempo,
         ]);
 
         return redirect()->route('orders.index')->with('success', 'Pesanan berhasil diperbarui.');
     }
 
     // ===== LAPORAN =====
-    public function laporanKeuangan()
+    public function laporanKeuangan(Request $request)
     {
-        // Ringkasan penjualan per bulan
-        $laporanPenjualan = DB::table('orders')
+        // --- Filter parameters ---
+        $filterBulanDari  = $request->get('bulan_dari');
+        $filterBulanSampai = $request->get('bulan_sampai');
+        $filterTahun      = $request->get('tahun');
+        $filterCustomer   = $request->get('customer_name');
+        $filterSupplier   = $request->get('supplier_name');
+
+        // --- Daftar dropdown untuk filter ---
+        $customers = Order::whereNotNull('customer_name')
+            ->where('customer_name', '!=', '')
+            ->distinct()->orderBy('customer_name')->pluck('customer_name');
+
+        $suppliers = \App\Models\PurchaseOrder::select('supplier_name')
+            ->distinct()->orderBy('supplier_name')->pluck('supplier_name');
+
+        $availableYears = DB::table('orders')
+            ->select(DB::raw('YEAR(ordered_at) as tahun'))
+            ->union(
+                DB::table('purchase_orders')->select(DB::raw('YEAR(ordered_at) as tahun'))
+            )
+            ->distinct()
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun');
+
+        // --- Helper: Apply month range filter ---
+        $applyMonthRange = function ($query) use ($filterBulanDari, $filterBulanSampai) {
+            if ($filterBulanDari && $filterBulanSampai) {
+                if ($filterBulanDari <= $filterBulanSampai) {
+                    $query->whereRaw('MONTH(ordered_at) >= ?', [$filterBulanDari])
+                          ->whereRaw('MONTH(ordered_at) <= ?', [$filterBulanSampai]);
+                } else {
+                    // Edge case: wrap around (e.g. Nov-Feb) — unlikely but safe
+                    $query->where(function($q) use ($filterBulanDari, $filterBulanSampai) {
+                        $q->whereRaw('MONTH(ordered_at) >= ?', [$filterBulanDari])
+                           ->orWhereRaw('MONTH(ordered_at) <= ?', [$filterBulanSampai]);
+                    });
+                }
+            } elseif ($filterBulanDari) {
+                $query->whereMonth('ordered_at', $filterBulanDari);
+            } elseif ($filterBulanSampai) {
+                $query->whereMonth('ordered_at', $filterBulanSampai);
+            }
+            return $query;
+        };
+
+        // --- Helper: Apply filters to order query ---
+        $applyOrderFilters = function ($query) use ($filterTahun, $filterCustomer, $applyMonthRange) {
+            $applyMonthRange($query);
+            if ($filterTahun) $query->whereYear('ordered_at', $filterTahun);
+            if ($filterCustomer) $query->where('customer_name', $filterCustomer);
+            return $query;
+        };
+
+        $applyPoFilters = function ($query) use ($filterTahun, $filterSupplier, $applyMonthRange) {
+            $applyMonthRange($query);
+            if ($filterTahun) $query->whereYear('ordered_at', $filterTahun);
+            if ($filterSupplier) $query->where('supplier_name', $filterSupplier);
+            return $query;
+        };
+
+        // --- Ringkasan penjualan per bulan (filtered) ---
+        $laporanPenjualan = $applyOrderFilters(DB::table('orders'))
             ->select(
                 DB::raw('MONTH(ordered_at) as bulan'),
                 DB::raw('YEAR(ordered_at) as tahun'),
@@ -197,8 +261,8 @@ class OrderController extends Controller
             ->orderBy(DB::raw('MONTH(ordered_at)'), 'desc')
             ->get();
 
-        // Ringkasan pembelian (PO) per bulan
-        $laporanPembelian = DB::table('purchase_orders')
+        // --- Ringkasan pembelian (PO) per bulan (filtered) ---
+        $laporanPembelian = $applyPoFilters(DB::table('purchase_orders'))
             ->select(
                 DB::raw('MONTH(ordered_at) as bulan'),
                 DB::raw('YEAR(ordered_at) as tahun'),
@@ -210,33 +274,79 @@ class OrderController extends Controller
             ->orderBy(DB::raw('MONTH(ordered_at)'), 'desc')
             ->get();
 
-        // Transaksi penjualan terbaru (detail)
-        $recentOrders = Order::with('user')->latest('ordered_at')->take(20)->get();
+        // --- Transaksi penjualan terbaru (detail, filtered) ---
+        $recentOrders = $applyOrderFilters(Order::with('user'))
+            ->latest('ordered_at')->get();
 
-        // Transaksi PO terbaru (detail)
-        $recentPOs = \App\Models\PurchaseOrder::with('user')->latest('ordered_at')->take(20)->get();
+        // --- Transaksi PO terbaru (detail, filtered) ---
+        $recentPOs = $applyPoFilters(\App\Models\PurchaseOrder::with('user'))
+            ->latest('ordered_at')->get();
 
-        // Grand totals
-        $totalPenjualan = DB::table('orders')->sum('total_price');
-        $totalPembelian = DB::table('purchase_orders')->sum('total_price');
+        // --- Grand totals (filtered) ---
+        $totalPenjualan = $applyOrderFilters(DB::table('orders'))->sum('total_price');
+        $totalPembelian = $applyPoFilters(DB::table('purchase_orders'))->sum('total_price');
+
+        // --- Chart data: per-bulan penjualan vs pembelian ---
+        $namaBulanArr = [1=>'Jan',2=>'Feb',3=>'Mar',4=>'Apr',5=>'Mei',6=>'Jun',
+                         7=>'Jul',8=>'Agu',9=>'Sep',10=>'Okt',11=>'Nov',12=>'Des'];
+
+        $chartLabels = [];
+        $chartPenjualan = [];
+        $chartPembelian = [];
+
+        // Build per-month data from the filtered summaries
+        $penjualanByMonth = $laporanPenjualan->keyBy(fn($item) => $item->tahun . '-' . $item->bulan);
+        $pembelianByMonth = $laporanPembelian->keyBy(fn($item) => $item->tahun . '-' . $item->bulan);
+
+        // Collect all unique year-months and sort
+        $allMonthKeys = $penjualanByMonth->keys()->merge($pembelianByMonth->keys())->unique()->sort();
+
+        foreach ($allMonthKeys as $key) {
+            $parts = explode('-', $key);
+            $yr = $parts[0];
+            $mo = $parts[1];
+            $chartLabels[] = ($namaBulanArr[(int)$mo] ?? $mo) . ' ' . $yr;
+            $chartPenjualan[] = (float) ($penjualanByMonth->get($key)->total ?? 0);
+            $chartPembelian[] = (float) ($pembelianByMonth->get($key)->total ?? 0);
+        }
+
+        $chartData = [
+            'labels' => $chartLabels,
+            'penjualan' => $chartPenjualan,
+            'pembelian' => $chartPembelian,
+            'totalPenjualan' => $totalPenjualan,
+            'totalPembelian' => $totalPembelian,
+        ];
 
         // Backward compat: keep $laporan for old export
         $laporan = $laporanPenjualan;
+
+        // Filters for the view
+        $filters = compact('filterBulanDari', 'filterBulanSampai', 'filterTahun', 'filterCustomer', 'filterSupplier');
 
         return view('laporan.index', compact(
             'laporanPenjualan', 'laporanPembelian',
             'recentOrders', 'recentPOs',
             'totalPenjualan', 'totalPembelian',
-            'laporan'
+            'laporan', 'filters',
+            'customers', 'suppliers', 'availableYears',
+            'chartData'
         ));
     }
 
     public function exportExcel(Request $request)
     {
-        $bulan = $request->query('bulan');
-        $tahun = $request->query('tahun');
+        $type = $request->query('type', 'penjualan');
+        $filters = [
+            'bulan_dari' => $request->query('bulan_dari'),
+            'bulan_sampai' => $request->query('bulan_sampai'),
+            'tahun' => $request->query('tahun'),
+            'customer_name' => $request->query('customer_name'),
+            'supplier_name' => $request->query('supplier_name'),
+        ];
 
-        return Excel::download(new LaporanKeuanganExport($bulan, $tahun), 'laporan_keuangan_' . $bulan . '_' . $tahun . '.xlsx');
+        $filename = 'laporan_' . $type . '_' . now()->format('Ymd_His') . '.xlsx';
+        return Excel::download(new LaporanKeuanganExport($type, $filters), $filename);
     }
 
     // ===== INVOICE PDF =====

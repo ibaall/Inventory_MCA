@@ -83,6 +83,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/cart')->group(function () {
         Route::get('/', [CartController::class, 'index'])->name('cart.index');
         Route::post('/add/{product}', [CartController::class, 'addToCart'])->name('cart.add');
+        Route::post('/set-discount/{cartKey}', [CartController::class, 'setDiscount'])->name('cart.setDiscount');
         Route::delete('/remove/{productId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
         Route::delete('/bulk-remove', [CartController::class, 'bulkRemove'])->name('cart.bulkRemove');
         Route::delete('/clear', [CartController::class, 'clearCart'])->name('cart.clear');

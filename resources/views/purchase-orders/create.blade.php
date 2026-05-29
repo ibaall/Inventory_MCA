@@ -76,10 +76,11 @@
                             <tr>
                                 <th style="width:4%" class="text-center">No</th>
                                 <th style="width:25%">Produk</th>
-                                <th style="width:20%">Varian</th>
+                                <th style="width:15%">Varian</th>
                                 <th style="width:8%" class="text-center">Kode</th>
                                 <th style="width:8%" class="text-center">QTY</th>
                                 <th style="width:14%" class="text-end">Harga Beli</th>
+                                <th style="width:10%" class="text-center">Diskon</th>
                                 <th style="width:14%" class="text-end">Subtotal</th>
                                 <th style="width:7%" class="text-center">Aksi</th>
                             </tr>
@@ -88,17 +89,17 @@
                         </tbody>
                         <tfoot class="table-light fw-bold">
                             <tr>
-                                <td colspan="6" class="text-end">Total DPP:</td>
+                                <td colspan="7" class="text-end">Total DPP:</td>
                                 <td class="text-end" id="totalDpp">Rp 0</td>
                                 <td></td>
                             </tr>
                             <tr id="ppnRow">
-                                <td colspan="6" class="text-end">PPN 11%:</td>
+                                <td colspan="7" class="text-end">PPN 11%:</td>
                                 <td class="text-end" id="totalPpn">Rp 0</td>
                                 <td></td>
                             </tr>
                             <tr class="table-warning">
-                                <td colspan="6" class="text-end">TOTAL:</td>
+                                <td colspan="7" class="text-end">TOTAL:</td>
                                 <td class="text-end text-danger" id="grandTotal">Rp 0</td>
                                 <td></td>
                             </tr>
@@ -156,6 +157,24 @@
             <td>
                 <input type="number" name="items[${rowCount}][price]" class="form-control form-control-sm text-end"
                        min="0" value="0" required onchange="calcRow(${rowCount})" onkeyup="calcRow(${rowCount})" id="price-${rowCount}">
+            </td>
+            <td>
+                <select name="items[${rowCount}][discount_percent]" class="form-select form-select-sm"
+                        onchange="calcRow(${rowCount})" id="discount-${rowCount}">
+                    <option value="0">0%</option>
+                    <option value="5">5%</option>
+                    <option value="10">10%</option>
+                    <option value="15">15%</option>
+                    <option value="20">20%</option>
+                    <option value="25">25%</option>
+                    <option value="30">30%</option>
+                    <option value="35">35%</option>
+                    <option value="40">40%</option>
+                    <option value="45">45%</option>
+                    <option value="50">50%</option>
+                    <option value="55">55%</option>
+                    <option value="60">60%</option>
+                </select>
             </td>
             <td class="text-end" id="subtotal-${rowCount}">Rp 0</td>
             <td class="text-center">
@@ -238,7 +257,9 @@
         if (!row) return;
         const qty = parseInt(row.querySelector(`[name="items[${idx}][quantity]"]`).value) || 0;
         const price = parseFloat(row.querySelector(`[name="items[${idx}][price]"]`).value) || 0;
-        const subtotal = qty * price;
+        const discountPct = parseInt(row.querySelector(`[name="items[${idx}][discount_percent]"]`).value) || 0;
+        const discountedPrice = discountPct > 0 ? Math.round(price * (1 - discountPct / 100)) : price;
+        const subtotal = qty * discountedPrice;
         document.getElementById(`subtotal-${idx}`).textContent = 'Rp ' + subtotal.toLocaleString('id-ID');
         calcTotal();
     }
@@ -248,8 +269,13 @@
         document.querySelectorAll('#itemsBody tr').forEach(tr => {
             const qtyInput = tr.querySelector('input[name*="[quantity]"]');
             const priceInput = tr.querySelector('input[name*="[price]"]');
+            const discountSelect = tr.querySelector('select[name*="[discount_percent]"]');
             if (qtyInput && priceInput) {
-                total += (parseInt(qtyInput.value) || 0) * (parseFloat(priceInput.value) || 0);
+                const qty = parseInt(qtyInput.value) || 0;
+                const price = parseFloat(priceInput.value) || 0;
+                const discountPct = discountSelect ? (parseInt(discountSelect.value) || 0) : 0;
+                const discountedPrice = discountPct > 0 ? Math.round(price * (1 - discountPct / 100)) : price;
+                total += qty * discountedPrice;
             }
         });
 

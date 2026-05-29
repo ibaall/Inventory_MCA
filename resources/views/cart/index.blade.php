@@ -78,7 +78,10 @@
                     @php $total = 0; @endphp
                     @foreach($cart as $index => $item)
                         @php
-                            $subtotal = $item['price'] * $item['quantity'];
+                            $discountPct = $item['discount_percent'] ?? 0;
+                            $originalPrice = $item['price'];
+                            $discountedPrice = $discountPct > 0 ? round($originalPrice * (1 - $discountPct / 100)) : $originalPrice;
+                            $subtotal = $discountedPrice * $item['quantity'];
                             $total += $subtotal;
                         @endphp
                         <tr id="row-{{ $index }}" class="cart-row">
@@ -144,14 +147,32 @@
                             <td class="text-center">
                                 <span class="badge bg-secondary">{{ $item['satuan'] ?? 'Pcs' }}</span>
                             </td>
-                            <td>Rp {{ number_format($item['price'], 0, ',', '.') }}</td>
+                            <td>
+                                @if($discountPct > 0)
+                                    <small class="text-decoration-line-through text-muted">Rp {{ number_format($originalPrice, 0, ',', '.') }}</small><br>
+                                    <span class="text-success fw-bold">Rp {{ number_format($discountedPrice, 0, ',', '.') }}</span>
+                                @else
+                                    Rp {{ number_format($originalPrice, 0, ',', '.') }}
+                                @endif
+                            </td>
                             <td>Rp {{ number_format($subtotal, 0, ',', '.') }}</td>
                             <td>
-                                <form action="{{ route('cart.remove', $index) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                                </form>
+                                <div class="d-flex flex-column gap-1">
+                                    <form action="{{ route('cart.setDiscount', $index) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <select name="discount_percent" class="form-select form-select-sm" style="width: 85px;" onchange="this.form.submit()">
+                                            <option value="0" {{ $discountPct == 0 ? 'selected' : '' }}>0%</option>
+                                            <option value="5" {{ $discountPct == 5 ? 'selected' : '' }}>5%</option>
+                                            <option value="10" {{ $discountPct == 10 ? 'selected' : '' }}>10%</option>
+                                            <option value="15" {{ $discountPct == 15 ? 'selected' : '' }}>15%</option>
+                                        </select>
+                                    </form>
+                                    <form action="{{ route('cart.remove', $index) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm w-100">Hapus</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @endforeach

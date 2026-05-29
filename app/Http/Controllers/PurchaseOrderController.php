@@ -69,13 +69,17 @@ class PurchaseOrderController extends Controller
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity'   => 'required|integer|min:1',
             'items.*.price'      => 'required|numeric|min:0',
+            'items.*.discount_percent' => 'nullable|integer|min:0|max:60',
         ]);
 
         $usePpn = $request->has('use_ppn') ? 1 : 0;
 
         $totalPrice = 0;
         foreach ($request->items as $item) {
-            $totalPrice += $item['price'] * $item['quantity'];
+            $discountPct = $item['discount_percent'] ?? 0;
+            $originalPrice = $item['price'];
+            $discountedPrice = $discountPct > 0 ? round($originalPrice * (1 - $discountPct / 100)) : $originalPrice;
+            $totalPrice += $discountedPrice * $item['quantity'];
         }
 
         $po = PurchaseOrder::create([
@@ -98,14 +102,20 @@ class PurchaseOrderController extends Controller
                 $namaVarian = $variant ? $variant->nama_varian : null;
             }
 
+            $discountPct = $item['discount_percent'] ?? 0;
+            $originalPrice = $item['price'];
+            $discountedPrice = $discountPct > 0 ? round($originalPrice * (1 - $discountPct / 100)) : $originalPrice;
+
             PurchaseOrderItem::create([
                 'purchase_order_id'  => $po->id,
                 'product_id'         => $item['product_id'],
                 'product_variant_id' => $variantId ?: null,
                 'nama_varian'        => $namaVarian,
                 'quantity'           => $item['quantity'],
-                'price'              => $item['price'],
-                'subtotal'           => $item['price'] * $item['quantity'],
+                'price'              => $discountedPrice,
+                'original_price'     => $originalPrice,
+                'discount_percent'   => $discountPct,
+                'subtotal'           => $discountedPrice * $item['quantity'],
             ]);
         }
 

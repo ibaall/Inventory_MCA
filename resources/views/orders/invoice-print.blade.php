@@ -204,6 +204,9 @@
                 <div class="info-left">
                     <div><strong>Kepada yth,</strong></div>
                     <div class="recipient-name">{{ $order->customer_name }}</div>
+                    @if($order->alamat)
+                        <div style="margin-top: 2px; font-size: 11px;">{{ $order->alamat }}</div>
+                    @endif
                 </div>
                 <div class="info-right">
                     <div class="info-row">
@@ -224,7 +227,22 @@
                     <div class="info-row">
                         <span class="info-label">Tanggal Jatuh Tempo</span>
                         <span class="info-sep">:</span>
-                        <span class="info-val">{{ $order->status_pembayaran === 'lunas' ? '-' : $tanggal->copy()->addDays(30)->translatedFormat('d F Y') }}</span>
+                        <span class="info-val">{{ $order->tanggal_jatuh_tempo ? \Carbon\Carbon::parse($order->tanggal_jatuh_tempo)->translatedFormat('d F Y') : ($order->status_pembayaran === 'lunas' ? '-' : $tanggal->copy()->addDays(30)->translatedFormat('d F Y')) }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Tanggal Operasi</span>
+                        <span class="info-sep">:</span>
+                        <span class="info-val">{{ $order->tanggal_operasi ? \Carbon\Carbon::parse($order->tanggal_operasi)->translatedFormat('d F Y') : '-' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Nama Pasien</span>
+                        <span class="info-sep">:</span>
+                        <span class="info-val">{{ $order->nama_pasien ?? '-' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Operator</span>
+                        <span class="info-sep">:</span>
+                        <span class="info-val">{{ $order->operator ?? '-' }}</span>
                     </div>
                 </div>
             </div>

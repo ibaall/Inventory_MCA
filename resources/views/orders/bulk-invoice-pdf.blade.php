@@ -65,6 +65,9 @@
             <td class="info-left" rowspan="4">
                 <div><strong>Kepada yth,</strong></div>
                 <div style="font-size: 12px; font-weight: bold; margin-top: 4px;">{{ $order->customer_name }}</div>
+                @if($order->alamat)
+                    <div style="margin-top: 2px;">{{ $order->alamat }}</div>
+                @endif
             </td>
             <td class="info-right">
                 <table><tr><td style="width:42%; font-weight:bold;">Tanggal</td><td style="width:3%;">:</td><td>{{ $tanggal->translatedFormat('d F Y') }}</td></tr></table>

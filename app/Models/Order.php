@@ -23,6 +23,7 @@ class Order extends Model
         'operator',
         'tanggal_operasi',
         'alamat',
+        'tanggal_jatuh_tempo',
     ];
 
     // Relasi ke User

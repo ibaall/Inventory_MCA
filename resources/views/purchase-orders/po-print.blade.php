@@ -89,6 +89,9 @@
                 <div class="info-left">
                     <div><strong>Kepada yth,</strong></div>
                     <div class="recipient-name">{{ $po->supplier_name }}</div>
+                    @if($po->alamat)
+                        <div style="margin-top: 2px; font-size: 11px;">{{ $po->alamat }}</div>
+                    @endif
                 </div>
                 <div class="info-right">
                     <div class="info-row">
@@ -153,7 +156,12 @@
             <div class="bottom">
                 <div class="bottom-note">Mohon untuk dicek dan diterima,</div>
                 <div class="bottom-flex">
-                    <table class="signature-table"><tr><td>Mengetahui</td><td>Penerima</td></tr></table>
+                    <div>
+                        <div style="margin-bottom: 8px; font-size: 11px;">
+                            {{ $tanggal->translatedFormat('d F Y') }} / PX : {{ $po->user->name ?? '-' }}
+                        </div>
+                        <table class="signature-table"><tr><td>Mengetahui</td><td>Penerima</td></tr></table>
+                    </div>
                     <div class="bank-info">
                         <div class="bank-name">BANK MANDIRI</div>
                         <div>A/C ( IDR ) : 1420025406918</div>

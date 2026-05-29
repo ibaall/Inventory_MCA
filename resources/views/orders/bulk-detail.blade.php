@@ -48,6 +48,10 @@
                             <td class="text-muted">Tanggal Pesanan</td>
                             <td>{{ \Carbon\Carbon::parse($order->ordered_at)->translatedFormat('d F Y, H:i') }}</td>
                         </tr>
+                        <tr>
+                            <td class="text-muted">Alamat</td>
+                            <td>{{ $order->alamat ?? '-' }}</td>
+                        </tr>
                     </table>
                 </div>
             </div>

@@ -48,23 +48,38 @@
                 </tr>
 
                 @foreach($entries as $entry)
-                <tr class="{{ $entry['type'] == 'payment' ? 'table-success' : '' }}">
-                    <td class="text-center">{{ $loop->iteration }}</td>
-                    <td>{{ $entry['date']->format('d/m/Y') }}</td>
-                    <td>
-                        @if($entry['type'] == 'purchase')
+                {{-- Baris utama (PO atau standalone payment) --}}
+                @php
+                    $subPayments = $entry['payments'] ?? [];
+                    $subPayCount = count($subPayments);
+                    // Jumlah baris yg ditempati entry ini: 1 (PO) + jumlah sub-payment
+                    $rowspan = ($entry['type'] === 'purchase' && $subPayCount > 0) ? 1 + $subPayCount : 1;
+                @endphp
+
+                <tr class="{{ $entry['type'] === 'payment_standalone' ? 'table-success' : '' }}">
+                    {{-- No, Tanggal, Nomor, Keterangan, Saldo Awal: rowspan kalau ada sub-payment --}}
+                    <td class="text-center" @if($rowspan > 1) rowspan="{{ $rowspan }}" style="vertical-align: middle;" @endif>{{ $loop->iteration }}</td>
+                    <td @if($rowspan > 1) rowspan="{{ $rowspan }}" style="vertical-align: middle;" @endif>{{ $entry['date']->format('d/m/Y') }}</td>
+                    <td @if($rowspan > 1) rowspan="{{ $rowspan }}" style="vertical-align: middle;" @endif>
+                        @if($entry['type'] === 'purchase')
                             <span class="badge bg-secondary">{{ $entry['nomor'] }}</span>
+                        @elseif($entry['type'] === 'payment_standalone')
+                            <span class="badge bg-info text-dark">{{ $entry['nomor'] }}</span>
                         @else
                             <span class="text-muted">-</span>
                         @endif
                     </td>
-                    <td>{{ $entry['keterangan'] }}</td>
-                    <td class="text-end">Rp {{ number_format($entry['saldo_awal_baris'], 0, ',', '.') }}</td>
+                    <td @if($rowspan > 1) rowspan="{{ $rowspan }}" style="vertical-align: middle;" @endif>{{ $entry['keterangan'] }}</td>
+                    <td class="text-end" @if($rowspan > 1) rowspan="{{ $rowspan }}" style="vertical-align: middle;" @endif>Rp {{ number_format($entry['saldo_awal_baris'], 0, ',', '.') }}</td>
+
+                    {{-- Kolom Pembelian --}}
                     <td class="text-end {{ $entry['pembelian'] > 0 ? 'text-danger fw-semibold' : '' }}">
                         {{ $entry['pembelian'] > 0 ? 'Rp ' . number_format($entry['pembelian'], 0, ',', '.') : '-' }}
                     </td>
-                    <td class="text-end {{ $entry['type'] == 'payment' && $entry['pembayaran'] > 0 ? 'text-success fw-semibold' : '' }}">
-                        @if($entry['type'] == 'purchase')
+
+                    {{-- Kolom Pembayaran --}}
+                    <td class="text-end">
+                        @if($entry['type'] === 'purchase')
                             @if(($entry['remaining'] ?? 0) <= 0)
                                 <span class="badge bg-success">Lunas</span>
                             @else
@@ -86,12 +101,37 @@
                                     Sisa: Rp {{ number_format($entry['remaining'], 0, ',', '.') }}
                                 </div>
                             @endif
+                        @elseif($entry['type'] === 'payment_standalone')
+                            <span class="text-success fw-semibold">Rp {{ number_format($entry['pembayaran'], 0, ',', '.') }}</span>
                         @else
-                            {{ $entry['pembayaran'] > 0 ? 'Rp ' . number_format($entry['pembayaran'], 0, ',', '.') : '-' }}
+                            -
                         @endif
                     </td>
-                    <td class="text-end fw-bold">Rp {{ number_format($entry['saldo_akhir'], 0, ',', '.') }}</td>
+
+                    {{-- Saldo Akhir --}}
+                    <td class="text-end fw-bold" @if($rowspan > 1) rowspan="{{ $rowspan }}" style="vertical-align: middle;" @endif>Rp {{ number_format($entry['saldo_akhir'], 0, ',', '.') }}</td>
                 </tr>
+
+                {{-- Sub-baris pembayaran (di bawah baris PO, dalam kolom Pembelian & Pembayaran) --}}
+                @if($entry['type'] === 'purchase' && $subPayCount > 0)
+                    @foreach($subPayments as $sp)
+                    <tr class="table-success" style="background-color: #e8f5e9 !important;">
+                        {{-- Kolom No, Tanggal, Nomor, Keterangan, Saldo Awal sudah di-rowspan --}}
+                        {{-- Kolom Pembelian: kosong --}}
+                        <td class="text-end text-muted" style="font-size: 11px;">
+                            <i class="bi bi-arrow-return-right"></i> {{ Carbon\Carbon::parse($sp['date'])->format('d/m/Y') }}
+                        </td>
+                        {{-- Kolom Pembayaran --}}
+                        <td class="text-end text-success fw-semibold" style="font-size: 12px;">
+                            Rp {{ number_format($sp['amount'], 0, ',', '.') }}
+                            @if($sp['note'])
+                                <br><small class="text-muted fst-italic">{{ $sp['note'] }}</small>
+                            @endif
+                        </td>
+                        {{-- Kolom Saldo Akhir: sudah di-rowspan --}}
+                    </tr>
+                    @endforeach
+                @endif
                 @endforeach
             </tbody>
             <tfoot class="table-secondary">

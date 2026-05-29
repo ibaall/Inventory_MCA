@@ -90,6 +90,9 @@
                 <div class="info-left">
                     <div><strong>Kepada yth,</strong></div>
                     <div class="recipient-name">{{ $order->customer_name }}</div>
+                    @if($order->alamat)
+                        <div style="margin-top: 2px; font-size: 11px;">{{ $order->alamat }}</div>
+                    @endif
                 </div>
                 <div class="info-right">
                     <div class="info-row"><span class="info-label">Tanggal</span><span class="info-sep">:</span><span class="info-val">{{ $tanggal->translatedFormat('d F Y') }}</span></div>

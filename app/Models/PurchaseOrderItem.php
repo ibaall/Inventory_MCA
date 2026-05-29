@@ -16,6 +16,8 @@ class PurchaseOrderItem extends Model
         'nama_varian',
         'quantity',
         'price',
+        'original_price',
+        'discount_percent',
         'subtotal',
     ];
 

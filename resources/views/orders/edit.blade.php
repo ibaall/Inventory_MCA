@@ -60,6 +60,18 @@
         </div>
 
         <div class="mb-3">
+            <label for="surat_jalan_number" class="form-label">Nomer Surat Jalan</label>
+            <input type="text" name="surat_jalan_number" id="surat_jalan_number" class="form-control"
+                   value="{{ old('surat_jalan_number', $order->surat_jalan_number) }}" placeholder="Contoh: 01/SJ/MCA/V/2026">
+        </div>
+
+        <div class="mb-3">
+            <label for="tanggal_jatuh_tempo" class="form-label">Tanggal Jatuh Tempo</label>
+            <input type="date" name="tanggal_jatuh_tempo" id="tanggal_jatuh_tempo" class="form-control"
+                   value="{{ old('tanggal_jatuh_tempo', $order->tanggal_jatuh_tempo ? \Carbon\Carbon::parse($order->tanggal_jatuh_tempo)->format('Y-m-d') : '') }}">
+        </div>
+
+        <div class="mb-3">
             <label for="alamat_history" class="form-label">Pilih dari Alamat Tersimpan (Opsional)</label>
             <select id="alamat_history" class="form-select" onchange="useSavedAddress(this.value)">
                 <option value="">-- Gunakan Alamat Baru / Ketik Manual --</option>

@@ -56,6 +56,10 @@
                             <td><strong>{{ $po->supplier_name }}</strong></td>
                         </tr>
                         <tr>
+                            <td class="text-muted">Alamat</td>
+                            <td>{{ $po->alamat ?? '-' }}</td>
+                        </tr>
+                        <tr>
                             <td class="text-muted">Dibuat oleh</td>
                             <td>{{ $po->user->name ?? '-' }}</td>
                         </tr>

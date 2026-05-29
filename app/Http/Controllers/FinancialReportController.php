@@ -140,7 +140,6 @@ class FinancialReportController extends Controller
         }
 
         // --- Hitung Saldo Awal ---
-        // Total semua pembelian supplier sebelum periode (grand total termasuk PPN)
         $purchasesBefore = PurchaseOrder::where('supplier_name', $supplierName)
             ->where('ordered_at', '<', $startDate)
             ->get();
@@ -148,7 +147,6 @@ class FinancialReportController extends Controller
             return $this->hitungGrandTotal($po->total_price, $po->use_ppn);
         });
 
-        // Total semua pembayaran supplier sebelum periode
         $totalPaymentBefore = Payment::where('transaction_type', 'purchase')
             ->where('party_name', $supplierName)
             ->where('payment_date', '<', $startDate)
@@ -163,18 +161,33 @@ class FinancialReportController extends Controller
             ->orderBy('id')
             ->get();
 
-        $payments = Payment::where('transaction_type', 'purchase')
+        // Ambil semua pembayaran periode ini, dikelompokkan per transaction_id
+        $allPayments = Payment::where('transaction_type', 'purchase')
             ->where('party_name', $supplierName)
             ->whereBetween('payment_date', [$startDate, $endDate])
             ->orderBy('payment_date')
             ->orderBy('id')
             ->get();
 
-        // --- Gabungkan dan urutkan ---
+        $paymentsByTxId = $allPayments->groupBy('transaction_id');
+        $purchaseIds = $purchases->pluck('id')->toArray();
+
+        // --- Bangun entries: setiap PO membawa sub-pembayaran ---
         $entries = collect();
 
         foreach ($purchases as $po) {
             $grandTotal = $this->hitungGrandTotal($po->total_price, $po->use_ppn);
+            $poPayments = $paymentsByTxId->get($po->id, collect());
+
+            $subPayments = $poPayments->map(function ($pay) {
+                return [
+                    'id'          => $pay->id,
+                    'date'        => Carbon::parse($pay->payment_date),
+                    'amount'      => $pay->amount,
+                    'note'        => $pay->note,
+                ];
+            })->values()->toArray();
+
             $entries->push([
                 'id'          => $po->id,
                 'date'        => Carbon::parse($po->ordered_at),
@@ -183,24 +196,35 @@ class FinancialReportController extends Controller
                 'pembelian'   => $grandTotal,
                 'pembayaran'  => 0,
                 'type'        => 'purchase',
-                'sort_order'  => 0, // transaksi duluan
+                'sort_order'  => 0,
                 'remaining'   => $po->remaining,
+                'payments'    => $subPayments,
             ]);
         }
 
-        foreach ($payments as $pay) {
-            $entries->push([
-                'date'        => Carbon::parse($pay->payment_date),
-                'nomor'       => '-',
-                'keterangan'  => 'Pembayaran' . ($pay->note ? ': ' . $pay->note : ''),
-                'pembelian'   => 0,
-                'pembayaran'  => $pay->amount,
-                'type'        => 'payment',
-                'sort_order'  => 1, // pembayaran setelah transaksi
-            ]);
+        // Pembayaran yg tidak punya PO di periode ini (bayar PO periode lalu)
+        foreach ($paymentsByTxId as $txId => $pays) {
+            if (!in_array($txId, $purchaseIds)) {
+                // Cari info PO untuk label
+                $relatedPo = PurchaseOrder::find($txId);
+                $poLabel = $relatedPo ? ($relatedPo->po_number ?: 'PO-' . $relatedPo->id) : 'PO-' . $txId;
+
+                foreach ($pays as $pay) {
+                    $entries->push([
+                        'date'        => Carbon::parse($pay->payment_date),
+                        'nomor'       => $poLabel,
+                        'keterangan'  => 'Pembayaran' . ($pay->note ? ': ' . $pay->note : '') . ' (' . $poLabel . ')',
+                        'pembelian'   => 0,
+                        'pembayaran'  => $pay->amount,
+                        'type'        => 'payment_standalone',
+                        'sort_order'  => 1,
+                        'payments'    => [],
+                    ]);
+                }
+            }
         }
 
-        // Urutkan: tanggal → sort_order → id
+        // Urutkan: tanggal → sort_order
         $entries = $entries->sortBy([
             ['date', 'asc'],
             ['sort_order', 'asc'],
@@ -213,10 +237,25 @@ class FinancialReportController extends Controller
 
         $entries = $entries->map(function ($entry) use (&$runningBalance, &$totalPembelian, &$totalPembayaran) {
             $entry['saldo_awal_baris'] = $runningBalance;
-            $runningBalance = $runningBalance + $entry['pembelian'] - $entry['pembayaran'];
+            $runningBalance += $entry['pembelian'];
+
+            // Hitung pembayaran dari sub-payments
+            $subPayTotal = 0;
+            if (!empty($entry['payments'])) {
+                foreach ($entry['payments'] as &$sp) {
+                    $subPayTotal += $sp['amount'];
+                }
+            }
+            // Untuk standalone payment entries
+            if ($entry['type'] === 'payment_standalone') {
+                $subPayTotal = $entry['pembayaran'];
+            }
+
+            $runningBalance -= $subPayTotal;
             $entry['saldo_akhir'] = $runningBalance;
+            $entry['total_pembayaran_baris'] = $subPayTotal;
             $totalPembelian += $entry['pembelian'];
-            $totalPembayaran += $entry['pembayaran'];
+            $totalPembayaran += $subPayTotal;
             return $entry;
         });
 
@@ -262,18 +301,33 @@ class FinancialReportController extends Controller
             ->orderBy('id')
             ->get();
 
-        $payments = Payment::where('transaction_type', 'sale')
+        // Ambil semua pembayaran periode ini, dikelompokkan per transaction_id
+        $allPayments = Payment::where('transaction_type', 'sale')
             ->where('party_name', $customerName)
             ->whereBetween('payment_date', [$startDate, $endDate])
             ->orderBy('payment_date')
             ->orderBy('id')
             ->get();
 
-        // --- Gabungkan dan urutkan ---
+        $paymentsByTxId = $allPayments->groupBy('transaction_id');
+        $saleIds = $sales->pluck('id')->toArray();
+
+        // --- Bangun entries: setiap Order membawa sub-pembayaran ---
         $entries = collect();
 
         foreach ($sales as $order) {
             $grandTotal = $this->hitungGrandTotal($order->total_price, $order->use_ppn);
+            $orderPayments = $paymentsByTxId->get($order->id, collect());
+
+            $subPayments = $orderPayments->map(function ($pay) {
+                return [
+                    'id'          => $pay->id,
+                    'date'        => Carbon::parse($pay->payment_date),
+                    'amount'      => $pay->amount,
+                    'note'        => $pay->note,
+                ];
+            })->values()->toArray();
+
             $entries->push([
                 'id'          => $order->id,
                 'date'        => Carbon::parse($order->ordered_at),
@@ -284,19 +338,29 @@ class FinancialReportController extends Controller
                 'type'        => 'sale',
                 'sort_order'  => 0,
                 'remaining'   => $order->remaining,
+                'payments'    => $subPayments,
             ]);
         }
 
-        foreach ($payments as $pay) {
-            $entries->push([
-                'date'        => Carbon::parse($pay->payment_date),
-                'nomor'       => '-',
-                'keterangan'  => 'Pembayaran' . ($pay->note ? ': ' . $pay->note : ''),
-                'penjualan'   => 0,
-                'pembayaran'  => $pay->amount,
-                'type'        => 'payment',
-                'sort_order'  => 1,
-            ]);
+        // Pembayaran yg tidak punya Order di periode ini (bayar Order periode lalu)
+        foreach ($paymentsByTxId as $txId => $pays) {
+            if (!in_array($txId, $saleIds)) {
+                $relatedOrder = Order::find($txId);
+                $invLabel = $relatedOrder ? ($relatedOrder->invoice_number ?: 'INV-' . $relatedOrder->id) : 'INV-' . $txId;
+
+                foreach ($pays as $pay) {
+                    $entries->push([
+                        'date'        => Carbon::parse($pay->payment_date),
+                        'nomor'       => $invLabel,
+                        'keterangan'  => 'Pembayaran' . ($pay->note ? ': ' . $pay->note : '') . ' (' . $invLabel . ')',
+                        'penjualan'   => 0,
+                        'pembayaran'  => $pay->amount,
+                        'type'        => 'payment_standalone',
+                        'sort_order'  => 1,
+                        'payments'    => [],
+                    ]);
+                }
+            }
         }
 
         $entries = $entries->sortBy([
@@ -311,10 +375,24 @@ class FinancialReportController extends Controller
 
         $entries = $entries->map(function ($entry) use (&$runningBalance, &$totalPenjualan, &$totalPembayaran) {
             $entry['saldo_awal_baris'] = $runningBalance;
-            $runningBalance = $runningBalance + $entry['penjualan'] - $entry['pembayaran'];
+            $runningBalance += ($entry['penjualan'] ?? 0);
+
+            // Hitung pembayaran dari sub-payments
+            $subPayTotal = 0;
+            if (!empty($entry['payments'])) {
+                foreach ($entry['payments'] as &$sp) {
+                    $subPayTotal += $sp['amount'];
+                }
+            }
+            if ($entry['type'] === 'payment_standalone') {
+                $subPayTotal = $entry['pembayaran'];
+            }
+
+            $runningBalance -= $subPayTotal;
             $entry['saldo_akhir'] = $runningBalance;
-            $totalPenjualan += $entry['penjualan'];
-            $totalPembayaran += $entry['pembayaran'];
+            $entry['total_pembayaran_baris'] = $subPayTotal;
+            $totalPenjualan += ($entry['penjualan'] ?? 0);
+            $totalPembayaran += $subPayTotal;
             return $entry;
         });
 

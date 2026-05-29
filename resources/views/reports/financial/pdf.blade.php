@@ -171,16 +171,37 @@
                     <td class="text-end fw-bold">Rp {{ number_format($saldoAwal, 0, ',', '.') }}</td>
                 </tr>
                 @foreach($entries as $entry)
-                <tr class="{{ $entry['type'] == 'payment' ? 'payment-row' : '' }}">
-                    <td class="text-center">{{ $loop->iteration }}</td>
-                    <td>{{ $entry['date']->format('d/m/Y') }}</td>
-                    <td>{{ $entry['type'] == 'purchase' ? $entry['nomor'] : '-' }}</td>
-                    <td>{{ $entry['keterangan'] }}</td>
-                    <td class="text-end">Rp {{ number_format($entry['saldo_awal_baris'], 0, ',', '.') }}</td>
+                @php
+                    $subPayments = $entry['payments'] ?? [];
+                    $subPayCount = count($subPayments);
+                    $rowspan = ($entry['type'] === 'purchase' && $subPayCount > 0) ? 1 + $subPayCount : 1;
+                @endphp
+                <tr class="{{ $entry['type'] === 'payment_standalone' ? 'payment-row' : '' }}">
+                    <td class="text-center" @if($rowspan > 1) rowspan="{{ $rowspan }}" @endif>{{ $loop->iteration }}</td>
+                    <td @if($rowspan > 1) rowspan="{{ $rowspan }}" @endif>{{ $entry['date']->format('d/m/Y') }}</td>
+                    <td @if($rowspan > 1) rowspan="{{ $rowspan }}" @endif>{{ in_array($entry['type'], ['purchase', 'payment_standalone']) ? $entry['nomor'] : '-' }}</td>
+                    <td @if($rowspan > 1) rowspan="{{ $rowspan }}" @endif>{{ $entry['keterangan'] }}</td>
+                    <td class="text-end" @if($rowspan > 1) rowspan="{{ $rowspan }}" @endif>Rp {{ number_format($entry['saldo_awal_baris'], 0, ',', '.') }}</td>
                     <td class="text-end">{{ $entry['pembelian'] > 0 ? 'Rp ' . number_format($entry['pembelian'], 0, ',', '.') : '-' }}</td>
-                    <td class="text-end">{{ $entry['pembayaran'] > 0 ? 'Rp ' . number_format($entry['pembayaran'], 0, ',', '.') : '-' }}</td>
-                    <td class="text-end fw-bold">Rp {{ number_format($entry['saldo_akhir'], 0, ',', '.') }}</td>
+                    <td class="text-end">
+                        @if($entry['type'] === 'purchase' && $subPayCount === 0)
+                            -
+                        @elseif($entry['type'] === 'payment_standalone')
+                            Rp {{ number_format($entry['pembayaran'], 0, ',', '.') }}
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td class="text-end fw-bold" @if($rowspan > 1) rowspan="{{ $rowspan }}" @endif>Rp {{ number_format($entry['saldo_akhir'], 0, ',', '.') }}</td>
                 </tr>
+                @if($entry['type'] === 'purchase' && $subPayCount > 0)
+                    @foreach($subPayments as $sp)
+                    <tr class="payment-row">
+                        <td class="text-end" style="font-size: 8px;">↳ {{ \Carbon\Carbon::parse($sp['date'])->format('d/m/Y') }}</td>
+                        <td class="text-end text-success">Rp {{ number_format($sp['amount'], 0, ',', '.') }}</td>
+                    </tr>
+                    @endforeach
+                @endif
                 @endforeach
             </tbody>
             <tfoot>
@@ -251,16 +272,37 @@
                     <td class="text-end fw-bold">Rp {{ number_format($saldoAwal, 0, ',', '.') }}</td>
                 </tr>
                 @foreach($entries as $entry)
-                <tr class="{{ $entry['type'] == 'payment' ? 'payment-row' : '' }}">
-                    <td class="text-center">{{ $loop->iteration }}</td>
-                    <td>{{ $entry['date']->format('d/m/Y') }}</td>
-                    <td>{{ $entry['type'] == 'sale' ? $entry['nomor'] : '-' }}</td>
-                    <td>{{ $entry['keterangan'] }}</td>
-                    <td class="text-end">Rp {{ number_format($entry['saldo_awal_baris'], 0, ',', '.') }}</td>
-                    <td class="text-end">{{ $entry['penjualan'] > 0 ? 'Rp ' . number_format($entry['penjualan'], 0, ',', '.') : '-' }}</td>
-                    <td class="text-end">{{ $entry['pembayaran'] > 0 ? 'Rp ' . number_format($entry['pembayaran'], 0, ',', '.') : '-' }}</td>
-                    <td class="text-end fw-bold">Rp {{ number_format($entry['saldo_akhir'], 0, ',', '.') }}</td>
+                @php
+                    $subPayments = $entry['payments'] ?? [];
+                    $subPayCount = count($subPayments);
+                    $rowspan = ($entry['type'] === 'sale' && $subPayCount > 0) ? 1 + $subPayCount : 1;
+                @endphp
+                <tr class="{{ $entry['type'] === 'payment_standalone' ? 'payment-row' : '' }}">
+                    <td class="text-center" @if($rowspan > 1) rowspan="{{ $rowspan }}" @endif>{{ $loop->iteration }}</td>
+                    <td @if($rowspan > 1) rowspan="{{ $rowspan }}" @endif>{{ $entry['date']->format('d/m/Y') }}</td>
+                    <td @if($rowspan > 1) rowspan="{{ $rowspan }}" @endif>{{ in_array($entry['type'], ['sale', 'payment_standalone']) ? $entry['nomor'] : '-' }}</td>
+                    <td @if($rowspan > 1) rowspan="{{ $rowspan }}" @endif>{{ $entry['keterangan'] }}</td>
+                    <td class="text-end" @if($rowspan > 1) rowspan="{{ $rowspan }}" @endif>Rp {{ number_format($entry['saldo_awal_baris'], 0, ',', '.') }}</td>
+                    <td class="text-end">{{ ($entry['penjualan'] ?? 0) > 0 ? 'Rp ' . number_format($entry['penjualan'], 0, ',', '.') : '-' }}</td>
+                    <td class="text-end">
+                        @if($entry['type'] === 'sale' && $subPayCount === 0)
+                            -
+                        @elseif($entry['type'] === 'payment_standalone')
+                            Rp {{ number_format($entry['pembayaran'], 0, ',', '.') }}
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td class="text-end fw-bold" @if($rowspan > 1) rowspan="{{ $rowspan }}" @endif>Rp {{ number_format($entry['saldo_akhir'], 0, ',', '.') }}</td>
                 </tr>
+                @if($entry['type'] === 'sale' && $subPayCount > 0)
+                    @foreach($subPayments as $sp)
+                    <tr class="payment-row">
+                        <td class="text-end" style="font-size: 8px;">↳ {{ \Carbon\Carbon::parse($sp['date'])->format('d/m/Y') }}</td>
+                        <td class="text-end text-success">Rp {{ number_format($sp['amount'], 0, ',', '.') }}</td>
+                    </tr>
+                    @endforeach
+                @endif
                 @endforeach
             </tbody>
             <tfoot>

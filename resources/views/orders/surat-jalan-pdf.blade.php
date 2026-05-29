@@ -124,31 +124,37 @@
     {{-- INFO --}}
     <table class="info-section">
         <tr>
-            <td class="info-left" rowspan="2">
+            <td class="info-left" rowspan="5">
                 <div><strong>Kepada yth,</strong></div>
                 <div style="font-size: 12px; font-weight: bold; margin-top: 4px;">
                     {{ $order->customer_name }}
                 </div>
+                @if($order->alamat)
+                    <div style="margin-top: 2px;">{{ $order->alamat }}</div>
+                @endif
             </td>
             <td class="info-right">
-                <table>
-                    <tr>
-                        <td style="width:45%; font-weight:bold;">Tanggal</td>
-                        <td style="width:5%;">:</td>
-                        <td>{{ $tanggal->translatedFormat('d F Y') }}</td>
-                    </tr>
-                </table>
+                <table><tr><td style="width:45%; font-weight:bold;">Tanggal</td><td style="width:5%;">:</td><td>{{ $tanggal->translatedFormat('d F Y') }}</td></tr></table>
             </td>
         </tr>
         <tr>
             <td class="info-right">
-                <table>
-                    <tr>
-                        <td style="width:45%; font-weight:bold;">Nomer Surat Jalan</td>
-                        <td style="width:5%;">:</td>
-                        <td>{{ $nomorSJ }}</td>
-                    </tr>
-                </table>
+                <table><tr><td style="width:45%; font-weight:bold;">Nomer Surat Jalan</td><td style="width:5%;">:</td><td>{{ $nomorSJ }}</td></tr></table>
+            </td>
+        </tr>
+        <tr>
+            <td class="info-right">
+                <table><tr><td style="width:45%; font-weight:bold;">Tanggal Operasi</td><td style="width:5%;">:</td><td>{{ $order->tanggal_operasi ? \Carbon\Carbon::parse($order->tanggal_operasi)->translatedFormat('d F Y') : '-' }}</td></tr></table>
+            </td>
+        </tr>
+        <tr>
+            <td class="info-right">
+                <table><tr><td style="width:45%; font-weight:bold;">Nama Pasien</td><td style="width:5%;">:</td><td>{{ $order->nama_pasien ?? '-' }}</td></tr></table>
+            </td>
+        </tr>
+        <tr>
+            <td class="info-right">
+                <table><tr><td style="width:45%; font-weight:bold;">Operator</td><td style="width:5%;">:</td><td>{{ $order->operator ?? '-' }}</td></tr></table>
             </td>
         </tr>
     </table>
@@ -195,6 +201,9 @@
     </table>
 
     {{-- SIGNATURE --}}
+    <div style="margin-top: 14px; font-size: 11px;">
+        {{ $tanggal->translatedFormat('d F Y') }} / PX : {{ $order->user->name ?? '-' }}
+    </div>
     <table class="signature-section">
         <tr>
             <td>

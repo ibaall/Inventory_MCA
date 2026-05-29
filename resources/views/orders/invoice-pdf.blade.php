@@ -14,67 +14,23 @@
         }
 
         /* ===== HEADER ===== */
-        .header-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 14px;
-        }
-        .header-table td {
-            vertical-align: middle;
-            padding: 0;
-        }
-        .company-name {
-            font-size: 20px;
-            font-weight: bold;
-            color: #000;
-        }
-        .doc-title {
-            font-size: 16px;
-            font-weight: bold;
-            text-decoration: underline;
-            text-align: right;
-        }
+        .header-table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+        .header-table td { vertical-align: middle; padding: 0; }
+        .company-name { font-size: 20px; font-weight: bold; color: #000; }
+        .doc-title { font-size: 16px; font-weight: bold; text-decoration: underline; text-align: right; }
 
         /* ===== INFO SECTION ===== */
-        .info-section {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 14px;
-        }
-        .info-section td {
-            vertical-align: top;
-            padding: 3px 6px;
-            font-size: 11px;
-            border: 1px solid #888;
-        }
+        .info-section { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+        .info-section td { vertical-align: top; padding: 3px 6px; font-size: 11px; border: 1px solid #888; }
         .info-left { width: 50%; }
         .info-right { width: 50%; }
         .info-right table { width: 100%; border-collapse: collapse; }
-        .info-right table td {
-            border: none;
-            padding: 2px 4px;
-            font-size: 11px;
-        }
+        .info-right table td { border: none; padding: 2px 4px; font-size: 11px; }
 
         /* ===== TABEL ITEM ===== */
-        .items-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 0;
-        }
-        .items-table th {
-            background-color: #d9d9d9;
-            border: 1px solid #888;
-            text-align: center;
-            padding: 5px 4px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        .items-table td {
-            border: 1px solid #888;
-            padding: 4px 6px;
-            font-size: 11px;
-        }
+        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 0; }
+        .items-table th { background-color: #d9d9d9; border: 1px solid #888; text-align: center; padding: 5px 4px; font-size: 11px; font-weight: bold; }
+        .items-table td { border: 1px solid #888; padding: 4px 6px; font-size: 11px; }
         .items-table .col-no       { width: 4%;  text-align: center; }
         .items-table .col-kode     { width: 12%; text-align: center; }
         .items-table .col-desc     { width: 34%; }
@@ -82,43 +38,15 @@
         .items-table .col-sat      { width: 7%;  text-align: center; }
         .items-table .col-price    { width: 18%; text-align: right; }
         .items-table .col-total    { width: 19%; text-align: right; }
-
         .items-table .empty-row td { height: 18px; }
-
-        /* ===== FOOTER TABEL ===== */
-        .footer-table {
-            width: 100%;
-            border-collapse: collapse;
-            border-top: none;
-        }
-        .footer-table td {
-            border: 1px solid #888;
-            padding: 4px 8px;
-            font-size: 11px;
-        }
-        .footer-left  { width: 55%; vertical-align: middle; }
-        .footer-label { font-weight: bold; text-align: right; }
-        .footer-value { text-align: right; }
-        .footer-total { font-weight: bold; background-color: #d9d9d9; }
 
         /* ===== BOTTOM ===== */
         .bottom-section { margin-top: 14px; }
         .bottom-note { font-size: 11px; margin-bottom: 10px; }
-
         .bottom-table { width: 100%; }
         .bottom-table td { vertical-align: top; font-size: 11px; }
-
         .signature-table { border-collapse: collapse; }
-        .signature-table td {
-            border: 1px solid #666;
-            width: 130px;
-            height: 70px;
-            text-align: center;
-            vertical-align: top;
-            padding: 4px 8px;
-            font-size: 11px;
-        }
-
+        .signature-table td { border: 1px solid #666; width: 130px; height: 70px; text-align: center; vertical-align: top; padding: 4px 8px; font-size: 11px; }
         .bank-info { padding-left: 20px; line-height: 1.8; }
         .bank-name { font-weight: bold; font-size: 12px; }
     </style>
@@ -136,53 +64,47 @@
     {{-- ===== INFO PENERIMA & NOMOR ===== --}}
     <table class="info-section">
         <tr>
-            <td class="info-left" rowspan="4">
+            <td class="info-left" rowspan="8">
                 <div><strong>Kepada yth,</strong></div>
                 <div style="font-size: 12px; font-weight: bold; margin-top: 4px;">
                     {{ $order->customer_name }}
                 </div>
+                @if($order->alamat)
+                    <div style="margin-top: 2px;">{{ $order->alamat }}</div>
+                @endif
             </td>
             <td class="info-right">
-                <table>
-                    <tr>
-                        <td style="width:42%; font-weight:bold;">Tanggal</td>
-                        <td style="width:3%;">:</td>
-                        <td>{{ $tanggal->translatedFormat('d F Y') }}</td>
-                    </tr>
-                </table>
+                <table><tr><td style="width:42%; font-weight:bold;">Tanggal</td><td style="width:3%;">:</td><td>{{ $tanggal->translatedFormat('d F Y') }}</td></tr></table>
             </td>
         </tr>
         <tr>
             <td class="info-right">
-                <table>
-                    <tr>
-                        <td style="width:42%; font-weight:bold;">Nomer Invoice</td>
-                        <td style="width:3%;">:</td>
-                        <td>{{ $nomorInvoice }}</td>
-                    </tr>
-                </table>
+                <table><tr><td style="width:42%; font-weight:bold;">Nomer Invoice</td><td style="width:3%;">:</td><td>{{ $nomorInvoice }}</td></tr></table>
             </td>
         </tr>
         <tr>
             <td class="info-right">
-                <table>
-                    <tr>
-                        <td style="width:42%; font-weight:bold;">Nomer Surat Jalan</td>
-                        <td style="width:3%;">:</td>
-                        <td>{{ $nomorSJ }}</td>
-                    </tr>
-                </table>
+                <table><tr><td style="width:42%; font-weight:bold;">Nomer Surat Jalan</td><td style="width:3%;">:</td><td>{{ $nomorSJ }}</td></tr></table>
             </td>
         </tr>
         <tr>
             <td class="info-right">
-                <table>
-                    <tr>
-                        <td style="width:42%; font-weight:bold;">Tanggal Jatuh Tempo</td>
-                        <td style="width:3%;">:</td>
-                        <td>{{ $order->status_pembayaran === 'lunas' ? '-' : $tanggal->copy()->addDays(30)->translatedFormat('d F Y') }}</td>
-                    </tr>
-                </table>
+                <table><tr><td style="width:42%; font-weight:bold;">Tanggal Jatuh Tempo</td><td style="width:3%;">:</td><td>{{ $order->tanggal_jatuh_tempo ? \Carbon\Carbon::parse($order->tanggal_jatuh_tempo)->translatedFormat('d F Y') : ($order->status_pembayaran === 'lunas' ? '-' : $tanggal->copy()->addDays(30)->translatedFormat('d F Y')) }}</td></tr></table>
+            </td>
+        </tr>
+        <tr>
+            <td class="info-right">
+                <table><tr><td style="width:42%; font-weight:bold;">Tanggal Operasi</td><td style="width:3%;">:</td><td>{{ $order->tanggal_operasi ? \Carbon\Carbon::parse($order->tanggal_operasi)->translatedFormat('d F Y') : '-' }}</td></tr></table>
+            </td>
+        </tr>
+        <tr>
+            <td class="info-right">
+                <table><tr><td style="width:42%; font-weight:bold;">Nama Pasien</td><td style="width:3%;">:</td><td>{{ $order->nama_pasien ?? '-' }}</td></tr></table>
+            </td>
+        </tr>
+        <tr>
+            <td class="info-right">
+                <table><tr><td style="width:42%; font-weight:bold;">Operator</td><td style="width:3%;">:</td><td>{{ $order->operator ?? '-' }}</td></tr></table>
             </td>
         </tr>
     </table>
@@ -221,13 +143,7 @@
             {{-- Baris kosong --}}
             @for($e = $order->items->count(); $e < 12; $e++)
             <tr class="empty-row">
-                <td class="col-no"></td>
-                <td class="col-kode"></td>
-                <td class="col-desc"></td>
-                <td class="col-qty"></td>
-                <td class="col-sat"></td>
-                <td class="col-price"></td>
-                <td class="col-total"></td>
+                <td class="col-no"></td><td class="col-kode"></td><td class="col-desc"></td><td class="col-qty"></td><td class="col-sat"></td><td class="col-price"></td><td class="col-total"></td>
             </tr>
             @endfor
 

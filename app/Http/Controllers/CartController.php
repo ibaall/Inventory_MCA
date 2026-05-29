@@ -174,6 +174,23 @@ class CartController extends Controller
         return redirect()->route('cart.index')->with('success', $removedCount . ' item berhasil dihapus dari keranjang!');
     }
 
+    // Method baru: set discount
+    public function setDiscount(Request $request, $cartKey)
+    {
+        $request->validate([
+            'discount_percent' => 'required|integer|in:0,5,10,15',
+        ]);
+
+        $cart = session()->get('cart', []);
+
+        if (isset($cart[$cartKey])) {
+            $cart[$cartKey]['discount_percent'] = $request->discount_percent;
+            session()->put('cart', $cart);
+        }
+
+        return redirect()->route('cart.index')->with('success', 'Diskon berhasil diperbarui.');
+    }
+
     // Method baru: Checkout dan simpan pesanan, dengan metode pembayaran
     public function checkout(Request $request)
     {
@@ -211,10 +228,13 @@ class CartController extends Controller
             return redirect()->route('cart.index')->with('error', 'Item yang dipilih tidak ditemukan.');
         }
 
-        // Calculate total from selected items only
+        // Calculate total from selected items only, including discount
         $totalPrice = 0;
         foreach ($checkoutItems as $item) {
-            $totalPrice += $item['price'] * $item['quantity'];
+            $discountPct = $item['discount_percent'] ?? 0;
+            $originalPrice = $item['price'];
+            $discountedPrice = $discountPct > 0 ? round($originalPrice * (1 - $discountPct / 100)) : $originalPrice;
+            $totalPrice += $discountedPrice * $item['quantity'];
         }
 
         // Check PPN toggle
@@ -235,12 +255,17 @@ class CartController extends Controller
             // ✅ Ambil product_id murni dari cartKey
             // Format cartKey: "63" (tanpa varian) atau "63_3" (dengan varian)
             $productId = (int) explode('_', $cartKey)[0];
+            $discountPct = $item['discount_percent'] ?? 0;
+            $originalPrice = $item['price'];
+            $discountedPrice = $discountPct > 0 ? round($originalPrice * (1 - $discountPct / 100)) : $originalPrice;
 
             $order->items()->create([
-                'product_id' => $productId,               // ✅ integer bukan "63_3"
-                'quantity'   => $item['quantity'],
-                'price'      => $item['price'],
-                'subtotal'   => $item['price'] * $item['quantity'],
+                'product_id'       => $productId,               // ✅ integer bukan "63_3"
+                'quantity'         => $item['quantity'],
+                'price'            => $discountedPrice,
+                'original_price'   => $originalPrice,
+                'discount_percent' => $discountPct,
+                'subtotal'         => $discountedPrice * $item['quantity'],
             ]);
         }
 

@@ -72,6 +72,38 @@
                                 @endif
                             </td>
                         </tr>
+                        <tr>
+                            <td class="text-muted">Tanggal Jatuh Tempo</td>
+                            <td>
+                                @if($order->tanggal_jatuh_tempo)
+                                    {{ \Carbon\Carbon::parse($order->tanggal_jatuh_tempo)->translatedFormat('d F Y') }}
+                                @else
+                                    <span class="text-secondary">-</span>
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Tanggal Operasi</td>
+                            <td>
+                                @if($order->tanggal_operasi)
+                                    {{ \Carbon\Carbon::parse($order->tanggal_operasi)->translatedFormat('d F Y') }}
+                                @else
+                                    <span class="text-secondary">-</span>
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Nama Pasien</td>
+                            <td>{{ $order->nama_pasien ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Operator</td>
+                            <td>{{ $order->operator ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Alamat</td>
+                            <td>{{ $order->alamat ?? '-' }}</td>
+                        </tr>
                     </table>
                 </div>
             </div>
