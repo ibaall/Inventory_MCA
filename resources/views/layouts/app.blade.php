@@ -98,7 +98,6 @@
 
         /* ===== MOBILE SIDEBAR DRAWER ===== */
         .mobile-overlay {
-            display: none;
             position: fixed;
             top: 0;
             left: 0;
@@ -107,11 +106,13 @@
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 1200;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
         .mobile-overlay.active {
             opacity: 1;
+            visibility: visible;
         }
 
         .mobile-drawer {
@@ -269,14 +270,7 @@
                 display: flex;
             }
 
-            .mobile-overlay {
-                display: block;
-                pointer-events: none;
-            }
 
-            .mobile-overlay.active {
-                pointer-events: auto;
-            }
 
             .content {
                 margin-left: 0;

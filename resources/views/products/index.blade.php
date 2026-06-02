@@ -205,93 +205,6 @@
                         @endif
                     </td>
                 </tr>
-
-                {{-- ===== MODAL EDIT ===== --}}
-                <div class="modal fade" id="editModal{{ $product->id }}" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Edit Produk</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form action="{{ route('products.update', $product->id) }}"
-                                      method="POST" enctype="multipart/form-data">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="mb-3">
-                                        <label class="form-label">Kode Barang</label>
-                                        <input type="text" class="form-control" name="kode_barang"
-                                               value="{{ $product->kode_barang }}" placeholder="Contoh: ALK-001">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Nama Produk</label>
-                                        <input type="text" class="form-control" name="name"
-                                               value="{{ $product->name }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Nama Vendor</label>
-                                        <input type="text" class="form-control" name="vendor"
-                                               value="{{ $product->vendor }}" placeholder="Contoh: PT. Medika Utama">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Kategori</label>
-                                        <input type="text" class="form-control" name="category"
-                                               value="{{ $product->category }}" placeholder="Contoh: Alat Diagnostik">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Stok</label>
-                                        <input type="number" class="form-control" name="stock"
-                                               value="{{ $product->stock }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Satuan</label>
-                                        <select class="form-select" name="satuan" required>
-                                            @foreach($satuanList as $sat)
-                                                <option value="{{ $sat }}"
-                                                    {{ ($product->satuan ?? 'Pcs') === $sat ? 'selected' : '' }}>
-                                                    {{ $sat }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Harga</label>
-                                        <input type="number" class="form-control" name="price"
-                                               value="{{ $product->price }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Gambar Produk</label>
-                                        @if($product->image)
-                                            <div class="mb-2">
-                                                <img src="{{ asset('storage/' . $product->image) }}"
-                                                     class="img-thumbnail" style="height:80px; object-fit:cover;">
-                                                <small class="text-muted d-block">Gambar saat ini</small>
-                                            </div>
-                                        @endif
-                                        <input type="file" class="form-control" name="image" accept="image/*">
-                                        <small class="text-muted">Biarkan kosong jika tidak ingin mengubah gambar.</small>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                </form>
-
-                                {{-- Tombol Hapus Barang --}}
-                                <hr class="my-3">
-                                <form action="{{ route('products.destroy', $product->id) }}" method="POST"
-                                      onsubmit="return confirm('Yakin ingin menghapus produk {{ addslashes($product->name) }}? Data tidak dapat dikembalikan!')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-outline-danger w-100">
-                                        🗑️ Hapus Barang
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {{-- ===== END MODAL EDIT ===== --}}
-
                 @endforeach
             </tbody>
         </table>
@@ -311,6 +224,95 @@
 
     <a href="{{ route('cart.index') }}" class="btn btn-outline-primary mt-2">Lihat Keranjang</a>
 </div>
+
+{{-- ===== MODAL EDIT — DI LUAR TABEL ===== --}}
+@if(auth()->check() && in_array(auth()->user()->role, ['owner', 'admin']))
+    @foreach ($products as $product)
+    <div class="modal fade" id="editModal{{ $product->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Produk</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('products.update', $product->id) }}"
+                          method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+                        <div class="mb-3">
+                            <label class="form-label">Kode Barang</label>
+                            <input type="text" class="form-control" name="kode_barang"
+                                   value="{{ $product->kode_barang }}" placeholder="Contoh: ALK-001">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nama Produk</label>
+                            <input type="text" class="form-control" name="name"
+                                   value="{{ $product->name }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nama Vendor</label>
+                            <input type="text" class="form-control" name="vendor"
+                                   value="{{ $product->vendor }}" placeholder="Contoh: PT. Medika Utama">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Kategori</label>
+                            <input type="text" class="form-control" name="category"
+                                   value="{{ $product->category }}" placeholder="Contoh: Alat Diagnostik">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Stok</label>
+                            <input type="number" class="form-control" name="stock"
+                                   value="{{ $product->stock }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Satuan</label>
+                            <select class="form-select" name="satuan" required>
+                                @foreach($satuanList as $sat)
+                                    <option value="{{ $sat }}"
+                                        {{ ($product->satuan ?? 'Pcs') === $sat ? 'selected' : '' }}>
+                                        {{ $sat }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Harga</label>
+                            <input type="number" class="form-control" name="price"
+                                   value="{{ $product->price }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Gambar Produk</label>
+                            @if($product->image)
+                                <div class="mb-2">
+                                    <img src="{{ asset('storage/' . $product->image) }}"
+                                         class="img-thumbnail" style="height:80px; object-fit:cover;">
+                                    <small class="text-muted d-block">Gambar saat ini</small>
+                                </div>
+                            @endif
+                            <input type="file" class="form-control" name="image" accept="image/*">
+                            <small class="text-muted">Biarkan kosong jika tidak ingin mengubah gambar.</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    </form>
+
+                    {{-- Tombol Hapus Barang --}}
+                    <hr class="my-3">
+                    <form action="{{ route('products.destroy', $product->id) }}" method="POST"
+                          onsubmit="return confirm('Yakin ingin menghapus produk {{ addslashes($product->name) }}? Data tidak dapat dikembalikan!')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-outline-danger w-100">
+                            🗑️ Hapus Barang
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endforeach
+@endif
 
 {{-- ===== MODAL VARIAN — DI LUAR TABEL & FOREACH UTAMA ===== --}}
 @foreach($products as $product)
@@ -478,8 +480,6 @@
     @endif
 @endforeach
 {{-- ===== END MODAL VARIAN ===== --}}
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 {{-- ===== SATU BLOK SCRIPT ===== --}}
 <script>
