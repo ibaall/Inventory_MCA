@@ -39,7 +39,7 @@ class PasswordResetLinkController extends Controller
                         ? back()->with('status', __($status))
                         : back()->withInput($request->only('email'))
                             ->withErrors(['email' => __($status)]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Log error
             logger()->error('Gagal mengirim email reset password: ' . $e->getMessage());
 

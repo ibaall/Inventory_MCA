@@ -59,7 +59,7 @@ class AuthenticatedSessionController extends Controller
             try {
                 Mail::to($user->email)->send(new OtpMail($otpCode, $user->name));
                 $otpMessage = 'Kode OTP telah dikirim ke email Anda.';
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // Log error
                 logger()->error('Gagal mengirim email OTP: ' . $e->getMessage());
                 // Tampilkan kode OTP langsung di layar sebagai fallback
