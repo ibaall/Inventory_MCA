@@ -1,0 +1,7 @@
+public/storage
+node_modules
+vendor
+.env
+.env.backup
+storage/*.key
+.phpunit.cache
