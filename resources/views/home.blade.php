@@ -12,8 +12,8 @@
         @endphp
 
         {{-- Modul Penjualan dan Distribusi --}}
-        @if ($user->role === 'SD' || $user->role === 'admin')
-        <div class="col-md-4">
+        @if (in_array($user->role, ['owner', 'admin', 'karyawan']))
+        <div class="col-md-4 col-6">
             <div class="card shadow border-0 mb-4 h-100">
                 <div class="card-body text-center">
                     <h5 class="card-title text-primary"><i class="bi bi-bag-check-fill"></i> Penjualan & Distribusi</h5>
@@ -31,8 +31,8 @@
         @endif
 
         {{-- Modul Manajemen Material --}}
-        @if ($user->role === 'MM' || $user->role === 'admin')
-        <div class="col-md-4">
+        @if (in_array($user->role, ['owner', 'admin']))
+        <div class="col-md-4 col-6">
             <div class="card shadow border-0 mb-4 h-100">
                 <div class="card-body text-center">
                     <h5 class="card-title text-success"><i class="bi bi-boxes"></i> Manajemen Material</h5>
@@ -50,8 +50,8 @@
         @endif
 
         {{-- Modul Keuangan & Akuntansi --}}
-        @if ($user->role === 'FI' || $user->role === 'admin')
-        <div class="col-md-4">
+        @if (in_array($user->role, ['owner', 'admin']))
+        <div class="col-md-4 col-6">
             <div class="card shadow border-0 mb-4 h-100">
                 <div class="card-body text-center">
                     <h5 class="card-title text-danger"><i class="bi bi-cash-stack"></i> Keuangan & Akuntansi</h5>
@@ -62,6 +62,36 @@
                     <br>
                     <a href="{{ route('laporan.keuangan') }}" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-bar-chart-line"></i> Laporan Keuangan
+                    </a>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- Modul Purchase Order --}}
+        @if (in_array($user->role, ['owner', 'admin', 'karyawan']))
+        <div class="col-md-4 col-6">
+            <div class="card shadow border-0 mb-4 h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-info"><i class="bi bi-truck"></i> Purchase Order</h5>
+                    <p class="card-text">Kelola pembelian dan pesanan ke supplier.</p>
+                    <a href="{{ route('purchase-orders.index') }}" class="btn btn-outline-info btn-sm mb-2">
+                        <i class="bi bi-truck"></i> Daftar PO
+                    </a>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- Modul Kelola Akun (Hanya Owner & Admin) --}}
+        @if (in_array($user->role, ['owner', 'admin']))
+        <div class="col-md-4 col-6">
+            <div class="card shadow border-0 mb-4 h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-warning"><i class="bi bi-people-fill"></i> Kelola Akun</h5>
+                    <p class="card-text">Kelola pengguna dan hak akses aplikasi.</p>
+                    <a href="{{ route('users.index') }}" class="btn btn-outline-warning btn-sm mb-2">
+                        <i class="bi bi-people"></i> Daftar User
                     </a>
                 </div>
             </div>
