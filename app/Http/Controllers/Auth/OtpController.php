@@ -102,17 +102,14 @@ class OtpController extends Controller
             'expires_at' => now()->addMinutes(5),
         ]);
 
-        // Kirim email dengan fallback try-catch jika SMTP bermasalah di production
+        // Kirim email
         try {
             Mail::to($user->email)->send(new OtpMail($otpCode, $user->name));
-            $otpMessage = 'Kode OTP baru telah dikirim ke email Anda.';
+            return back()->with('otp_success', 'Kode OTP baru telah dikirim ke email Anda.');
         } catch (\Throwable $e) {
             // Log error
             logger()->error('Gagal mengirim email OTP (Resend): ' . $e->getMessage());
-            // Tampilkan kode OTP langsung di layar sebagai fallback
-            $otpMessage = 'Kode OTP baru Anda adalah: ' . $otpCode . ' (Pemberitahuan: Layanan email SMTP sedang mengalami gangguan/timeout).';
+            return back()->withErrors(['email' => 'Gagal mengirim email OTP baru. Silakan hubungi admin atau coba lagi nanti.']);
         }
-
-        return back()->with('otp_success', $otpMessage);
     }
 }

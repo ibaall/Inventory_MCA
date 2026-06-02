@@ -43,19 +43,8 @@ class PasswordResetLinkController extends Controller
             // Log error
             logger()->error('Gagal mengirim email reset password: ' . $e->getMessage());
 
-            // Cari user
-            $user = \App\Models\User::where('email', $request->email)->first();
-            if ($user) {
-                // Generate token reset password secara manual
-                $token = Password::createToken($user);
-                $resetUrl = route('password.reset', ['token' => $token, 'email' => $request->email]);
-                
-                // Kembalikan ke halaman sebelumnya dengan pesan sukses berisi link reset password langsung
-                return back()->with('status', 'Gagal mengirim email karena SMTP server timeout. Namun, Anda dapat mereset password melalui link berikut: ' . $resetUrl);
-            }
-
             return back()->withInput($request->only('email'))
-                ->withErrors(['email' => 'Gagal mengirim email reset password: ' . $e->getMessage()]);
+                ->withErrors(['email' => 'Gagal mengirim link reset password. Silakan hubungi admin atau coba lagi nanti.']);
         }
     }
 }

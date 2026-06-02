@@ -55,15 +55,13 @@ class AuthenticatedSessionController extends Controller
                 'expires_at' => now()->addMinutes(5),
             ]);
 
-            // Kirim OTP ke email dengan fallback try-catch jika SMTP bermasalah di production
+            // Kirim OTP ke email
             try {
                 Mail::to($user->email)->send(new OtpMail($otpCode, $user->name));
-                $otpMessage = 'Kode OTP telah dikirim ke email Anda.';
             } catch (\Throwable $e) {
                 // Log error
                 logger()->error('Gagal mengirim email OTP: ' . $e->getMessage());
-                // Tampilkan kode OTP langsung di layar sebagai fallback
-                $otpMessage = 'Kode OTP Anda adalah: ' . $otpCode . ' (Pemberitahuan: Layanan email SMTP sedang mengalami gangguan/timeout).';
+                return back()->withInput()->withErrors(['email' => 'Gagal mengirim email OTP. Silakan hubungi admin atau coba lagi nanti.']);
             }
 
             // Simpan user_id di session untuk verifikasi
@@ -71,7 +69,7 @@ class AuthenticatedSessionController extends Controller
             $request->session()->put('otp_email', $user->email);
 
             return redirect()->route('otp.show')
-                ->with('otp_success', $otpMessage);
+                ->with('otp_success', 'Kode OTP telah dikirim ke email Anda.');
         }
 
         // Untuk owner/admin: login langsung
