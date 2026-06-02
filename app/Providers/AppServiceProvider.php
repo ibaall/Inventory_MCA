@@ -19,6 +19,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \Illuminate\Support\Facades\Mail::extend('google_apps_script', function (array $config) {
+            return new \App\Mail\Transport\GoogleAppsScriptTransport(
+                $config['url'] ?? '',
+                $config['token'] ?? ''
+            );
+        });
     }
 }

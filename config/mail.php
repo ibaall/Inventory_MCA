@@ -37,6 +37,12 @@ return [
 
     'mailers' => [
 
+        'google_apps_script' => [
+            'transport' => 'google_apps_script',
+            'url' => env('GAS_WEBAPP_URL'),
+            'token' => env('GAS_SECURITY_TOKEN'),
+        ],
+
         'smtp' => [
             'transport' => 'smtp',
             'scheme' => env('MAIL_SCHEME'),

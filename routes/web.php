@@ -3,22 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
-Route::get('/test-connection', function() {
-    $host = 'smtp.gmail.com';
-    $ports = [25, 465, 587, 2525];
-    $results = [];
-    foreach ($ports as $port) {
-        $connection = @fsockopen($host, $port, $errno, $errstr, 5);
-        if (is_resource($connection)) {
-            $results[$port] = 'Open';
-            fclose($connection);
-        } else {
-            $results[$port] = 'Closed: ' . $errstr . ' (' . $errno . ')';
-        }
-    }
-    return response()->json($results);
-});
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
