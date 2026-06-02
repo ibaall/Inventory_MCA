@@ -106,34 +106,8 @@
             @auth
                 @php $user = auth()->user(); @endphp
 
-                {{-- Role MM --}}
-                @if ($user->role == 'MM')
-                    <li class="nav-item"><a class="nav-link" href="{{ route('products.create') }}"><i class="bi bi-plus-circle"></i> Tambah Produk</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}"><i class="bi bi-box-seam"></i> Lihat Produk</a></li>
-                @endif
-
-                {{-- Role DD --}}
-                @if ($user->role == 'DD')
-                    <li class="nav-item"><a class="nav-link" href="{{ route('products.create') }}"><i class="bi bi-plus-circle"></i> Tambah Produk</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('cart.index') }}"><i class="bi bi-receipt"></i> Lihat Keranjang</a></li>
-                @endif
-
-                {{-- Role SD --}}
-                @if ($user->role == 'SD')
-                    <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}"><i class="bi bi-box-seam"></i> Lihat Produk</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('cart.index') }}"><i class="bi bi-receipt"></i> Lihat Keranjang</a></li>
-                @endif
-
-                {{-- Role FI --}}
-                @if ($user->role == 'FI')
-                    <li class="nav-item"><a class="nav-link" href="{{ route('cart.index') }}"><i class="bi bi-receipt"></i> Lihat Keranjang</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('orders.index') }}"><i class="bi bi-list-check"></i> Daftar Keranjang</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('laporan.keuangan') }}"><i class="bi bi-bar-chart-line"></i> Laporan Keuangan</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('financial-reports.index') }}"><i class="bi bi-journal-text"></i> Laporan Detail</a></li>
-                @endif
-
-                {{-- Role Admin --}}
-                @if ($user->role == 'admin')
+                {{-- Role Owner & Admin: Akses Penuh --}}
+                @if (in_array($user->role, ['owner', 'admin']))
                     <li class="nav-item"><a class="nav-link" href="{{ route('products.create') }}"><i class="bi bi-plus-circle"></i> Tambah Produk</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}"><i class="bi bi-box-seam"></i> Lihat Produk</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('cart.index') }}"><i class="bi bi-receipt"></i> Lihat Keranjang</a></li>
@@ -141,9 +115,24 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('purchase-orders.index') }}"><i class="bi bi-truck"></i> Purchase Order</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('laporan.keuangan') }}"><i class="bi bi-bar-chart-line"></i> Laporan Keuangan</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('financial-reports.index') }}"><i class="bi bi-journal-text"></i> Laporan Detail</a></li>
+                    <hr class="text-white w-75 mx-auto my-2">
+                    <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}"><i class="bi bi-people"></i> Kelola Akun</a></li>
                 @endif
 
-                {{-- Logout --}}
+                {{-- Role Karyawan: Akses Terbatas --}}
+                @if ($user->role == 'karyawan')
+                    <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}"><i class="bi bi-box-seam"></i> Lihat Produk</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('cart.index') }}"><i class="bi bi-receipt"></i> Lihat Keranjang</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('orders.index') }}"><i class="bi bi-list-check"></i> Daftar Invoice</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('purchase-orders.index') }}"><i class="bi bi-truck"></i> Purchase Order</a></li>
+                @endif
+
+                {{-- User Info + Logout --}}
+                <hr class="text-white w-75 mx-auto my-2">
+                <li class="nav-item px-3 mb-1">
+                    <small class="text-white-50"><i class="bi bi-person-circle"></i> {{ $user->name }}</small><br>
+                    <small class="text-warning">{{ strtoupper($user->role) }}</small>
+                </li>
                 <li class="nav-item">
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf

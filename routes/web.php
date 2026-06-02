@@ -11,6 +11,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\UserManagementController;
 
 // ===== LAPORAN & ORDER (tidak butuh auth karena sudah di resource) =====
 Route::get('/laporan/export', [OrderController::class, 'exportExcel'])->name('laporan.export');
@@ -44,7 +45,7 @@ Route::post('/logout', function (Request $request) {
 // ===== HALAMAN UTAMA =====
 Route::get('/', function (Request $request) {
     if (Auth::check()) {
-        return redirect('http://transaksi.test:8080/products/create');
+        return redirect()->route('products.create');
     }
     return view('welcome');
 });
@@ -64,9 +65,11 @@ Route::middleware('auth')->group(function () {
         Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
 
-    // Produk
-    Route::prefix('/products')->group(function () {
-        Route::get('/', [ProductController::class, 'index'])->name('products.index');
+    // Produk - Lihat (semua user)
+    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+
+    // Produk - Kelola (owner & admin only)
+    Route::middleware('role:owner,admin')->prefix('/products')->group(function () {
         Route::get('/create', [ProductController::class, 'create'])->name('products.create');
         Route::post('/', [ProductController::class, 'store'])->name('products.store');
         Route::get('/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
@@ -116,6 +119,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan-keuangan-detail/pdf', [\App\Http\Controllers\FinancialReportController::class, 'exportPdf'])->name('financial-reports.pdf');
     Route::post('/payments', [\App\Http\Controllers\PaymentController::class, 'store'])->name('payments.store');
     Route::delete('/payments/{id}', [\App\Http\Controllers\PaymentController::class, 'destroy'])->name('payments.destroy');
+
+    // Kelola Akun (Owner & Admin only)
+    Route::middleware('role:owner,admin')->prefix('users')->group(function () {
+        Route::get('/', [UserManagementController::class, 'index'])->name('users.index');
+        Route::get('/create', [UserManagementController::class, 'create'])->name('users.create');
+        Route::post('/', [UserManagementController::class, 'store'])->name('users.store');
+        Route::get('/{user}/edit', [UserManagementController::class, 'edit'])->name('users.edit');
+        Route::put('/{user}', [UserManagementController::class, 'update'])->name('users.update');
+        Route::delete('/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
+        Route::post('/{user}/reset-password', [UserManagementController::class, 'resetPassword'])->name('users.resetPassword');
+    });
 });
 
 require __DIR__.'/auth.php';

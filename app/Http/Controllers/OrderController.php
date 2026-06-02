@@ -6,6 +6,7 @@ use App\Exports\LaporanKeuanganExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -122,6 +123,10 @@ class OrderController extends Controller
 
         session()->forget('cart');
 
+        // Invalidate cached dropdown data
+        Cache::forget('laporan_customers');
+        Cache::forget('laporan_available_years');
+
         return redirect()->route('orders.show', $order->id)->with('success', 'Checkout berhasil! Pesanan telah disimpan.');
     }
 
@@ -133,7 +138,7 @@ class OrderController extends Controller
 
     public function index()
     {
-        $orders = Order::with('user')->latest()->get();
+        $orders = Order::with('user')->latest()->paginate(25)->withQueryString();
         return view('orders.index', compact('orders'));
     }
 
@@ -142,6 +147,10 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
         $order->items()->delete();
         $order->delete();
+
+        // Invalidate cached dropdown data
+        Cache::forget('laporan_customers');
+        Cache::forget('laporan_available_years');
 
         return redirect()->route('orders.index')->with('success', 'Pesanan berhasil dihapus.');
     }
@@ -195,22 +204,28 @@ class OrderController extends Controller
         $filterCustomer   = $request->get('customer_name');
         $filterSupplier   = $request->get('supplier_name');
 
-        // --- Daftar dropdown untuk filter ---
-        $customers = Order::whereNotNull('customer_name')
-            ->where('customer_name', '!=', '')
-            ->distinct()->orderBy('customer_name')->pluck('customer_name');
+        // --- Daftar dropdown untuk filter (cached 10 min) ---
+        $customers = Cache::remember('laporan_customers', 600, function () {
+            return Order::whereNotNull('customer_name')
+                ->where('customer_name', '!=', '')
+                ->distinct()->orderBy('customer_name')->pluck('customer_name');
+        });
 
-        $suppliers = \App\Models\PurchaseOrder::select('supplier_name')
-            ->distinct()->orderBy('supplier_name')->pluck('supplier_name');
+        $suppliers = Cache::remember('laporan_suppliers', 600, function () {
+            return \App\Models\PurchaseOrder::select('supplier_name')
+                ->distinct()->orderBy('supplier_name')->pluck('supplier_name');
+        });
 
-        $availableYears = DB::table('orders')
-            ->select(DB::raw('YEAR(ordered_at) as tahun'))
-            ->union(
-                DB::table('purchase_orders')->select(DB::raw('YEAR(ordered_at) as tahun'))
-            )
-            ->distinct()
-            ->orderBy('tahun', 'desc')
-            ->pluck('tahun');
+        $availableYears = Cache::remember('laporan_available_years', 600, function () {
+            return DB::table('orders')
+                ->select(DB::raw('YEAR(ordered_at) as tahun'))
+                ->union(
+                    DB::table('purchase_orders')->select(DB::raw('YEAR(ordered_at) as tahun'))
+                )
+                ->distinct()
+                ->orderBy('tahun', 'desc')
+                ->pluck('tahun');
+        });
 
         // --- Helper: Apply month range filter ---
         $applyMonthRange = function ($query) use ($filterBulanDari, $filterBulanSampai) {
@@ -274,13 +289,13 @@ class OrderController extends Controller
             ->orderBy(DB::raw('MONTH(ordered_at)'), 'desc')
             ->get();
 
-        // --- Transaksi penjualan terbaru (detail, filtered) ---
+        // --- Transaksi penjualan terbaru (detail, filtered, paginated) ---
         $recentOrders = $applyOrderFilters(Order::with('user'))
-            ->latest('ordered_at')->get();
+            ->latest('ordered_at')->paginate(20, ['*'], 'orders_page')->withQueryString();
 
-        // --- Transaksi PO terbaru (detail, filtered) ---
+        // --- Transaksi PO terbaru (detail, filtered, paginated) ---
         $recentPOs = $applyPoFilters(\App\Models\PurchaseOrder::with('user'))
-            ->latest('ordered_at')->get();
+            ->latest('ordered_at')->paginate(20, ['*'], 'po_page')->withQueryString();
 
         // --- Grand totals (filtered) ---
         $totalPenjualan = $applyOrderFilters(DB::table('orders'))->sum('total_price');

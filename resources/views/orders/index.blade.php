@@ -116,7 +116,7 @@
                                    class="form-check-input order-checkbox"
                                    style="cursor: pointer; width: 18px; height: 18px;">
                         </td>
-                        <td class="text-center">{{ $loop->iteration }}</td>
+                        <td class="text-center">{{ $orders->firstItem() + $loop->index }}</td>
                         <td><span class="badge bg-secondary">#{{ $order->id }}</span></td>
                         <td>{{ $order->customer_name ?? '-' }}</td>
                         <td>{{ $order->user->name ?? '-' }}</td>
@@ -154,12 +154,17 @@
                 <tfoot class="table-secondary fw-bold">
                     <tr>
                         <td></td>
-                        <td colspan="4" class="text-end">Total Semua Pesanan:</td>
+                        <td colspan="4" class="text-end">Total Halaman Ini:</td>
                         <td class="text-end">Rp {{ number_format($orders->sum('total_price'), 0, ',', '.') }}</td>
                         <td colspan="4"></td>
                     </tr>
                 </tfoot>
             </table>
+        </div>
+
+        {{-- Pagination Links --}}
+        <div class="d-flex justify-content-center mt-3">
+            {{ $orders->links() }}
         </div>
     @endif
 </div>

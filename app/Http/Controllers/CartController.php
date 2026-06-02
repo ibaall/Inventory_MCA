@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\LaporanExport;
@@ -279,6 +280,11 @@ class CartController extends Controller
         } else {
             session()->put('cart', $cart);
         }
+
+        // Invalidate cached dropdown data
+        Cache::forget('laporan_customers');
+        Cache::forget('laporan_available_years');
+        Cache::forget('financial_customers');
 
         return redirect()->route('orders.index')->with('success', 'Pesanan berhasil dibuat.');
     }

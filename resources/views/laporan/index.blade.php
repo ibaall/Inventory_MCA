@@ -156,7 +156,7 @@
                     @foreach($recentOrders as $order)
                     @php $ppn=($order->use_ppn??true)?round($order->total_price*0.11):0; @endphp
                     <tr>
-                        <td class="text-center">{{$loop->iteration}}</td>
+                        <td class="text-center">{{ $recentOrders->firstItem() + $loop->index }}</td>
                         <td><span class="badge bg-secondary">#{{$order->id}}</span></td>
                         <td>{{$order->customer_name??'-'}}</td>
                         <td>{{$order->user->name??'-'}}</td>
@@ -176,13 +176,17 @@
                     @endforeach
                     </tbody>
                     <tfoot class="table-secondary fw-bold"><tr>
-                        <td colspan="4" class="text-end">Total:</td>
-                        <td class="text-end">Rp {{number_format($recentOrders->sum('total_price'),0,',','.')}}</td>
-                        <td class="text-end">Rp {{number_format($recentOrders->sum(fn($o)=>($o->use_ppn??true)?round($o->total_price*0.11):0),0,',','.')}}</td>
-                        <td class="text-end text-success">Rp {{number_format($recentOrders->sum(fn($o)=>$o->total_price+(($o->use_ppn??true)?round($o->total_price*0.11):0)),0,',','.')}}</td>
+                        <td colspan="4" class="text-end">Total (Grand):</td>
+                        <td class="text-end">Rp {{number_format($totalPenjualan,0,',','.')}}</td>
+                        <td class="text-end">—</td>
+                        <td class="text-end text-success">—</td>
                         <td colspan="3"></td>
                     </tr></tfoot>
                 </table>
+            </div>
+            {{-- Pagination Links --}}
+            <div class="d-flex justify-content-center mt-3">
+                {{ $recentOrders->links() }}
             </div>
             @endif
         </div>
@@ -209,7 +213,7 @@
                     @foreach($recentPOs as $po)
                     @php $ppnPo=($po->use_ppn??true)?round($po->total_price*0.11):0; @endphp
                     <tr>
-                        <td class="text-center">{{$loop->iteration}}</td>
+                        <td class="text-center">{{ $recentPOs->firstItem() + $loop->index }}</td>
                         <td>@if($po->po_number)<span class="badge bg-secondary">{{$po->po_number}}</span>@else<span class="text-muted">-</span>@endif</td>
                         <td>{{$po->supplier_name}}</td>
                         <td>{{$po->user->name??'-'}}</td>
@@ -226,13 +230,17 @@
                     @endforeach
                     </tbody>
                     <tfoot class="table-secondary fw-bold"><tr>
-                        <td colspan="4" class="text-end">Total:</td>
-                        <td class="text-end">Rp {{number_format($recentPOs->sum('total_price'),0,',','.')}}</td>
-                        <td class="text-end">Rp {{number_format($recentPOs->sum(fn($p)=>($p->use_ppn??true)?round($p->total_price*0.11):0),0,',','.')}}</td>
-                        <td class="text-end text-danger">Rp {{number_format($recentPOs->sum(fn($p)=>$p->total_price+(($p->use_ppn??true)?round($p->total_price*0.11):0)),0,',','.')}}</td>
+                        <td colspan="4" class="text-end">Total (Grand):</td>
+                        <td class="text-end">Rp {{number_format($totalPembelian,0,',','.')}}</td>
+                        <td class="text-end">—</td>
+                        <td class="text-end text-danger">—</td>
                         <td colspan="3"></td>
                     </tr></tfoot>
                 </table>
+            </div>
+            {{-- Pagination Links --}}
+            <div class="d-flex justify-content-center mt-3">
+                {{ $recentPOs->links() }}
             </div>
             @endif
         </div>

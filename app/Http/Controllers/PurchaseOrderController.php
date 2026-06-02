@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderItem;
 use App\Models\Product;
@@ -44,7 +45,7 @@ class PurchaseOrderController extends Controller
     // ===== INDEX =====
     public function index()
     {
-        $purchaseOrders = PurchaseOrder::with('user')->latest()->get();
+        $purchaseOrders = PurchaseOrder::with('user')->latest()->paginate(25)->withQueryString();
         return view('purchase-orders.index', compact('purchaseOrders'));
     }
 
@@ -119,6 +120,11 @@ class PurchaseOrderController extends Controller
             ]);
         }
 
+        // Invalidate cached dropdown data
+        Cache::forget('laporan_suppliers');
+        Cache::forget('laporan_available_years');
+        Cache::forget('financial_suppliers');
+
         return redirect()->route('purchase-orders.index')->with('success', 'Purchase Order berhasil dibuat.');
     }
 
@@ -175,6 +181,11 @@ class PurchaseOrderController extends Controller
 
         $po->items()->delete();
         $po->delete();
+
+        // Invalidate cached dropdown data
+        Cache::forget('laporan_suppliers');
+        Cache::forget('laporan_available_years');
+        Cache::forget('financial_suppliers');
 
         return redirect()->route('purchase-orders.index')->with('success', 'Purchase Order berhasil dihapus.');
     }

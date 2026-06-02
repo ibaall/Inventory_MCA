@@ -40,7 +40,7 @@
                 <tbody>
                     @foreach($purchaseOrders as $po)
                     <tr>
-                        <td class="text-center">{{ $loop->iteration }}</td>
+                        <td class="text-center">{{ $purchaseOrders->firstItem() + $loop->index }}</td>
                         <td>
                             @if($po->po_number)
                                 <span class="badge bg-secondary">{{ $po->po_number }}</span>
@@ -75,12 +75,17 @@
                 </tbody>
                 <tfoot class="table-secondary fw-bold">
                     <tr>
-                        <td colspan="4" class="text-end">Total:</td>
+                        <td colspan="4" class="text-end">Total Halaman Ini:</td>
                         <td class="text-end">Rp {{ number_format($purchaseOrders->sum('total_price'), 0, ',', '.') }}</td>
                         <td colspan="3"></td>
                     </tr>
                 </tfoot>
             </table>
+        </div>
+
+        {{-- Pagination Links --}}
+        <div class="d-flex justify-content-center mt-3">
+            {{ $purchaseOrders->links() }}
         </div>
     @endif
 </div>

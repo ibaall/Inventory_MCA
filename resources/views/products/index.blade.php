@@ -10,7 +10,9 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <a href="{{ route('products.create') }}" class="btn btn-primary mb-3">Tambah Produk</a>
+    @if(auth()->check() && in_array(auth()->user()->role, ['owner', 'admin']))
+        <a href="{{ route('products.create') }}" class="btn btn-primary mb-3">Tambah Produk</a>
+    @endif
 
     {{-- ===== PANEL PENCARIAN & FILTER ===== --}}
     <div class="card mb-4 shadow-sm">
@@ -84,7 +86,7 @@
     </div>
 
     <div class="mb-2 text-muted small">
-        Menampilkan <strong>{{ $products->count() }}</strong> produk
+        Menampilkan <strong>{{ $products->firstItem() ?? 0 }}</strong>–<strong>{{ $products->lastItem() ?? 0 }}</strong> dari <strong>{{ $products->total() }}</strong> produk
         @if(request()->hasAny(['search','kode_barang','vendor','category','stock_status']))
             &nbsp;–&nbsp;
             <a href="{{ route('products.index') }}" class="text-danger text-decoration-none">✕ Hapus semua filter</a>
@@ -112,13 +114,14 @@
             <tbody>
                 @foreach ($products as $index => $product)
                 <tr>
-                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $products->firstItem() + $index }}</td>
 
                     <td class="text-center">
                         @if($product->image)
                             <img src="{{ asset('storage/' . $product->image) }}"
                                  alt="{{ $product->name }}"
                                  class="img-thumbnail"
+                                 loading="lazy"
                                  style="width:70px; height:70px; object-fit:cover;">
                         @else
                             <span class="text-muted">-</span>
@@ -171,12 +174,14 @@
                     <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
 
                     <td>
-                        {{-- Tombol Edit --}}
+                        {{-- Tombol Edit (hanya owner/admin) --}}
+                        @if(auth()->check() && in_array(auth()->user()->role, ['owner', 'admin']))
                         <button class="btn btn-warning btn-sm mb-1"
                                 data-bs-toggle="modal"
                                 data-bs-target="#editModal{{ $product->id }}">
                             Edit
                         </button>
+                        @endif
 
                         {{-- Tambah ke Keranjang --}}
                         @if($product->stock > 0)
@@ -292,6 +297,11 @@
         </table>
     </div>
 
+    {{-- Pagination Links --}}
+    <div class="d-flex justify-content-center mt-3">
+        {{ $products->links() }}
+    </div>
+
     @else
         <div class="alert alert-warning text-center">
             <h5>Tidak ada produk yang ditemukan.</h5>
@@ -324,7 +334,7 @@
                     <div class="d-flex gap-3 mb-3">
                         @if($product->image)
                             <img src="{{ asset('storage/' . $product->image) }}"
-                                 class="img-thumbnail" style="width:80px; height:80px; object-fit:cover;">
+                                 class="img-thumbnail" loading="lazy" style="width:80px; height:80px; object-fit:cover;">
                         @endif
                         <div>
                             <div class="text-danger fw-bold fs-5">

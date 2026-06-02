@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\PurchaseOrder;
@@ -64,18 +65,22 @@ class FinancialReportController extends Controller
             return back()->withErrors(['tanggal_awal' => 'Tanggal awal tidak boleh lebih besar dari tanggal akhir.']);
         }
 
-        // Ambil daftar supplier dan customer untuk dropdown filter
-        $suppliers = PurchaseOrder::select('supplier_name')
+        // Ambil daftar supplier dan customer untuk dropdown filter (cached 10 min)
+        $suppliers = Cache::remember('financial_suppliers', 600, function () {
+            return PurchaseOrder::select('supplier_name')
                         ->distinct()
                         ->orderBy('supplier_name')
                         ->pluck('supplier_name');
+        });
 
-        $customers = Order::select('customer_name')
+        $customers = Cache::remember('financial_customers', 600, function () {
+            return Order::select('customer_name')
                         ->whereNotNull('customer_name')
                         ->where('customer_name', '!=', '')
                         ->distinct()
                         ->orderBy('customer_name')
                         ->pluck('customer_name');
+        });
 
         // Data laporan berdasarkan jenis
         $reportData = [];

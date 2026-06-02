@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
@@ -67,6 +68,10 @@ public function store(Request $request)
         }
     }
 
+    // Invalidate cached dropdown data
+    Cache::forget('product_categories');
+    Cache::forget('product_vendors');
+
     return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan!');
 }
 
@@ -84,9 +89,16 @@ public function index(Request $request)
         elseif ($request->stock_status === 'empty') $query->where('stock', 0);
     }
 
-    $products    = $query->with('variants')->orderBy('name')->get();
-    $categories  = Product::whereNotNull('category')->distinct()->pluck('category');
-    $vendors     = Product::whereNotNull('vendor')->distinct()->pluck('vendor');
+    // Pagination + eager loading variants
+    $products    = $query->with('variants')->orderBy('name')->paginate(25)->withQueryString();
+
+    // Cache dropdown data for 10 minutes
+    $categories  = Cache::remember('product_categories', 600, function () {
+        return Product::whereNotNull('category')->distinct()->pluck('category');
+    });
+    $vendors     = Cache::remember('product_vendors', 600, function () {
+        return Product::whereNotNull('vendor')->distinct()->pluck('vendor');
+    });
     $satuanList  = $this->satuanList;
 
     return view('products.index', compact('products', 'categories', 'vendors', 'satuanList'));
@@ -150,6 +162,10 @@ public function update(Request $request, $id)
         'category'    => $request->category,
     ]);
 
+    // Invalidate cached dropdown data
+    Cache::forget('product_categories');
+    Cache::forget('product_vendors');
+
     return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui!');
 }
 
@@ -166,6 +182,10 @@ public function destroy($id)
     }
 
     $product->delete();
+
+    // Invalidate cached dropdown data
+    Cache::forget('product_categories');
+    Cache::forget('product_vendors');
 
     return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus!');
 }
