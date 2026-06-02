@@ -123,12 +123,12 @@
         const row  = document.createElement('div');
         row.className = 'row g-2 align-items-center mb-2 variant-row';
         row.innerHTML = `
-            <div class="col-5">
+            <div class="col-12 col-md-5">
                 <input type="text" class="form-control form-control-sm"
                        name="variants[${variantIndex}][nama_varian]"
                        placeholder="Nama varian (contoh: M3x10mm)" required>
             </div>
-            <div class="col-3">
+            <div class="col-6 col-md-3">
                 <div class="input-group input-group-sm">
                     <span class="input-group-text">Stok</span>
                     <input type="number" class="form-control"
@@ -136,7 +136,7 @@
                            placeholder="0" min="0" required>
                 </div>
             </div>
-            <div class="col-3">
+            <div class="col-6 col-md-3">
                 <div class="input-group input-group-sm">
                     <span class="input-group-text">Rp</span>
                     <input type="number" class="form-control"
@@ -144,7 +144,7 @@
                            placeholder="Harga (opsional)" min="0">
                 </div>
             </div>
-            <div class="col-1 text-center">
+            <div class="col-12 col-md-1 text-center mt-1 mt-md-0">
                 <button type="button" class="btn btn-danger btn-sm"
                         onclick="this.closest('.variant-row').remove()">✕</button>
             </div>

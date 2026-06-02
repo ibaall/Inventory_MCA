@@ -193,7 +193,7 @@
                             @else
                                 <form action="{{ route('cart.add', $product->id) }}" method="POST">
                                     @csrf
-                                    <div class="input-group input-group-sm mt-1" style="width:160px;">
+                                    <div class="input-group input-group-sm mt-1" style="max-width:160px;">
                                         <input type="number" name="quantity" class="form-control"
                                                value="1" min="1" max="{{ $product->stock }}" required>
                                         <button type="submit" class="btn btn-success btn-sm">+ Keranjang</button>

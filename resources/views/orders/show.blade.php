@@ -5,27 +5,27 @@
 @section('content')
 <div class="container">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <h2 class="mb-0">Detail Pesanan</h2>
         <div class="d-flex gap-2 flex-wrap">
             {{-- Invoice --}}
-            <button onclick="cetakInvoice({{ $order->id }})" class="btn btn-success">
-                🖨️ Cetak Invoice
+            <button onclick="cetakInvoice({{ $order->id }})" class="btn btn-success btn-sm">
+                🖨️ Invoice
             </button>
-            <a href="{{ route('orders.invoice.pdf', $order->id) }}" class="btn btn-danger" target="_blank">
-                ⬇️ Download PDF
+            <a href="{{ route('orders.invoice.pdf', $order->id) }}" class="btn btn-danger btn-sm" target="_blank">
+                ⬇️ PDF
             </a>
 
             {{-- Surat Jalan --}}
-            <button onclick="cetakSuratJalan({{ $order->id }})" class="btn btn-warning">
-                📄 Cetak Surat Jalan
+            <button onclick="cetakSuratJalan({{ $order->id }})" class="btn btn-warning btn-sm">
+                📄 Surat Jalan
             </button>
-            <a href="{{ route('orders.sj.pdf', $order->id) }}" class="btn btn-outline-warning" target="_blank">
-                ⬇️ Download SJ
+            <a href="{{ route('orders.sj.pdf', $order->id) }}" class="btn btn-outline-warning btn-sm" target="_blank">
+                ⬇️ SJ
             </a>
 
-            <a href="{{ route('orders.edit', $order->id) }}" class="btn btn-secondary">Edit</a>
-            <a href="{{ route('orders.index') }}" class="btn btn-outline-secondary">← Kembali</a>
+            <a href="{{ route('orders.edit', $order->id) }}" class="btn btn-secondary btn-sm">Edit</a>
+            <a href="{{ route('orders.index') }}" class="btn btn-outline-secondary btn-sm">← Kembali</a>
         </div>
     </div>
 

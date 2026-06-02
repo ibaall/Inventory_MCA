@@ -4,26 +4,26 @@
 
 @section('content')
 <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <h2 class="mb-0">Detail Purchase Order</h2>
         <div class="d-flex gap-2 flex-wrap">
-            <button onclick="window.open('/purchase-orders/{{ $po->id }}/print', '_blank')" class="btn btn-success">
+            <button onclick="window.open('/purchase-orders/{{ $po->id }}/print', '_blank')" class="btn btn-success btn-sm">
                 🖨️ Cetak PO
             </button>
-            <a href="{{ route('purchase-orders.pdf', $po->id) }}" class="btn btn-danger" target="_blank">
-                ⬇️ Download PDF
+            <a href="{{ route('purchase-orders.pdf', $po->id) }}" class="btn btn-danger btn-sm" target="_blank">
+                ⬇️ PDF
             </a>
 
             @if($po->status === 'pending')
             <form action="{{ route('purchase-orders.terima', $po->id) }}" method="POST" class="d-inline">
                 @csrf
-                <button type="submit" class="btn btn-primary" onclick="return confirm('Konfirmasi barang diterima? Stok akan diperbarui.')">
+                <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('Konfirmasi barang diterima? Stok akan diperbarui.')">
                     ✅ Terima Barang
                 </button>
             </form>
             @endif
 
-            <a href="{{ route('purchase-orders.index') }}" class="btn btn-outline-secondary">← Kembali</a>
+            <a href="{{ route('purchase-orders.index') }}" class="btn btn-outline-secondary btn-sm">← Kembali</a>
         </div>
     </div>
 

@@ -309,6 +309,250 @@
                 }
             }
         }
+
+        /* ========================================================
+           GLOBAL MOBILE RESPONSIVE FIXES (iPhone 13 / 390px)
+           ======================================================== */
+        @media (max-width: 767.98px) {
+
+            /* --- Container & Typography --- */
+            .content .container {
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+
+            .content h2 {
+                font-size: 1.3rem;
+            }
+
+            .content h5,
+            .content .card-title {
+                font-size: 0.95rem;
+            }
+
+            /* --- Tables: make them usable on mobile --- */
+            .table-responsive {
+                border-radius: 8px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .table {
+                font-size: 0.78rem;
+            }
+
+            .table th,
+            .table td {
+                padding: 6px 8px;
+                white-space: nowrap;
+            }
+
+            .table .btn-sm {
+                font-size: 0.7rem;
+                padding: 4px 8px;
+                white-space: nowrap;
+            }
+
+            /* --- Action buttons in table cells: stack them --- */
+            td .btn-sm {
+                margin-bottom: 3px !important;
+                display: inline-block;
+            }
+
+            /* --- Cards: full width, less padding --- */
+            .card-body {
+                padding: 12px;
+            }
+
+            .card-header {
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+
+            /* --- Row/Col on mobile --- */
+            .row > .col-md-6 {
+                margin-bottom: 12px;
+            }
+
+            /* --- Page header: stack title + buttons vertically --- */
+            .d-flex.justify-content-between.align-items-center {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 10px;
+            }
+
+            .d-flex.justify-content-between.align-items-center > .d-flex {
+                flex-wrap: wrap;
+                gap: 6px;
+                width: 100%;
+            }
+
+            .d-flex.justify-content-between.align-items-center > .d-flex > .btn,
+            .d-flex.justify-content-between.align-items-center > .d-flex > form > .btn {
+                font-size: 0.78rem;
+                padding: 6px 10px;
+                flex: 1 1 auto;
+                min-width: 0;
+                text-align: center;
+            }
+
+            /* --- Forms: proper sizing on mobile --- */
+            .form-control,
+            .form-select {
+                font-size: 0.9rem;
+            }
+
+            .form-label {
+                font-size: 0.85rem;
+            }
+
+            /* --- Modals: full-width on mobile --- */
+            .modal-dialog {
+                margin: 10px;
+                max-width: calc(100% - 20px);
+            }
+
+            .modal-body {
+                padding: 16px;
+            }
+
+            .modal-content {
+                border-radius: 12px;
+            }
+
+            /* --- Floating Bulk Action Bar: mobile friendly --- */
+            #bulkActionBar {
+                left: 10px !important;
+                right: 10px !important;
+                transform: none !important;
+                flex-wrap: wrap !important;
+                padding: 10px 14px !important;
+                gap: 8px !important;
+                border-radius: 12px !important;
+                font-size: 12px !important;
+                bottom: 16px !important;
+            }
+
+            #bulkActionBar .btn {
+                font-size: 11px !important;
+                padding: 6px 10px !important;
+                border-radius: 8px !important;
+            }
+
+            /* --- Badges --- */
+            .badge {
+                font-size: 0.68rem;
+                padding: 3px 6px;
+            }
+
+            /* --- Filter cards on mobile --- */
+            .card .row.g-3 > [class*="col-md"] {
+                margin-bottom: 4px;
+            }
+
+            /* --- Variant modal tabs on mobile --- */
+            .nav-tabs .nav-link {
+                font-size: 0.8rem;
+                padding: 8px 10px;
+            }
+
+            /* --- Input group compact on mobile --- */
+            .input-group {
+                flex-wrap: nowrap;
+            }
+
+            .input-group-text {
+                font-size: 0.8rem;
+                padding: 4px 8px;
+            }
+
+            /* --- Product images smaller on mobile --- */
+            .img-thumbnail {
+                width: 50px !important;
+                height: 50px !important;
+            }
+
+            /* --- Pagination styling on mobile --- */
+            .pagination {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 2px;
+            }
+
+            .pagination .page-link {
+                font-size: 0.75rem;
+                padding: 4px 8px;
+            }
+
+            /* --- Alert/Info boxes --- */
+            .alert {
+                font-size: 0.85rem;
+                padding: 10px 14px;
+            }
+
+            /* --- Charts: proper sizing on mobile --- */
+            .card-body canvas {
+                max-height: 200px !important;
+            }
+
+            /* --- Checkout/Form buttons full width on mobile --- */
+            .btn-primary,
+            .btn-success,
+            .btn-warning,
+            .btn-secondary,
+            .btn-danger {
+                font-size: 0.85rem;
+            }
+
+            /* --- Tabs scrollable on mobile --- */
+            .nav-tabs {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+
+            .nav-tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .nav-tabs .nav-item {
+                flex-shrink: 0;
+            }
+
+            /* --- Home dashboard cards --- */
+            .col-6 .card-body {
+                padding: 10px;
+            }
+
+            .col-6 .card-title {
+                font-size: 0.8rem;
+            }
+
+            .col-6 .card-text {
+                font-size: 0.72rem;
+                margin-bottom: 8px;
+            }
+
+            .col-6 .btn-sm {
+                font-size: 0.68rem;
+                padding: 3px 6px;
+            }
+        }
+
+        /* Extra small phones (SE etc) */
+        @media (max-width: 374px) {
+            .content {
+                padding: 10px;
+            }
+
+            .table {
+                font-size: 0.72rem;
+            }
+
+            .col-6 .card-title {
+                font-size: 0.72rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -482,7 +726,10 @@
         @yield('content')
     </div>
 
-    <!-- JavaScript -->
+    <!-- Bootstrap JS Bundle (global) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Mobile Drawer Script -->
     <script>
         (function() {
             const toggle = document.getElementById('mobile-menu-toggle');
@@ -522,5 +769,7 @@
             }
         })();
     </script>
+
+    @yield('scripts')
 </body>
 </html>
