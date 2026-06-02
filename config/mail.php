@@ -39,7 +39,7 @@ return [
 
         'google_apps_script' => [
             'transport' => 'google_apps_script',
-            'url' => env('GAS_WEBAPP_URL'),
+            'webapp_url' => env('GAS_WEBAPP_URL'),
             'token' => env('GAS_SECURITY_TOKEN'),
         ],
 
