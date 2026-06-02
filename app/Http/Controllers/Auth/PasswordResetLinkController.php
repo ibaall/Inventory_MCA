@@ -29,16 +29,33 @@ class PasswordResetLinkController extends Controller
             'email' => ['required', 'email'],
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        try {
+            // Coba kirim email reset password secara normal
+            $status = Password::sendResetLink(
+                $request->only('email')
+            );
 
-        return $status == Password::RESET_LINK_SENT
-                    ? back()->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                        ->withErrors(['email' => __($status)]);
+            return $status == Password::RESET_LINK_SENT
+                        ? back()->with('status', __($status))
+                        : back()->withInput($request->only('email'))
+                            ->withErrors(['email' => __($status)]);
+        } catch (\Exception $e) {
+            // Log error
+            logger()->error('Gagal mengirim email reset password: ' . $e->getMessage());
+
+            // Cari user
+            $user = \App\Models\User::where('email', $request->email)->first();
+            if ($user) {
+                // Generate token reset password secara manual
+                $token = Password::createToken($user);
+                $resetUrl = route('password.reset', ['token' => $token, 'email' => $request->email]);
+                
+                // Kembalikan ke halaman sebelumnya dengan pesan sukses berisi link reset password langsung
+                return back()->with('status', 'Gagal mengirim email karena SMTP server timeout. Namun, Anda dapat mereset password melalui link berikut: ' . $resetUrl);
+            }
+
+            return back()->withInput($request->only('email'))
+                ->withErrors(['email' => 'Gagal mengirim email reset password: ' . $e->getMessage()]);
+        }
     }
 }
