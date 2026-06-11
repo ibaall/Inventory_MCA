@@ -72,18 +72,20 @@
         </div>
 
         <div class="mb-3">
-            <label for="alamat_history" class="form-label">Pilih dari Alamat Tersimpan (Opsional)</label>
-            <select id="alamat_history" class="form-select" onchange="useSavedAddress(this.value)">
-                <option value="">-- Gunakan Alamat Baru / Ketik Manual --</option>
-                @foreach($savedAddresses as $savedAddr)
-                    <option value="{{ $savedAddr }}">{{ $savedAddr }}</option>
+            <label for="alamat_customer" class="form-label">Pilih Alamat dari Customer (Opsional)</label>
+            <select id="alamat_customer" class="form-select" onchange="onCustomerAddressChange(this)">
+                <option value="">-- Pilih Customer untuk Isi Alamat --</option>
+                @foreach($customers as $customer)
+                    @if($customer->alamat)
+                        <option value="{{ $customer->alamat }}">{{ $customer->name }} — {{ $customer->alamat }}</option>
+                    @endif
                 @endforeach
             </select>
         </div>
 
         <div class="mb-3">
             <label for="alamat" class="form-label">Alamat</label>
-            <textarea name="alamat" id="alamat" class="form-control" rows="3" placeholder="Masukkan alamat lengkap">{{ old('alamat', $order->alamat) }}</textarea>
+            <textarea name="alamat" id="alamat" class="form-control" rows="3" placeholder="Alamat otomatis terisi dari customer" readonly style="background-color: #e9ecef;">{{ old('alamat', $order->alamat) }}</textarea>
         </div>
 
         <button type="submit" class="btn btn-success">Update Pesanan</button>
@@ -92,8 +94,8 @@
 </div>
 
 <script>
-    function useSavedAddress(value) {
-        document.getElementById('alamat').value = value;
+    function onCustomerAddressChange(select) {
+        document.getElementById('alamat').value = select.value;
     }
 </script>
 @endsection

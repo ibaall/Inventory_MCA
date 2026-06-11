@@ -19,6 +19,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        \Illuminate\Pagination\Paginator::useBootstrapFive();
+
         \Illuminate\Support\Facades\Mail::extend('google_apps_script', function (array $config) {
             return new \App\Mail\Transport\GoogleAppsScriptTransport(
                 $config['webapp_url'] ?? '',

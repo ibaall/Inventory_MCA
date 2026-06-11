@@ -625,12 +625,18 @@
                     <a class="mobile-nav-item" href="{{ route('financial-reports.index') }}">
                         <i class="bi bi-journal-text"></i> Laporan Detail
                     </a>
+                    <a class="mobile-nav-item" href="{{ route('stock-report.index') }}">
+                        <i class="bi bi-box-seam-fill"></i> Laporan Stok
+                    </a>
                 </div>
 
                 <div class="mobile-nav-divider"></div>
 
                 <div class="mobile-nav-section">
                     <div class="mobile-nav-section-title">Administrasi</div>
+                    <a class="mobile-nav-item" href="{{ route('master-data.index') }}">
+                        <i class="bi bi-database"></i> Master Data
+                    </a>
                     <a class="mobile-nav-item" href="{{ route('users.index') }}">
                         <i class="bi bi-people"></i> Kelola Akun
                     </a>
@@ -686,6 +692,8 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('purchase-orders.index') }}"><i class="bi bi-truck"></i> Purchase Order</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('laporan.keuangan') }}"><i class="bi bi-bar-chart-line"></i> Laporan Keuangan</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('financial-reports.index') }}"><i class="bi bi-journal-text"></i> Laporan Detail</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('stock-report.index') }}"><i class="bi bi-box-seam-fill"></i> Laporan Stok</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('master-data.index') }}"><i class="bi bi-database"></i> Master Data</a></li>
                     <hr class="text-white w-75 mx-auto my-2">
                     <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}"><i class="bi bi-people"></i> Kelola Akun</a></li>
                 @endif

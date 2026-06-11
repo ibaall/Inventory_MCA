@@ -199,22 +199,20 @@
             @csrf
             <input type="hidden" name="selected_items" id="checkoutSelectedItems" value="">
             <div class="mb-3">
-                <label for="customer_name" class="form-label">Nama Pelanggan</label>
-                <input type="text" name="customer_name" id="customer_name"
-                       class="form-control" required placeholder="Masukkan nama pelanggan">
-            </div>
-            <div class="mb-3">
-                <label for="alamat_history" class="form-label">Pilih dari Alamat Tersimpan (Opsional)</label>
-                <select id="alamat_history" class="form-select" onchange="useSavedAddress(this.value)">
-                    <option value="">-- Gunakan Alamat Baru / Ketik Manual --</option>
-                    @foreach($savedAddresses as $savedAddr)
-                        <option value="{{ $savedAddr }}">{{ $savedAddr }}</option>
+                <label for="customer_name" class="form-label">Nama Customer</label>
+                <select name="customer_name" id="customer_name" class="form-select" required onchange="onCustomerChange(this)">
+                    <option value="">-- Pilih Customer --</option>
+                    @foreach($customers as $customer)
+                        <option value="{{ $customer->name }}" data-alamat="{{ $customer->alamat }}">
+                            {{ $customer->name }}
+                        </option>
                     @endforeach
                 </select>
+                <small class="text-muted">Kelola customer di <a href="{{ route('master-data.index') }}">Master Data</a></small>
             </div>
             <div class="mb-3">
                 <label for="alamat" class="form-label">Alamat</label>
-                <textarea name="alamat" id="alamat" class="form-control" rows="3" placeholder="Masukkan alamat lengkap"></textarea>
+                <textarea name="alamat" id="alamat" class="form-control" rows="3" placeholder="Alamat otomatis terisi saat pilih customer" readonly style="background-color: #e9ecef;"></textarea>
             </div>
             <div class="mb-3">
                 <label for="status_pembayaran" class="form-label">Status Pembayaran</label>
@@ -382,8 +380,10 @@
         document.getElementById('bulkActionBar').style.display = 'none';
     }
 
-    function useSavedAddress(value) {
-        document.getElementById('alamat').value = value;
+    function onCustomerChange(select) {
+        const option = select.options[select.selectedIndex];
+        const alamat = option ? (option.getAttribute('data-alamat') || '') : '';
+        document.getElementById('alamat').value = alamat;
     }
 </script>
 @endsection

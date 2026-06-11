@@ -17,11 +17,8 @@ class CartController extends Controller
     public function index()
     {
         $cart = session()->get('cart', []);
-        $savedAddresses = Order::whereNotNull('alamat')
-            ->where('alamat', '!=', '')
-            ->distinct()
-            ->pluck('alamat');
-        return view('cart.index', compact('cart', 'savedAddresses'));
+        $customers = \App\Models\Customer::orderBy('name')->get();
+        return view('cart.index', compact('cart', 'customers'));
     }
 
     // Menambahkan produk ke keranjang

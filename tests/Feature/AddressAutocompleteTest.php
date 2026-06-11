@@ -21,27 +21,28 @@ class AddressAutocompleteTest extends TestCase
         $this->user = User::factory()->create();
     }
 
-    public function test_cart_index_passes_saved_addresses()
+    public function test_cart_index_passes_customers()
     {
-        Order::create([
-            'user_id' => $this->user->id,
-            'customer_name' => 'John Doe',
+        \App\Models\Customer::create([
+            'name' => 'John Doe',
             'alamat' => 'Alamat Indah 123',
-            'total_price' => 100000,
-            'ordered_at' => now(),
-            'status_pembayaran' => 'belum dibayar',
         ]);
 
         $response = $this->actingAs($this->user)->get(route('cart.index'));
 
         $response->assertStatus(200);
-        $response->assertViewHas('savedAddresses', function ($addresses) {
-            return $addresses->contains('Alamat Indah 123');
+        $response->assertViewHas('customers', function ($customers) {
+            return $customers->contains('name', 'John Doe');
         });
     }
 
-    public function test_order_edit_passes_saved_addresses()
+    public function test_order_edit_passes_customers()
     {
+        \App\Models\Customer::create([
+            'name' => 'John Doe',
+            'alamat' => 'Alamat Indah 123',
+        ]);
+
         $order = Order::create([
             'user_id' => $this->user->id,
             'customer_name' => 'John Doe',
@@ -54,27 +55,23 @@ class AddressAutocompleteTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('orders.edit', $order->id));
 
         $response->assertStatus(200);
-        $response->assertViewHas('savedAddresses', function ($addresses) {
-            return $addresses->contains('Alamat Indah 123');
+        $response->assertViewHas('customers', function ($customers) {
+            return $customers->contains('name', 'John Doe');
         });
     }
 
-    public function test_purchase_order_create_passes_saved_addresses()
+    public function test_purchase_order_create_passes_suppliers()
     {
-        PurchaseOrder::create([
-            'user_id' => $this->user->id,
-            'supplier_name' => 'Supplier A',
+        \App\Models\Supplier::create([
+            'name' => 'Supplier A',
             'alamat' => 'Alamat Supplier 456',
-            'total_price' => 200000,
-            'ordered_at' => now(),
-            'status' => 'pending',
         ]);
 
         $response = $this->actingAs($this->user)->get(route('purchase-orders.create'));
 
         $response->assertStatus(200);
-        $response->assertViewHas('savedAddresses', function ($addresses) {
-            return $addresses->contains('Alamat Supplier 456');
+        $response->assertViewHas('suppliers', function ($suppliers) {
+            return $suppliers->contains('name', 'Supplier A');
         });
     }
 

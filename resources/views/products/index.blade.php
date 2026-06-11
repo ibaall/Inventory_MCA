@@ -252,8 +252,14 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Nama Vendor</label>
-                            <input type="text" class="form-control" name="vendor"
-                                   value="{{ $product->vendor }}" placeholder="Contoh: PT. Medika Utama">
+                            <select class="form-select" name="vendor">
+                                <option value="">-- Pilih Vendor --</option>
+                                @foreach($suppliers as $supplier)
+                                    <option value="{{ $supplier->name }}" {{ $product->vendor == $supplier->name ? 'selected' : '' }}>
+                                        {{ $supplier->name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Kategori</label>
@@ -625,17 +631,8 @@
         .catch(() => showVariantAlert(productId, 'Terjadi kesalahan.', 'danger'));
     }
 
-    // Filter select auto-submit
-    document.querySelectorAll('.filter-select').forEach(el => {
-        el.addEventListener('change', () => document.getElementById('filterForm').submit());
-    });
-
-    // Debounce pencarian
-    let debounceTimer;
-    document.getElementById('searchInput').addEventListener('input', function () {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => document.getElementById('filterForm').submit(), 400);
-    });
+    // Filter hanya diterapkan saat klik tombol "Terapkan Filter"
+    // (tidak ada auto-submit pada dropdown atau input pencarian)
 </script>
 
 @endsection

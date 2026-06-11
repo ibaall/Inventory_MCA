@@ -1,176 +1,1184 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PT Megah Catur Abadi — Distribusi Alat Kesehatan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:       #060810;
+      --bg2:      #0C1220;
+      --bg3:      #111928;
+      --gold:     #C89B3C;
+      --gold-lt:  #E2B85A;
+      --gold-dim: rgba(200,155,60,0.14);
+      --cream:    #F0E8D8;
+      --text:     #C8C2BC;
+      --muted:    #6A6660;
+      --border:   rgba(200,155,60,0.18);
+      --green:    #3A7D6B;
+    }
 
-        <title>Laravel</title>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
 
-        <!-- Styles / Scripts -->
-        @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-            @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @else
-            <style>
-                /* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,:before,:after{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }*,:before,:after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}:before,:after{--tw-content: ""}html,:host{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:Figtree,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}ol,ul,menu{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}button,[role=button]{cursor:pointer}:disabled{cursor:default}img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.absolute{position:absolute}.relative{position:relative}.-bottom-16{bottom:-4rem}.-left-16{left:-4rem}.-left-20{left:-5rem}.top-0{top:0}.z-0{z-index:0}.\!row-span-1{grid-row:span 1 / span 1!important}.-mx-3{margin-left:-.75rem;margin-right:-.75rem}.-ml-px{margin-left:-1px}.ml-3{margin-left:.75rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.\!hidden{display:none!important}.hidden{display:none}.aspect-video{aspect-ratio:16 / 9}.size-12{width:3rem;height:3rem}.size-5{width:1.25rem;height:1.25rem}.size-6{width:1.5rem;height:1.5rem}.h-12{height:3rem}.h-40{height:10rem}.h-5{height:1.25rem}.h-full{height:100%}.min-h-screen{min-height:100vh}.w-5{width:1.25rem}.w-\[calc\(100\%_\+_8rem\)\]{width:calc(100% + 8rem)}.w-auto{width:auto}.w-full{width:100%}.max-w-2xl{max-width:42rem}.max-w-\[877px\]{max-width:877px}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-default{cursor:default}.resize{resize:both}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.\!flex-row{flex-direction:row!important}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.items-stretch{align-items:stretch}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.justify-items-center{justify-items:center}.gap-2{gap:.5rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.self-center{align-self:center}.overflow-hidden{overflow:hidden}.rounded-\[10px\]{border-radius:10px}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-md{border-radius:.375rem}.rounded-sm{border-radius:.125rem}.rounded-l-md{border-top-left-radius:.375rem;border-bottom-left-radius:.375rem}.rounded-r-md{border-top-right-radius:.375rem;border-bottom-right-radius:.375rem}.border{border-width:1px}.border-gray-300{--tw-border-opacity: 1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.bg-\[\#FF2D20\]\/10{background-color:#ff2d201a}.bg-gray-50{--tw-bg-opacity: 1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity: 1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-gradient-to-b{background-image:linear-gradient(to bottom,var(--tw-gradient-stops))}.from-transparent{--tw-gradient-from: transparent var(--tw-gradient-from-position);--tw-gradient-to: rgb(0 0 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to)}.via-white{--tw-gradient-to: rgb(255 255 255 / 0) var(--tw-gradient-to-position);--tw-gradient-stops: var(--tw-gradient-from), #fff var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-white{--tw-gradient-to: #fff var(--tw-gradient-to-position)}.to-zinc-900{--tw-gradient-to: #18181b var(--tw-gradient-to-position)}.stroke-\[\#FF2D20\]{stroke:#ff2d20}.object-cover{-o-object-fit:cover;object-fit:cover}.object-top{-o-object-position:top;object-position:top}.p-6{padding:1.5rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.pt-3{padding-top:.75rem}.text-center{text-align:center}.font-sans{font-family:Figtree,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji"}.text-sm{font-size:.875rem;line-height:1.25rem}.text-sm\/relaxed{font-size:.875rem;line-height:1.625}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-medium{font-weight:500}.font-semibold{font-weight:600}.leading-5{line-height:1.25rem}.text-black{--tw-text-opacity: 1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.text-black\/50{color:#00000080}.text-gray-500{--tw-text-opacity: 1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity: 1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.underline{text-decoration-line:underline}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.shadow-\[0px_14px_34px_0px_rgba\(0\,0\,0\,0\.08\)\]{--tw-shadow: 0px 14px 34px 0px rgba(0,0,0,.08);--tw-shadow-colored: 0px 14px 34px 0px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}.shadow-sm{--tw-shadow: 0 1px 2px 0 rgb(0 0 0 / .05);--tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}.ring-1{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)}.ring-black{--tw-ring-opacity: 1;--tw-ring-color: rgb(0 0 0 / var(--tw-ring-opacity, 1))}.ring-gray-300{--tw-ring-opacity: 1;--tw-ring-color: rgb(209 213 219 / var(--tw-ring-opacity, 1))}.ring-transparent{--tw-ring-color: transparent}.ring-white{--tw-ring-opacity: 1;--tw-ring-color: rgb(255 255 255 / var(--tw-ring-opacity, 1))}.ring-white\/\[0\.05\]{--tw-ring-color: rgb(255 255 255 / .05)}.drop-shadow-\[0px_4px_34px_rgba\(0\,0\,0\,0\.06\)\]{--tw-drop-shadow: drop-shadow(0px 4px 34px rgba(0,0,0,.06));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow-\[0px_4px_34px_rgba\(0\,0\,0\,0\.25\)\]{--tw-drop-shadow: drop-shadow(0px 4px 34px rgba(0,0,0,.25));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-150{transition-duration:.15s}.duration-300{transition-duration:.3s}.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}.selection\:bg-\[\#FF2D20\] *::-moz-selection{--tw-bg-opacity: 1;background-color:rgb(255 45 32 / var(--tw-bg-opacity, 1))}.selection\:bg-\[\#FF2D20\] *::selection{--tw-bg-opacity: 1;background-color:rgb(255 45 32 / var(--tw-bg-opacity, 1))}.selection\:text-white *::-moz-selection{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.selection\:text-white *::selection{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.selection\:bg-\[\#FF2D20\]::-moz-selection{--tw-bg-opacity: 1;background-color:rgb(255 45 32 / var(--tw-bg-opacity, 1))}.selection\:bg-\[\#FF2D20\]::selection{--tw-bg-opacity: 1;background-color:rgb(255 45 32 / var(--tw-bg-opacity, 1))}.selection\:text-white::-moz-selection{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.selection\:text-white::selection{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:text-black:hover{--tw-text-opacity: 1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.hover\:text-black\/70:hover{color:#000000b3}.hover\:text-gray-400:hover{--tw-text-opacity: 1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.hover\:text-gray-500:hover{--tw-text-opacity: 1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.hover\:ring-black\/20:hover{--tw-ring-color: rgb(0 0 0 / .2)}.focus\:z-10:focus{z-index:10}.focus\:border-blue-300:focus{--tw-border-opacity: 1;border-color:rgb(147 197 253 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring:focus{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)}.focus-visible\:ring-1:focus-visible{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)}.focus-visible\:ring-\[\#FF2D20\]:focus-visible{--tw-ring-opacity: 1;--tw-ring-color: rgb(255 45 32 / var(--tw-ring-opacity, 1))}.active\:bg-gray-100:active{--tw-bg-opacity: 1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.active\:text-gray-500:active{--tw-text-opacity: 1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.active\:text-gray-700:active{--tw-text-opacity: 1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}@media (min-width: 640px){.sm\:flex{display:flex}.sm\:hidden{display:none}.sm\:size-16{width:4rem;height:4rem}.sm\:size-6{width:1.5rem;height:1.5rem}.sm\:flex-1{flex:1 1 0%}.sm\:items-center{align-items:center}.sm\:justify-between{justify-content:space-between}.sm\:pt-5{padding-top:1.25rem}}@media (min-width: 768px){.md\:row-span-3{grid-row:span 3 / span 3}}@media (min-width: 1024px){.lg\:col-start-2{grid-column-start:2}.lg\:h-16{height:4rem}.lg\:max-w-7xl{max-width:80rem}.lg\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.lg\:flex-col{flex-direction:column}.lg\:items-end{align-items:flex-end}.lg\:justify-center{justify-content:center}.lg\:gap-8{gap:2rem}.lg\:p-10{padding:2.5rem}.lg\:pb-10{padding-bottom:2.5rem}.lg\:pt-0{padding-top:0}.lg\:text-\[\#FF2D20\]{--tw-text-opacity: 1;color:rgb(255 45 32 / var(--tw-text-opacity, 1))}}.rtl\:flex-row-reverse:where([dir=rtl],[dir=rtl] *){flex-direction:row-reverse}@media (prefers-color-scheme: dark){.dark\:block{display:block}.dark\:hidden{display:none}.dark\:border-gray-600{--tw-border-opacity: 1;border-color:rgb(75 85 99 / var(--tw-border-opacity, 1))}.dark\:bg-black{--tw-bg-opacity: 1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.dark\:bg-gray-800{--tw-bg-opacity: 1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.dark\:bg-zinc-900{--tw-bg-opacity: 1;background-color:rgb(24 24 27 / var(--tw-bg-opacity, 1))}.dark\:via-zinc-900{--tw-gradient-to: rgb(24 24 27 / 0) var(--tw-gradient-to-position);--tw-gradient-stops: var(--tw-gradient-from), #18181b var(--tw-gradient-via-position), var(--tw-gradient-to)}.dark\:to-zinc-900{--tw-gradient-to: #18181b var(--tw-gradient-to-position)}.dark\:text-gray-300{--tw-text-opacity: 1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.dark\:text-gray-400{--tw-text-opacity: 1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.dark\:text-gray-600{--tw-text-opacity: 1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.dark\:text-white{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.dark\:text-white\/50{color:#ffffff80}.dark\:text-white\/70{color:#ffffffb3}.dark\:ring-zinc-800{--tw-ring-opacity: 1;--tw-ring-color: rgb(39 39 42 / var(--tw-ring-opacity, 1))}.dark\:hover\:text-gray-300:hover{--tw-text-opacity: 1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.dark\:hover\:text-white:hover{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.dark\:hover\:text-white\/70:hover{color:#ffffffb3}.dark\:hover\:text-white\/80:hover{color:#fffc}.dark\:hover\:ring-zinc-700:hover{--tw-ring-opacity: 1;--tw-ring-color: rgb(63 63 70 / var(--tw-ring-opacity, 1))}.dark\:focus\:border-blue-700:focus{--tw-border-opacity: 1;border-color:rgb(29 78 216 / var(--tw-border-opacity, 1))}.dark\:focus\:border-blue-800:focus{--tw-border-opacity: 1;border-color:rgb(30 64 175 / var(--tw-border-opacity, 1))}.dark\:focus-visible\:ring-\[\#FF2D20\]:focus-visible{--tw-ring-opacity: 1;--tw-ring-color: rgb(255 45 32 / var(--tw-ring-opacity, 1))}.dark\:focus-visible\:ring-white:focus-visible{--tw-ring-opacity: 1;--tw-ring-color: rgb(255 255 255 / var(--tw-ring-opacity, 1))}.dark\:active\:bg-gray-700:active{--tw-bg-opacity: 1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.dark\:active\:text-gray-300:active{--tw-text-opacity: 1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}}
-            </style>
-        @endif
-    </head>
-    <body class="font-sans antialiased dark:bg-black dark:text-white/50">
-        <div class="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">
-            <img id="background" class="absolute -left-20 top-0 max-w-[877px]" src="https://laravel.com/assets/img/welcome/background.svg" alt="Laravel background" />
-            <div class="relative min-h-screen flex flex-col items-center justify-center selection:bg-[#FF2D20] selection:text-white">
-                <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl">
-                    <header class="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
-                        <div class="flex lg:justify-center lg:col-start-2">
-                            <svg class="h-12 w-auto text-white lg:h-16 lg:text-[#FF2D20]" viewBox="0 0 62 65" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M61.8548 14.6253C61.8778 14.7102 61.8895 14.7978 61.8897 14.8858V28.5615C61.8898 28.737 61.8434 28.9095 61.7554 29.0614C61.6675 29.2132 61.5409 29.3392 61.3887 29.4265L49.9104 36.0351V49.1337C49.9104 49.4902 49.7209 49.8192 49.4118 49.9987L25.4519 63.7916C25.3971 63.8227 25.3372 63.8427 25.2774 63.8639C25.255 63.8714 25.2338 63.8851 25.2101 63.8913C25.0426 63.9354 24.8666 63.9354 24.6991 63.8913C24.6716 63.8838 24.6467 63.8689 24.6205 63.8589C24.5657 63.8389 24.5084 63.8215 24.456 63.7916L0.501061 49.9987C0.348882 49.9113 0.222437 49.7853 0.134469 49.6334C0.0465019 49.4816 0.000120578 49.3092 0 49.1337L0 8.10652C0 8.01678 0.0124642 7.92953 0.0348998 7.84477C0.0423783 7.8161 0.0598282 7.78993 0.0697995 7.76126C0.0884958 7.70891 0.105946 7.65531 0.133367 7.6067C0.152063 7.5743 0.179485 7.54812 0.20192 7.51821C0.230588 7.47832 0.256763 7.43719 0.290416 7.40229C0.319084 7.37362 0.356476 7.35243 0.388883 7.32751C0.425029 7.29759 0.457436 7.26518 0.498568 7.2415L12.4779 0.345059C12.6296 0.257786 12.8015 0.211853 12.9765 0.211853C13.1515 0.211853 13.3234 0.257786 13.475 0.345059L25.4531 7.2415H25.4556C25.4955 7.26643 25.5292 7.29759 25.5653 7.32626C25.5977 7.35119 25.6339 7.37362 25.6625 7.40104C25.6974 7.43719 25.7224 7.47832 25.7523 7.51821C25.7735 7.54812 25.8021 7.5743 25.8196 7.6067C25.8483 7.65656 25.8645 7.70891 25.8844 7.76126C25.8944 7.78993 25.9118 7.8161 25.9193 7.84602C25.9423 7.93096 25.954 8.01853 25.9542 8.10652V33.7317L35.9355 27.9844V14.8846C35.9355 14.7973 35.948 14.7088 35.9704 14.6253C35.9792 14.5954 35.9954 14.5692 36.0053 14.5405C36.0253 14.4882 36.0427 14.4346 36.0702 14.386C36.0888 14.3536 36.1163 14.3274 36.1375 14.2975C36.1674 14.2576 36.1923 14.2165 36.2272 14.1816C36.2559 14.1529 36.292 14.1317 36.3244 14.1068C36.3618 14.0769 36.3942 14.0445 36.4341 14.0208L48.4147 7.12434C48.5663 7.03694 48.7383 6.99094 48.9133 6.99094C49.0883 6.99094 49.2602 7.03694 49.4118 7.12434L61.3899 14.0208C61.4323 14.0457 61.4647 14.0769 61.5021 14.1055C61.5333 14.1305 61.5694 14.1529 61.5981 14.1803C61.633 14.2165 61.6579 14.2576 61.6878 14.2975C61.7103 14.3274 61.7377 14.3536 61.7551 14.386C61.7838 14.4346 61.8 14.4882 61.8199 14.5405C61.8312 14.5692 61.8474 14.5954 61.8548 14.6253ZM59.893 27.9844V16.6121L55.7013 19.0252L49.9104 22.3593V33.7317L59.8942 27.9844H59.893ZM47.9149 48.5566V37.1768L42.2187 40.4299L25.953 49.7133V61.2003L47.9149 48.5566ZM1.99677 9.83281V48.5566L23.9562 61.199V49.7145L12.4841 43.2219L12.4804 43.2194L12.4754 43.2169C12.4368 43.1945 12.4044 43.1621 12.3682 43.1347C12.3371 43.1097 12.3009 43.0898 12.2735 43.0624L12.271 43.0586C12.2386 43.0275 12.2162 42.9888 12.1887 42.9539C12.1638 42.9203 12.1339 42.8916 12.114 42.8567L12.1127 42.853C12.0903 42.8156 12.0766 42.7707 12.0604 42.7283C12.0442 42.6909 12.023 42.656 12.013 42.6161C12.0005 42.5688 11.998 42.5177 11.9931 42.4691C11.9881 42.4317 11.9781 42.3943 11.9781 42.3569V15.5801L6.18848 12.2446L1.99677 9.83281ZM12.9777 2.36177L2.99764 8.10652L12.9752 13.8513L22.9541 8.10527L12.9752 2.36177H12.9777ZM18.1678 38.2138L23.9574 34.8809V9.83281L19.7657 12.2459L13.9749 15.5801V40.6281L18.1678 38.2138ZM48.9133 9.14105L38.9344 14.8858L48.9133 20.6305L58.8909 14.8846L48.9133 9.14105ZM47.9149 22.3593L42.124 19.0252L37.9323 16.6121V27.9844L43.7219 31.3174L47.9149 33.7317V22.3593ZM24.9533 47.987L39.59 39.631L46.9065 35.4555L36.9352 29.7145L25.4544 36.3242L14.9907 42.3482L24.9533 47.987Z" fill="currentColor"/></svg>
-                        </div>
-                        @if (Route::has('login'))
-                            <nav class="-mx-3 flex flex-1 justify-end">
-                                @auth
-                                    <a
-                                        href="{{ url('/dashboard') }}"
-                                        class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                                    >
-                                        Dashboard
-                                    </a>
-                                @else
-                                    <a
-                                        href="{{ route('login') }}"
-                                        class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                                    >
-                                        Log in
-                                    </a>
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--gold); }
 
-                                    @if (Route::has('register'))
-                                        <a
-                                            href="{{ route('register') }}"
-                                            class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                                        >
-                                            Register
-                                        </a>
-                                    @endif
-                                @endauth
-                            </nav>
-                        @endif
-                    </header>
+    /* ─── NAVBAR ─── */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.5rem 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: all 0.4s ease;
+    }
+    #navbar.scrolled {
+      background: rgba(6,8,16,0.9);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 5%;
+    }
+    .logo { display: flex; flex-direction: column; gap: 2px; }
+    .logo-mark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; font-weight: 600;
+      color: var(--gold); letter-spacing: 0.18em; line-height: 1;
+    }
+    .logo-name {
+      font-size: 0.52rem; letter-spacing: 0.22em;
+      color: var(--muted); text-transform: uppercase;
+    }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      text-decoration: none; color: var(--muted);
+      font-size: 0.75rem; font-weight: 400;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    
+    .nav-actions { display: flex; gap: 1rem; align-items: center; }
+    .nav-cta {
+      padding: 0.55rem 1.4rem;
+      border: 1px solid var(--gold); border-radius: 2px;
+      color: var(--gold); text-decoration: none;
+      font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      transition: all 0.3s;
+    }
+    .nav-cta:hover { background: var(--gold); color: var(--bg); }
+    
+    .nav-cta-secondary {
+      padding: 0.55rem 1.4rem;
+      border: 1px solid rgba(200,155,60,0.22); border-radius: 2px;
+      color: var(--text); text-decoration: none;
+      font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      transition: all 0.3s;
+    }
+    .nav-cta-secondary:hover { border-color: var(--gold); color: var(--gold); }
+    
+    .mobile-only { display: none; }
+    .nav-burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .nav-burger span { display: block; width: 22px; height: 1px; background: var(--text); transition: all 0.3s; }
 
-                    <main class="mt-6">
-                        <div class="grid gap-6 lg:grid-cols-2 lg:gap-8">
-                            <a
-                                href="https://laravel.com/docs"
-                                id="docs-card"
-                                class="flex flex-col items-start gap-6 overflow-hidden rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#FF2D20] md:row-span-3 lg:p-10 lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#FF2D20]"
-                            >
-                                <div id="screenshot-container" class="relative flex w-full flex-1 items-stretch">
-                                    <img
-                                        src="https://laravel.com/assets/img/welcome/docs-light.svg"
-                                        alt="Laravel documentation screenshot"
-                                        class="aspect-video h-full w-full flex-1 rounded-[10px] object-top object-cover drop-shadow-[0px_4px_34px_rgba(0,0,0,0.06)] dark:hidden"
-                                        onerror="
-                                            document.getElementById('screenshot-container').classList.add('!hidden');
-                                            document.getElementById('docs-card').classList.add('!row-span-1');
-                                            document.getElementById('docs-card-content').classList.add('!flex-row');
-                                            document.getElementById('background').classList.add('!hidden');
-                                        "
-                                    />
-                                    <img
-                                        src="https://laravel.com/assets/img/welcome/docs-dark.svg"
-                                        alt="Laravel documentation screenshot"
-                                        class="hidden aspect-video h-full w-full flex-1 rounded-[10px] object-top object-cover drop-shadow-[0px_4px_34px_rgba(0,0,0,0.25)] dark:block"
-                                    />
-                                    <div
-                                        class="absolute -bottom-16 -left-16 h-40 w-[calc(100%_+_8rem)] bg-gradient-to-b from-transparent via-white to-white dark:via-zinc-900 dark:to-zinc-900"
-                                    ></div>
-                                </div>
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center;
+      padding: 0 5%; position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 55% 65% at 72% 48%, rgba(200,155,60,0.075) 0%, transparent 65%),
+        radial-gradient(ellipse 35% 45% at 18% 78%, rgba(58,125,107,0.055) 0%, transparent 55%),
+        var(--bg);
+    }
+    .hero-bg::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(200,155,60,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,155,60,0.025) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 660px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 0.85rem;
+      margin-bottom: 2rem;
+      opacity: 0; animation: fadeUp 0.8s ease forwards 0.3s;
+    }
+    .eyebrow::before { content: ''; display: block; width: 28px; height: 1px; background: var(--gold); }
+    .eyebrow span {
+      font-size: 0.68rem; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--gold); font-weight: 500;
+    }
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 6.5vw, 5.8rem);
+      font-weight: 300; line-height: 1.04; color: var(--cream);
+      margin-bottom: 1.6rem;
+      opacity: 0; animation: fadeUp 0.9s ease forwards 0.5s;
+    }
+    .hero h1 em { font-style: italic; color: var(--gold); }
+    .hero-desc {
+      font-size: 0.975rem; line-height: 1.8; color: var(--muted);
+      max-width: 460px; margin-bottom: 2.5rem;
+      opacity: 0; animation: fadeUp 0.9s ease forwards 0.7s;
+    }
+    .hero-actions {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      opacity: 0; animation: fadeUp 0.9s ease forwards 0.9s;
+    }
 
-                                <div class="relative flex items-center gap-6 lg:items-end">
-                                    <div id="docs-card-content" class="flex items-start gap-6 lg:flex-col">
-                                        <div class="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#FF2D20]/10 sm:size-16">
-                                            <svg class="size-5 sm:size-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path fill="#FF2D20" d="M23 4a1 1 0 0 0-1.447-.894L12.224 7.77a.5.5 0 0 1-.448 0L2.447 3.106A1 1 0 0 0 1 4v13.382a1.99 1.99 0 0 0 1.105 1.79l9.448 4.728c.14.065.293.1.447.1.154-.005.306-.04.447-.105l9.453-4.724a1.99 1.99 0 0 0 1.1-1.789V4ZM3 6.023a.25.25 0 0 1 .362-.223l7.5 3.75a.251.251 0 0 1 .138.223v11.2a.25.25 0 0 1-.362.224l-7.5-3.75a.25.25 0 0 1-.138-.22V6.023Zm18 11.2a.25.25 0 0 1-.138.224l-7.5 3.75a.249.249 0 0 1-.329-.099.249.249 0 0 1-.033-.12V9.772a.251.251 0 0 1 .138-.224l7.5-3.75a.25.25 0 0 1 .362.224v11.2Z"/><path fill="#FF2D20" d="m3.55 1.893 8 4.048a1.008 1.008 0 0 0 .9 0l8-4.048a1 1 0 0 0-.9-1.785l-7.322 3.706a.506.506 0 0 1-.452 0L4.454.108a1 1 0 0 0-.9 1.785H3.55Z"/></svg>
-                                        </div>
+    .btn-gold {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      padding: 0.9rem 2rem; background: var(--gold); color: var(--bg);
+      text-decoration: none; font-size: 0.8rem; font-weight: 500;
+      letter-spacing: 0.09em; text-transform: uppercase; border-radius: 2px;
+      border: none; cursor: pointer; transition: all 0.3s; font-family: 'DM Sans', sans-serif;
+    }
+    .btn-gold:hover { background: var(--gold-lt); transform: translateY(-1px); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      padding: 0.9rem 2rem; background: transparent;
+      color: var(--text); text-decoration: none;
+      font-size: 0.8rem; font-weight: 400;
+      letter-spacing: 0.09em; text-transform: uppercase;
+      border: 1px solid rgba(200,200,190,0.22); border-radius: 2px;
+      transition: all 0.3s;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
 
-                                        <div class="pt-3 sm:pt-5 lg:pt-0">
-                                            <h2 class="text-xl font-semibold text-black dark:text-white">Documentation</h2>
+    /* Hero decorative sphere */
+    .hero-orb {
+      position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
+      width: min(44vw, 520px); aspect-ratio: 1;
+      opacity: 0; animation: fadeIn 1.4s ease forwards 1.1s;
+      pointer-events: none;
+    }
+    .orb-ring {
+      position: absolute; border-radius: 50%;
+      border: 1px solid rgba(200,155,60,0.18);
+    }
+    .orb-r1 { inset: 5%; animation: spinSlow 30s linear infinite; }
+    .orb-r2 { inset: 20%; border-color: rgba(200,155,60,0.1); animation: spinSlow 42s linear infinite reverse; }
+    .orb-r3 { inset: 35%; border: 1.5px solid rgba(200,155,60,0.28); }
+    .orb-center {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; text-align: center;
+    }
+    .orb-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 5vw, 3.8rem);
+      color: rgba(200,155,60,0.12); font-weight: 600; letter-spacing: 0.22em; line-height: 1;
+    }
+    .orb-sub {
+      font-size: 0.58rem; letter-spacing: 0.32em; text-transform: uppercase;
+      color: rgba(200,155,60,0.14); margin-top: 0.6rem;
+    }
+    .orb-cross {
+      position: absolute;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .oc-top    { top: 4%;   left: 50%; transform: translateX(-50%); }
+    .oc-right  { right: 4%; top:  50%; transform: translateY(-50%); }
+    .oc-bottom { bottom: 4%;left: 50%; transform: translateX(-50%); }
+    .oc-left   { left: 4%;  top:  50%; transform: translateY(-50%); }
+    .orb-cross svg { fill: none; stroke: var(--gold); stroke-width: 0.9; opacity: 0.5; }
 
-                                            <p class="mt-4 text-sm/relaxed">
-                                                Laravel has wonderful documentation covering every aspect of the framework. Whether you are a newcomer or have prior experience with Laravel, we recommend reading our documentation from beginning to end.
-                                            </p>
-                                        </div>
-                                    </div>
+    /* ─── MARQUEE ─── */
+    .marquee-wrap {
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      background: var(--bg2); overflow: hidden; padding: 1.1rem 0;
+    }
+    .marquee-track {
+      display: flex; white-space: nowrap;
+      animation: marquee 28s linear infinite;
+    }
+    .mq-item {
+      display: inline-flex; align-items: center; gap: 0.85rem;
+      padding: 0 2.5rem;
+      font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted);
+    }
+    .mq-item .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+    .mq-item.hi { color: var(--gold); }
 
-                                    <svg class="size-6 shrink-0 stroke-[#FF2D20]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"/></svg>
-                                </div>
-                            </a>
+    /* ─── SHARED SECTION STYLES ─── */
+    section { padding: 7rem 5%; }
 
-                            <a
-                                href="https://laracasts.com"
-                                class="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#FF2D20] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#FF2D20]"
-                            >
-                                <div class="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#FF2D20]/10 sm:size-16">
-                                    <svg class="size-5 sm:size-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><g fill="#FF2D20"><path d="M24 8.25a.5.5 0 0 0-.5-.5H.5a.5.5 0 0 0-.5.5v12a2.5 2.5 0 0 0 2.5 2.5h19a2.5 2.5 0 0 0 2.5-2.5v-12Zm-7.765 5.868a1.221 1.221 0 0 1 0 2.264l-6.626 2.776A1.153 1.153 0 0 1 8 18.123v-5.746a1.151 1.151 0 0 1 1.609-1.035l6.626 2.776ZM19.564 1.677a.25.25 0 0 0-.177-.427H15.6a.106.106 0 0 0-.072.03l-4.54 4.543a.25.25 0 0 0 .177.427h3.783c.027 0 .054-.01.073-.03l4.543-4.543ZM22.071 1.318a.047.047 0 0 0-.045.013l-4.492 4.492a.249.249 0 0 0 .038.385.25.25 0 0 0 .14.042h5.784a.5.5 0 0 0 .5-.5v-2a2.5 2.5 0 0 0-1.925-2.432ZM13.014 1.677a.25.25 0 0 0-.178-.427H9.101a.106.106 0 0 0-.073.03l-4.54 4.543a.25.25 0 0 0 .177.427H8.4a.106.106 0 0 0 .073-.03l4.54-4.543ZM6.513 1.677a.25.25 0 0 0-.177-.427H2.5A2.5 2.5 0 0 0 0 3.75v2a.5.5 0 0 0 .5.5h1.4a.106.106 0 0 0 .073-.03l4.54-4.543Z"/></g></svg>
-                                </div>
+    .sec-eyebrow {
+      display: inline-flex; align-items: center; gap: 0.85rem; margin-bottom: 1.2rem;
+    }
+    .sec-eyebrow::before { content: ''; display: block; width: 22px; height: 1px; background: var(--gold); }
+    .sec-eyebrow span {
+      font-size: 0.65rem; letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--gold); font-weight: 500;
+    }
+    .sec-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.6rem);
+      font-weight: 400; color: var(--cream); line-height: 1.12;
+    }
+    .sec-title em { font-style: italic; color: var(--gold); }
 
-                                <div class="pt-3 sm:pt-5">
-                                    <h2 class="text-xl font-semibold text-black dark:text-white">Laracasts</h2>
+    /* ─── ABOUT ─── */
+    .about { background: var(--bg); }
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center;
+    }
+    .about-desc {
+      font-size: 0.95rem; line-height: 1.85; color: var(--muted); margin-bottom: 1.25rem;
+    }
+    .about-rule {
+      width: 100%; height: 1px;
+      background: linear-gradient(90deg, var(--gold) 0%, transparent 100%);
+      margin: 2rem 0;
+    }
+    .about-nums { display: flex; gap: 2.5rem; }
+    .about-num-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.8rem; font-weight: 600; color: var(--gold); line-height: 1;
+    }
+    .about-num-lbl {
+      font-size: 0.72rem; letter-spacing: 0.1em; color: var(--muted);
+      text-transform: uppercase; margin-top: 0.35rem; line-height: 1.5;
+    }
+    .about-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 3px;
+      padding: 2.75rem; position: relative; overflow: hidden;
+    }
+    .about-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 2px; background: linear-gradient(90deg, var(--gold), transparent);
+    }
+    .about-card-ico {
+      width: 52px; height: 52px;
+      border: 1px solid var(--border); border-radius: 2px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold); margin-bottom: 1.75rem;
+    }
+    .about-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; color: var(--cream); font-weight: 400; margin-bottom: 0.85rem;
+    }
+    .about-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.8; }
+    .about-card-deco {
+      position: absolute; bottom: -30px; right: -30px;
+      width: 130px; height: 130px; border-radius: 50%;
+      border: 1px solid rgba(200,155,60,0.08);
+    }
+    .info-pair {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1px; background: var(--border);
+      margin-top: 1px; border: 1px solid var(--border);
+    }
+    .info-cell {
+      background: var(--bg2); padding: 1.4rem 1.5rem;
+    }
+    .info-cell-lbl { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.4rem; }
+    .info-cell-val { font-size: 0.84rem; color: var(--muted); line-height: 1.55; }
 
-                                    <p class="mt-4 text-sm/relaxed">
-                                        Laracasts offers thousands of video tutorials on Laravel, PHP, and JavaScript development. Check them out, see for yourself, and massively level up your development skills in the process.
-                                    </p>
-                                </div>
+    /* ─── PRODUCTS ─── */
+    .products { background: var(--bg2); }
+    .prod-header {
+      display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3.5rem;
+    }
+    .prod-header p { max-width: 340px; font-size: 0.88rem; color: var(--muted); line-height: 1.8; }
+    .prod-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px; background: var(--border); border: 1px solid var(--border);
+    }
+    .prod-card {
+      background: var(--bg2); padding: 2.4rem 2rem;
+      position: relative; cursor: default; overflow: hidden;
+      transition: background 0.35s;
+    }
+    .prod-card:hover { background: var(--bg3); }
+    .prod-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 0;
+      background: linear-gradient(to top, rgba(200,155,60,0.055), transparent);
+      transition: height 0.4s;
+    }
+    .prod-card:hover::after { height: 100%; }
+    .prod-num { font-size: 0.62rem; letter-spacing: 0.22em; color: var(--muted); margin-bottom: 1.5rem; opacity: 0.45; }
+    .prod-ico {
+      width: 42px; height: 42px;
+      border: 1px solid rgba(200,155,60,0.22); border-radius: 2px;
+      display: flex; align-items: center; justify-content: center; color: var(--gold);
+      margin-bottom: 1.2rem; transition: all 0.3s;
+    }
+    .prod-card:hover .prod-ico { border-color: var(--gold); color: var(--gold-lt); }
+    .prod-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.28rem; color: var(--cream); font-weight: 400; margin-bottom: 0.7rem;
+    }
+    .prod-card p { font-size: 0.8rem; color: var(--muted); line-height: 1.72; }
 
-                                <svg class="size-6 shrink-0 self-center stroke-[#FF2D20]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"/></svg>
-                            </a>
+    /* ─── STATS ─── */
+    .stats { background: var(--bg); position: relative; overflow: hidden; }
+    .stats::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 50% 80% at 50% 50%, rgba(200,155,60,0.04) 0%, transparent 65%);
+    }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      border: 1px solid var(--border); position: relative;
+    }
+    .stat-item {
+      padding: 3rem 2.5rem; border-right: 1px solid var(--border); position: relative;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-item::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .stat-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.4rem; font-weight: 600; color: var(--gold); line-height: 1; margin-bottom: 0.55rem;
+    }
+    .stat-sfx { font-size: 1.8rem; }
+    .stat-lbl { font-size: 0.78rem; color: var(--muted); letter-spacing: 0.04em; line-height: 1.55; }
 
-                            <a
-                                href="https://laravel-news.com"
-                                class="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#FF2D20] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#FF2D20]"
-                            >
-                                <div class="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#FF2D20]/10 sm:size-16">
-                                    <svg class="size-5 sm:size-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><g fill="#FF2D20"><path d="M8.75 4.5H5.5c-.69 0-1.25.56-1.25 1.25v4.75c0 .69.56 1.25 1.25 1.25h3.25c.69 0 1.25-.56 1.25-1.25V5.75c0-.69-.56-1.25-1.25-1.25Z"/><path d="M24 10a3 3 0 0 0-3-3h-2V2.5a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2V20a3.5 3.5 0 0 0 3.5 3.5h17A3.5 3.5 0 0 0 24 20V10ZM3.5 21.5A1.5 1.5 0 0 1 2 20V3a.5.5 0 0 1 .5-.5h14a.5.5 0 0 1 .5.5v17c0 .295.037.588.11.874a.5.5 0 0 1-.484.625L3.5 21.5ZM22 20a1.5 1.5 0 1 1-3 0V9.5a.5.5 0 0 1 .5-.5H21a1 1 0 0 1 1 1v10Z"/><path d="M12.751 6.047h2a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-.75.75h-2A.75.75 0 0 1 12 7.3v-.5a.75.75 0 0 1 .751-.753ZM12.751 10.047h2a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-.75.75h-2A.75.75 0 0 1 12 11.3v-.5a.75.75 0 0 1 .751-.753ZM4.751 14.047h10a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-.75.75h-10A.75.75 0 0 1 4 15.3v-.5a.75.75 0 0 1 .751-.753ZM4.75 18.047h7.5a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-.75.75h-7.5A.75.75 0 0 1 4 19.3v-.5a.75.75 0 0 1 .75-.753Z"/></g></svg>
-                                </div>
+    /* ─── WHY ─── */
+    .why { background: var(--bg); }
+    .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; margin-top: 3.75rem; }
+    .feat-item {
+      display: flex; gap: 1.5rem; padding: 2rem 0;
+      border-bottom: 1px solid rgba(200,155,60,0.1);
+    }
+    .feat-item:first-child { padding-top: 0; }
+    .feat-n {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; color: var(--gold); opacity: 0.38; min-width: 26px; padding-top: 4px;
+    }
+    .feat-body h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.22rem; color: var(--cream); font-weight: 400; margin-bottom: 0.5rem;
+    }
+    .feat-body p { font-size: 0.83rem; color: var(--muted); line-height: 1.78; }
+    .why-right { position: sticky; top: 7rem; }
+    .why-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 3px;
+      padding: 2.75rem; position: relative; overflow: hidden;
+    }
+    .why-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at top right, rgba(200,155,60,0.055), transparent 60%);
+    }
+    .why-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; font-style: italic; color: var(--cream); line-height: 1.65;
+      margin-bottom: 2rem; position: relative; padding-left: 1.75rem;
+    }
+    .why-quote::before {
+      content: '\201C'; font-size: 5rem; color: var(--gold); opacity: 0.18;
+      position: absolute; left: -0.4rem; top: -1.2rem; line-height: 1;
+      font-style: normal; font-family: 'Cormorant Garamond', serif;
+    }
+    .why-sig { font-size: 0.78rem; color: var(--muted); letter-spacing: 0.06em; line-height: 1.6; }
+    .why-sig strong { display: block; color: var(--cream); font-weight: 500; font-size: 0.83rem; margin-bottom: 0.15rem; }
 
-                                <div class="pt-3 sm:pt-5">
-                                    <h2 class="text-xl font-semibold text-black dark:text-white">Laravel News</h2>
+    /* ─── CLIENTS ─── */
+    .clients { background: var(--bg2); }
+    .clients-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--border);
+      margin-top: 3.5rem; border: 1px solid var(--border);
+    }
+    .client-card {
+      background: var(--bg2); padding: 2.25rem 1.75rem;
+      display: flex; flex-direction: column; gap: 0.6rem;
+      transition: background 0.3s;
+    }
+    .client-card:hover { background: var(--bg3); }
+    .client-ico {
+      width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 2px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold); margin-bottom: 0.4rem; opacity: 0.7;
+    }
+    .client-card h4 { font-size: 0.84rem; color: var(--cream); font-weight: 500; line-height: 1.4; }
+    .client-card span { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.04em; }
 
-                                    <p class="mt-4 text-sm/relaxed">
-                                        Laravel News is a community driven portal and newsletter aggregating all of the latest and most important news in the Laravel ecosystem, including new package releases and tutorials.
-                                    </p>
-                                </div>
+    /* ─── CTA ─── */
+    .cta-section { background: var(--bg); text-align: center; position: relative; overflow: hidden; }
+    .cta-section::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(200,155,60,0.07) 0%, transparent 65%);
+    }
+    .cta-inner { position: relative; z-index: 2; }
+    .cta-inner .sec-eyebrow { justify-content: center; }
+    .cta-inner .sec-title { max-width: 640px; margin: 0 auto 1.4rem; }
+    .cta-desc { max-width: 440px; margin: 0 auto 2.75rem; font-size: 0.93rem; color: var(--muted); line-height: 1.8; }
+    .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
-                                <svg class="size-6 shrink-0 self-center stroke-[#FF2D20]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"/></svg>
-                            </a>
+    /* ─── CONTACT ─── */
+    .contact { background: var(--bg2); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.25fr; gap: 5rem; align-items: start; }
+    .ci-item { display: flex; gap: 1.2rem; padding: 1.5rem 0; border-bottom: 1px solid rgba(200,155,60,0.1); }
+    .ci-item:first-child { padding-top: 0; }
+    .ci-ico {
+      width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 2px;
+      display: flex; align-items: center; justify-content: center; color: var(--gold);
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .ci-ico svg { width: 15px; height: 15px; }
+    .ci-lbl { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.4rem; }
+    .ci-val { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+    .form-wrap {
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 3px;
+      padding: 2.5rem; position: relative; overflow: hidden;
+    }
+    .form-wrap::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 2px; background: linear-gradient(90deg, var(--gold), transparent);
+    }
+    .form-head {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; color: var(--cream); font-weight: 400; margin-bottom: 0.4rem;
+    }
+    .form-sub { font-size: 0.78rem; color: var(--muted); margin-bottom: 2rem; }
+    .form-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .fgrp { display: flex; flex-direction: column; gap: 0.45rem; }
+    .fgrp label { font-size: 0.63rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); opacity: 0.8; }
+    .fgrp input, .fgrp textarea, .fgrp select {
+      background: rgba(255,255,255,0.025); border: 1px solid rgba(200,155,60,0.18);
+      border-radius: 2px; padding: 0.8rem 1rem; color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: 0.88rem; outline: none;
+      transition: border-color 0.3s; width: 100%;
+    }
+    .fgrp input:focus, .fgrp textarea:focus, .fgrp select:focus { border-color: var(--gold); }
+    .fgrp select option { background: var(--bg3); }
+    .fgrp textarea { resize: vertical; min-height: 110px; }
+    .form-fields { display: flex; flex-direction: column; gap: 1.2rem; }
 
-                            <div class="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#FF2D20] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#FF2D20]">
-                                <div class="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#FF2D20]/10 sm:size-16">
-                                    <svg class="size-5 sm:size-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <g fill="#FF2D20">
-                                            <path
-                                                d="M16.597 12.635a.247.247 0 0 0-.08-.237 2.234 2.234 0 0 1-.769-1.68c.001-.195.03-.39.084-.578a.25.25 0 0 0-.09-.267 8.8 8.8 0 0 0-4.826-1.66.25.25 0 0 0-.268.181 2.5 2.5 0 0 1-2.4 1.824.045.045 0 0 0-.045.037 12.255 12.255 0 0 0-.093 3.86.251.251 0 0 0 .208.214c2.22.366 4.367 1.08 6.362 2.118a.252.252 0 0 0 .32-.079 10.09 10.09 0 0 0 1.597-3.733ZM13.616 17.968a.25.25 0 0 0-.063-.407A19.697 19.697 0 0 0 8.91 15.98a.25.25 0 0 0-.287.325c.151.455.334.898.548 1.328.437.827.981 1.594 1.619 2.28a.249.249 0 0 0 .32.044 29.13 29.13 0 0 0 2.506-1.99ZM6.303 14.105a.25.25 0 0 0 .265-.274 13.048 13.048 0 0 1 .205-4.045.062.062 0 0 0-.022-.07 2.5 2.5 0 0 1-.777-.982.25.25 0 0 0-.271-.149 11 11 0 0 0-5.6 2.815.255.255 0 0 0-.075.163c-.008.135-.02.27-.02.406.002.8.084 1.598.246 2.381a.25.25 0 0 0 .303.193 19.924 19.924 0 0 1 5.746-.438ZM9.228 20.914a.25.25 0 0 0 .1-.393 11.53 11.53 0 0 1-1.5-2.22 12.238 12.238 0 0 1-.91-2.465.248.248 0 0 0-.22-.187 18.876 18.876 0 0 0-5.69.33.249.249 0 0 0-.179.336c.838 2.142 2.272 4 4.132 5.353a.254.254 0 0 0 .15.048c1.41-.01 2.807-.282 4.117-.802ZM18.93 12.957l-.005-.008a.25.25 0 0 0-.268-.082 2.21 2.21 0 0 1-.41.081.25.25 0 0 0-.217.2c-.582 2.66-2.127 5.35-5.75 7.843a.248.248 0 0 0-.09.299.25.25 0 0 0 .065.091 28.703 28.703 0 0 0 2.662 2.12.246.246 0 0 0 .209.037c2.579-.701 4.85-2.242 6.456-4.378a.25.25 0 0 0 .048-.189 13.51 13.51 0 0 0-2.7-6.014ZM5.702 7.058a.254.254 0 0 0 .2-.165A2.488 2.488 0 0 1 7.98 5.245a.093.093 0 0 0 .078-.062 19.734 19.734 0 0 1 3.055-4.74.25.25 0 0 0-.21-.41 12.009 12.009 0 0 0-10.4 8.558.25.25 0 0 0 .373.281 12.912 12.912 0 0 1 4.826-1.814ZM10.773 22.052a.25.25 0 0 0-.28-.046c-.758.356-1.55.635-2.365.833a.25.25 0 0 0-.022.48c1.252.43 2.568.65 3.893.65.1 0 .2 0 .3-.008a.25.25 0 0 0 .147-.444c-.526-.424-1.1-.917-1.673-1.465ZM18.744 8.436a.249.249 0 0 0 .15.228 2.246 2.246 0 0 1 1.352 2.054c0 .337-.08.67-.23.972a.25.25 0 0 0 .042.28l.007.009a15.016 15.016 0 0 1 2.52 4.6.25.25 0 0 0 .37.132.25.25 0 0 0 .096-.114c.623-1.464.944-3.039.945-4.63a12.005 12.005 0 0 0-5.78-10.258.25.25 0 0 0-.373.274c.547 2.109.85 4.274.901 6.453ZM9.61 5.38a.25.25 0 0 0 .08.31c.34.24.616.561.8.935a.25.25 0 0 0 .3.127.631.631 0 0 1 .206-.034c2.054.078 4.036.772 5.69 1.991a.251.251 0 0 0 .267.024c.046-.024.093-.047.141-.067a.25.25 0 0 0 .151-.23A29.98 29.98 0 0 0 15.957.764a.25.25 0 0 0-.16-.164 11.924 11.924 0 0 0-2.21-.518.252.252 0 0 0-.215.076A22.456 22.456 0 0 0 9.61 5.38Z"
-                                            />
-                                        </g>
-                                    </svg>
-                                </div>
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--bg); border-top: 1px solid var(--border);
+      padding: 3rem 5%;
+    }
+    .footer-row { display: flex; justify-content: space-between; align-items: center; }
+    .foot-copy { font-size: 0.76rem; color: var(--muted); margin-top: 0.35rem; }
+    .foot-copy span { color: var(--gold); }
+    .foot-links { display: flex; gap: 2rem; }
+    .foot-links a {
+      font-size: 0.72rem; color: var(--muted); text-decoration: none;
+      letter-spacing: 0.12em; text-transform: uppercase; transition: color 0.3s;
+    }
+    .foot-links a:hover { color: var(--gold); }
 
-                                <div class="pt-3 sm:pt-5">
-                                    <h2 class="text-xl font-semibold text-black dark:text-white">Vibrant Ecosystem</h2>
+    /* ─── SCROLL REVEAL ─── */
+    .r {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .r.vis { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.1s; }
+    .d2 { transition-delay: 0.2s; }
+    .d3 { transition-delay: 0.3s; }
+    .d4 { transition-delay: 0.4s; }
 
-                                    <p class="mt-4 text-sm/relaxed">
-                                        Laravel's robust library of first-party tools and libraries, such as <a href="https://forge.laravel.com" class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white dark:focus-visible:ring-[#FF2D20]">Forge</a>, <a href="https://vapor.laravel.com" class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white">Vapor</a>, <a href="https://nova.laravel.com" class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white">Nova</a>, <a href="https://envoyer.io" class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white">Envoyer</a>, and <a href="https://herd.laravel.com" class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white">Herd</a> help you take your projects to the next level. Pair them with powerful open source libraries like <a href="https://laravel.com/docs/billing" class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white">Cashier</a>, <a href="https://laravel.com/docs/dusk" class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white">Dusk</a>, <a href="https://laravel.com/docs/broadcasting" class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white">Echo</a>, <a href="https://laravel.com/docs/horizon" class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white">Horizon</a>, <a href="https://laravel.com/docs/sanctum" class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white">Sanctum</a>, <a href="https://laravel.com/docs/telescope" class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white">Telescope</a>, and more.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </main>
+    /* ─── KEYFRAMES ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); } to { transform: rotate(360deg); }
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); } to { transform: translateX(-50%); }
+    }
 
-                    <footer class="py-16 text-center text-sm text-black dark:text-white/70">
-                        Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
-                    </footer>
-                </div>
-            </div>
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 960px) {
+      .about-grid, .why-grid, .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .prod-grid { grid-template-columns: 1fr 1fr; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .stat-item:nth-child(2) { border-right: none; }
+      .stat-item:nth-child(3) { border-right: 1px solid var(--border); border-top: 1px solid var(--border); }
+      .stat-item:nth-child(4) { border-top: 1px solid var(--border); }
+      .clients-grid { grid-template-columns: 1fr 1fr; }
+      .hero-orb { display: none; }
+      .prod-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .why-right { position: relative; top: auto; }
+      .nav-links, .nav-actions { display: none; }
+      .nav-burger { display: flex; }
+      .mobile-only { display: block; }
+    }
+    @media (max-width: 600px) {
+      section { padding: 5rem 5%; }
+      .prod-grid, .clients-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .stat-item:nth-child(3) { border-right: none; }
+      .hero-actions, .cta-btns { flex-direction: column; }
+      .about-nums { gap: 1.5rem; }
+      .form-cols { grid-template-columns: 1fr; }
+      .footer-row { flex-direction: column; gap: 2rem; align-items: flex-start; }
+      .foot-links { flex-wrap: wrap; gap: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ NAVBAR ═══ -->
+<nav id="navbar">
+  <div class="logo">
+    <span class="logo-mark">MCA</span>
+    <span class="logo-name">PT Megah Catur Abadi</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#tentang">Tentang</a></li>
+    <li><a href="#produk">Produk</a></li>
+    <li><a href="#keunggulan">Keunggulan</a></li>
+    <li><a href="#klien">Klien</a></li>
+    <li><a href="#kontak">Kontak</a></li>
+    @auth
+      <li class="mobile-only"><a href="{{ url('/products') }}" style="color: var(--gold);">Dashboard</a></li>
+    @else
+      <li class="mobile-only"><a href="{{ route('login') }}" style="color: var(--gold);">Login</a></li>
+    @endauth
+    <li class="mobile-only"><a href="#kontak" style="border: 1px solid rgba(200,155,60,0.3); padding: 0.55rem 1.4rem; border-radius: 2px; text-align: center; margin-top: 0.5rem; display: block; color: var(--text);">Konsultasi</a></li>
+  </ul>
+  
+  <div class="nav-actions">
+    @auth
+      <a href="{{ url('/products') }}" class="nav-cta" style="background: var(--gold); color: var(--bg);">Dashboard</a>
+    @else
+      <a href="{{ route('login') }}" class="nav-cta">Login</a>
+    @endauth
+    <a href="#kontak" class="nav-cta-secondary">Konsultasi</a>
+  </div>
+  <div class="nav-burger" id="burger"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="eyebrow"><span>Distributor Alat Kesehatan Resmi</span></div>
+    <h1>Teknologi Medis<br>untuk <em>Kehidupan</em><br>yang Lebih Baik</h1>
+    <p class="hero-desc">
+      PT Megah Catur Abadi menghadirkan peralatan kesehatan berkualitas tinggi untuk rumah sakit, klinik, dan masyarakat luas — dengan layanan purna jual yang handal dan tim profesional berpengalaman di Surabaya.
+    </p>
+    <div class="hero-actions">
+      <a href="#produk" class="btn-gold">
+        Lihat Produk
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M8 3l3.5 3.5L8 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="#kontak" class="btn-outline">Hubungi Kami</a>
+    </div>
+  </div>
+
+  <!-- Decorative orb -->
+  <div class="hero-orb">
+    <div class="orb-ring orb-r1"></div>
+    <div class="orb-ring orb-r2"></div>
+    <div class="orb-ring orb-r3"></div>
+    <div class="orb-center">
+      <div class="orb-text">MCA</div>
+      <div class="orb-sub">Est. 2008</div>
+    </div>
+    <div class="orb-cross oc-top">
+      <svg width="36" height="36" viewBox="0 0 36 36"><line x1="18" y1="4" x2="18" y2="32"/><line x1="4" y1="18" x2="32" y2="18"/><circle cx="18" cy="18" r="3"/></svg>
+    </div>
+    <div class="orb-cross oc-right">
+      <svg width="36" height="36" viewBox="0 0 36 36"><line x1="18" y1="4" x2="18" y2="32"/><line x1="4" y1="18" x2="32" y2="18"/><circle cx="18" cy="18" r="3"/></svg>
+    </div>
+    <div class="orb-cross oc-bottom">
+      <svg width="36" height="36" viewBox="0 0 36 36"><line x1="18" y1="4" x2="18" y2="32"/><line x1="4" y1="18" x2="32" y2="18"/><circle cx="18" cy="18" r="3"/></svg>
+    </div>
+    <div class="orb-cross oc-left">
+      <svg width="36" height="36" viewBox="0 0 36 36"><line x1="18" y1="4" x2="18" y2="32"/><line x1="4" y1="18" x2="32" y2="18"/><circle cx="18" cy="18" r="3"/></svg>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MARQUEE ═══ -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="mq-item hi"><span class="dot"></span>USG & Ultrasonografi</span>
+    <span class="mq-item"><span class="dot"></span>Ventilator ICU</span>
+    <span class="mq-item"><span class="dot"></span>Patient Monitor</span>
+    <span class="mq-item hi"><span class="dot"></span>Defibrillator</span>
+    <span class="mq-item"><span class="dot"></span>Infusion Pump</span>
+    <span class="mq-item"><span class="dot"></span>Autoclave Sterilisasi</span>
+    <span class="mq-item hi"><span class="dot"></span>ECG & EKG</span>
+    <span class="mq-item"><span class="dot"></span>Blood Gas Analyzer</span>
+    <span class="mq-item"><span class="dot"></span>Laminar Air Flow</span>
+    <span class="mq-item hi"><span class="dot"></span>X-Ray & Radiologi</span>
+    <span class="mq-item"><span class="dot"></span>Alat Bedah</span>
+    <span class="mq-item"><span class="dot"></span>Tensimeter Digital</span>
+    <!-- duplicate for loop -->
+    <span class="mq-item hi"><span class="dot"></span>USG & Ultrasonografi</span>
+    <span class="mq-item"><span class="dot"></span>Ventilator ICU</span>
+    <span class="mq-item"><span class="dot"></span>Patient Monitor</span>
+    <span class="mq-item hi"><span class="dot"></span>Defibrillator</span>
+    <span class="mq-item"><span class="dot"></span>Infusion Pump</span>
+    <span class="mq-item"><span class="dot"></span>Autoclave Sterilisasi</span>
+    <span class="mq-item hi"><span class="dot"></span>ECG & EKG</span>
+    <span class="mq-item"><span class="dot"></span>Blood Gas Analyzer</span>
+    <span class="mq-item"><span class="dot"></span>Laminar Air Flow</span>
+    <span class="mq-item hi"><span class="dot"></span>X-Ray & Radiologi</span>
+    <span class="mq-item"><span class="dot"></span>Alat Bedah</span>
+    <span class="mq-item"><span class="dot"></span>Tensimeter Digital</span>
+  </div>
+</div>
+
+<!-- ═══ ABOUT ═══ -->
+<section id="tentang" class="about">
+  <div class="about-grid">
+    <div class="r">
+      <div class="sec-eyebrow"><span>Tentang Kami</span></div>
+      <h2 class="sec-title" style="margin-bottom:1.6rem;">Mitra Terpercaya<br><em>Dunia Medis</em> Indonesia</h2>
+      <p class="about-desc">PT Megah Catur Abadi berdiri dengan satu misi: memastikan setiap fasilitas kesehatan dan individu di Indonesia memiliki akses ke peralatan medis berkualitas dunia.</p>
+      <p class="about-desc">Berbasis di Surabaya, kami melayani rumah sakit pemerintah, swasta, klinik spesialis, puskesmas, apotek, hingga pelanggan perorangan — dengan standar kualitas dan pelayanan yang tidak pernah kami kompromikan.</p>
+      <div class="about-rule"></div>
+      <div class="about-nums">
+        <div>
+          <div class="about-num-val" data-cnt="15">0+</div>
+          <div class="about-num-lbl">Tahun<br>Pengalaman</div>
         </div>
-    </body>
+        <div>
+          <div class="about-num-val" data-cnt="500">0+</div>
+          <div class="about-num-lbl">Produk<br>Tersedia</div>
+        </div>
+        <div>
+          <div class="about-num-val" data-cnt="200">0+</div>
+          <div class="about-num-lbl">Klien<br>Terlayani</div>
+        </div>
+      </div>
+    </div>
+    <div class="r d2">
+      <div class="about-card">
+        <div class="about-card-ico">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <h3>Terdaftar & Tersertifikasi Resmi</h3>
+        <p>Seluruh produk yang kami distribusikan memiliki izin edar resmi Kementerian Kesehatan RI dan memenuhi standar internasional — menjamin keamanan dan keandalan di setiap lingkungan klinis.</p>
+        <div class="about-card-deco"></div>
+      </div>
+      <div class="info-pair">
+        <div class="info-cell">
+          <div class="info-cell-lbl">Layanan Teknis</div>
+          <div class="info-cell-val">Instalasi, kalibrasi & pelatihan oleh teknisi bersertifikat</div>
+        </div>
+        <div class="info-cell" style="border-left:1px solid var(--border);">
+          <div class="info-cell-lbl">Garansi Produk</div>
+          <div class="info-cell-val">Garansi resmi & suku cadang original tersedia</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PRODUCTS ═══ -->
+<section id="produk" class="products">
+  <div class="prod-header r">
+    <div>
+      <div class="sec-eyebrow"><span>Kategori Produk</span></div>
+      <h2 class="sec-title">Solusi Lengkap<br><em>Peralatan Medis</em></h2>
+    </div>
+    <p>Dari diagnostik hingga bedah, kami menyediakan rangkaian lengkap peralatan medis yang dibutuhkan fasilitas kesehatan modern.</p>
+  </div>
+
+  <div class="prod-grid">
+    <!-- Card 1 -->
+    <div class="prod-card r">
+      <div class="prod-num">01</div>
+      <div class="prod-ico">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="2" x2="12" y2="7"/><line x1="12" y1="17" x2="12" y2="22"/>
+          <line x1="2" y1="12" x2="7" y2="12"/><line x1="17" y1="12" x2="22" y2="12"/>
+        </svg>
+      </div>
+      <h3>Diagnostik & Pencitraan</h3>
+      <p>USG portable & standar, X-Ray, ECG/EKG, dan perangkat diagnostik untuk pemeriksaan yang akurat dan efisien di setiap fasilitas.</p>
+    </div>
+    <!-- Card 2 -->
+    <div class="prod-card r d1">
+      <div class="prod-num">02</div>
+      <div class="prod-ico">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+        </svg>
+      </div>
+      <h3>Monitoring Pasien</h3>
+      <p>Patient monitor multi-parameter, pulse oximeter, vital sign monitor, dan sistem pemantauan ICU terintegrasi 24 jam.</p>
+    </div>
+    <!-- Card 3 -->
+    <div class="prod-card r d2">
+      <div class="prod-num">03</div>
+      <div class="prod-ico">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+          <line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/>
+        </svg>
+      </div>
+      <h3>ICU & Life Support</h3>
+      <p>Ventilator ICU, CPAP/BiPAP, defibrillator, infusion pump syringe, dan seluruh peralatan life-support esensial ruang intensif.</p>
+    </div>
+    <!-- Card 4 -->
+    <div class="prod-card r">
+      <div class="prod-num">04</div>
+      <div class="prod-ico">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m8 0h3a2 2 0 0 0 2-2v-3"/>
+        </svg>
+      </div>
+      <h3>Sterilisasi & Desinfeksi</h3>
+      <p>Autoclave, UV sterilizer, laminar air flow cabinet, dan sistem sterilisasi modern sesuai panduan WHO dan Kemenkes RI.</p>
+    </div>
+    <!-- Card 5 -->
+    <div class="prod-card r d1">
+      <div class="prod-num">05</div>
+      <div class="prod-ico">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
+        </svg>
+      </div>
+      <h3>Peralatan Laboratorium</h3>
+      <p>Blood gas analyzer, hematology analyzer, centrifuge medis, inkubator kultur, dan seluruh kebutuhan laboratorium klinis.</p>
+    </div>
+    <!-- Card 6 -->
+    <div class="prod-card r d2">
+      <div class="prod-num">06</div>
+      <div class="prod-ico">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </div>
+      <h3>Alat Medis Rumahan</h3>
+      <p>Tensimeter digital, nebulizer, pulse oximeter, glucometer, dan peralatan perawatan mandiri berkualitas untuk konsumen langsung.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STATS ═══ -->
+<section class="stats">
+  <div class="stats-grid">
+    <div class="stat-item r">
+      <div class="stat-val"><span class="ctr" data-t="15">0</span><span class="stat-sfx">+</span></div>
+      <div class="stat-lbl">Tahun melayani<br>fasilitas kesehatan</div>
+    </div>
+    <div class="stat-item r d1">
+      <div class="stat-val"><span class="ctr" data-t="500">0</span><span class="stat-sfx">+</span></div>
+      <div class="stat-lbl">Produk medis<br>tersertifikasi resmi</div>
+    </div>
+    <div class="stat-item r d2">
+      <div class="stat-val"><span class="ctr" data-t="200">0</span><span class="stat-sfx">+</span></div>
+      <div class="stat-lbl">Rumah sakit & klinik<br>yang telah kami layani</div>
+    </div>
+    <div class="stat-item r d3">
+      <div class="stat-val"><span class="ctr" data-t="24">0</span><span class="stat-sfx">/7</span></div>
+      <div class="stat-lbl">Dukungan teknis<br>sepanjang waktu</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ WHY US ═══ -->
+<section id="keunggulan" class="why">
+  <div class="sec-eyebrow r"><span>Keunggulan Kami</span></div>
+  <h2 class="sec-title r" style="margin-bottom:0;">Mengapa Memilih<br><em>PT Megah Catur Abadi?</em></h2>
+  <div class="why-grid">
+    <div>
+      <div class="feat-item r">
+        <div class="feat-n">01</div>
+        <div class="feat-body">
+          <h4>Produk Berstandar Internasional</h4>
+          <p>Semua produk kami berasal dari merek-merek terkemuka dunia dengan sertifikasi CE, ISO, dan izin edar Kemenkes RI yang terjamin, bukan barang tiruan.</p>
+        </div>
+      </div>
+      <div class="feat-item r d1">
+        <div class="feat-n">02</div>
+        <div class="feat-body">
+          <h4>Tenaga Teknis Bersertifikat</h4>
+          <p>Tim biomedical engineer kami siap melakukan instalasi, kalibrasi, pelatihan penggunaan, dan perawatan berkala langsung di lokasi fasilitas Anda.</p>
+        </div>
+      </div>
+      <div class="feat-item r d2">
+        <div class="feat-n">03</div>
+        <div class="feat-body">
+          <h4>Harga Kompetitif & Transparan</h4>
+          <p>Kami menawarkan harga yang kompetitif untuk semua segmen — dari pengadaan skala besar rumah sakit hingga pembelian satuan langsung oleh konsumen.</p>
+        </div>
+      </div>
+      <div class="feat-item r d3">
+        <div class="feat-n">04</div>
+        <div class="feat-body">
+          <h4>Garansi & Purna Jual Nyata</h4>
+          <p>Setiap produk dilengkapi garansi resmi, suku cadang original, dan layanan perbaikan cepat agar operasional fasilitas Anda tidak pernah terganggu.</p>
+        </div>
+      </div>
+      <div class="feat-item r">
+        <div class="feat-n">05</div>
+        <div class="feat-body">
+          <h4>Konsultasi Kebutuhan Tanpa Biaya</h4>
+          <p>Tim ahli kami siap membantu Anda memilih peralatan yang tepat sesuai kebutuhan klinis, anggaran yang tersedia, dan kapasitas fasilitas Anda.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="why-right r d2">
+      <div class="why-card">
+        <p class="why-quote">Sejak bermitra dengan PT Megah Catur Abadi, proses pengadaan alat kesehatan kami jauh lebih mudah dan cepat. Produk terpercaya, respons tim sangat sigap, dan purna jual yang benar-benar nyata.</p>
+        <div class="why-sig">
+          <strong>dr. Arief Santoso, Sp.An</strong>
+          Direktur Medis — RS Mitra Sehat Surabaya
+        </div>
+      </div>
+      <div class="info-pair" style="margin-top:1px;">
+        <div class="info-cell">
+          <div class="info-cell-lbl">Sertifikasi</div>
+          <div class="info-cell-val">ISO 9001:2015</div>
+        </div>
+        <div class="info-cell" style="border-left:1px solid var(--border);">
+          <div class="info-cell-lbl">Izin Resmi</div>
+          <div class="info-cell-val">Kemenkes RI</div>
+        </div>
+        <div class="info-cell" style="border-top:1px solid var(--border);">
+          <div class="info-cell-lbl">Standar</div>
+          <div class="info-cell-val">CE & FDA</div>
+        </div>
+        <div class="info-cell" style="border-left:1px solid var(--border);border-top:1px solid var(--border);">
+          <div class="info-cell-lbl">Jaminan</div>
+          <div class="info-cell-val">Garansi Resmi</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CLIENTS ═══ -->
+<section id="klien" class="clients">
+  <div class="sec-eyebrow r"><span>Klien Kami</span></div>
+  <h2 class="sec-title r">Dipercaya oleh<br><em>Fasilitas Kesehatan</em> Terkemuka</h2>
+  <div class="clients-grid">
+    <div class="client-card r">
+      <div class="client-ico">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9,22 9,12 15,12 15,22"/>
+        </svg>
+      </div>
+      <h4>RS Umum Daerah</h4>
+      <span>Rumah Sakit Pemerintah</span>
+    </div>
+    <div class="client-card r d1">
+      <div class="client-ico">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="3" width="20" height="14" rx="2"/>
+          <path d="M8 21h8M12 17v4"/>
+        </svg>
+      </div>
+      <h4>Klinik Spesialis</h4>
+      <span>Klinik Swasta & Poliklinik</span>
+    </div>
+    <div class="client-card r d2">
+      <div class="client-ico">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <h4>Puskesmas</h4>
+      <span>Pusat Kesehatan Masyarakat</span>
+    </div>
+    <div class="client-card r d3">
+      <div class="client-ico">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </div>
+      <h4>RS Swasta & Internasional</h4>
+      <span>Rumah Sakit Premium</span>
+    </div>
+    <div class="client-card r">
+      <div class="client-ico">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+        </svg>
+      </div>
+      <h4>Laboratorium Klinik</h4>
+      <span>Lab Diagnostik & Patologi</span>
+    </div>
+    <div class="client-card r d1">
+      <div class="client-ico">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <line x1="12" y1="8" x2="12" y2="16"/>
+          <line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+      </div>
+      <h4>Apotek & Toko Medis</h4>
+      <span>Retail Alat Kesehatan</span>
+    </div>
+    <div class="client-card r d2">
+      <div class="client-ico">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+          <line x1="12" y1="12" x2="12" y2="16"/>
+        </svg>
+      </div>
+      <h4>Institusi Pendidikan</h4>
+      <span>Universitas & Akademi Medis</span>
+    </div>
+    <div class="client-card r d3">
+      <div class="client-ico">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </div>
+      <h4>Pelanggan Perorangan</h4>
+      <span>Pembelian Langsung / Direct</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="sec-eyebrow r"><span>Mulai Kerjasama</span></div>
+    <h2 class="sec-title r">Siap Meningkatkan Kualitas<br>Layanan <em>Kesehatan Anda?</em></h2>
+    <p class="cta-desc r">Konsultasikan kebutuhan peralatan medis Anda dengan tim ahli kami. Kami siap memberikan solusi terbaik dengan harga yang kompetitif and dukungan penuh.</p>
+    <div class="cta-btns r">
+      <a href="#kontak" class="btn-gold">
+        Konsultasi Gratis
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M8 3l3.5 3.5L8 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="https://wa.me/6281234567890" class="btn-outline" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="opacity:0.8;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+        WhatsApp
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONTACT ═══ -->
+<section id="kontak" class="contact">
+  <div class="contact-grid">
+    <!-- Info -->
+    <div class="r">
+      <div class="sec-eyebrow"><span>Kontak</span></div>
+      <h2 class="sec-title" style="margin-bottom:2.5rem;">Hubungi<br><em>Kami</em></h2>
+      <div class="ci-item">
+        <div class="ci-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ci-lbl">Alamat Kantor</div>
+          <div class="ci-val">Jl. Raya Darmo No. 123<br>Surabaya, Jawa Timur 60241</div>
+        </div>
+      </div>
+      <div class="ci-item">
+        <div class="ci-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 14a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 3h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.6a16 16 0 0 0 5.49 5.49l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 18h.92z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ci-lbl">Telepon</div>
+          <div class="ci-val">+62 31 555 1234<br>+62 812 3456 7890 (WhatsApp)</div>
+        </div>
+      </div>
+      <div class="ci-item">
+        <div class="ci-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ci-lbl">Email</div>
+          <div class="ci-val">info@megahcaturabadi.co.id<br>sales@megahcaturabadi.co.id</div>
+        </div>
+      </div>
+      <div class="ci-item">
+        <div class="ci-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12,6 12,12 16,14"/>
+          </svg>
+        </div>
+        <div>
+          <div class="ci-lbl">Jam Operasional</div>
+          <div class="ci-val">Senin – Jumat: 08.00 – 17.00 WIB<br>Sabtu: 08.00 – 13.00 WIB</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="r d2">
+      <div class="form-wrap">
+        <div class="form-head">Kirim Pesan</div>
+        <div class="form-sub">Kami akan merespons dalam 1×24 jam kerja</div>
+        <div class="form-fields">
+          <div class="form-cols">
+            <div class="fgrp">
+              <label>Nama Lengkap</label>
+              <input type="text" placeholder="Nama Anda" />
+            </div>
+            <div class="fgrp">
+              <label>Instansi / Perusahaan</label>
+              <input type="text" placeholder="RS / Klinik / Pribadi" />
+            </div>
+          </div>
+          <div class="form-cols">
+            <div class="fgrp">
+              <label>No. WhatsApp</label>
+              <input type="tel" placeholder="+62 812..." />
+            </div>
+            <div class="fgrp">
+              <label>Alamat Email</label>
+              <input type="email" placeholder="email@domain.com" />
+            </div>
+          </div>
+          <div class="fgrp">
+            <label>Kategori Kebutuhan</label>
+            <select>
+              <option value="">Pilih kategori produk</option>
+              <option>Diagnostik & Pencitraan</option>
+              <option>Monitoring Pasien</option>
+              <option>ICU & Life Support</option>
+              <option>Sterilisasi & Desinfeksi</option>
+              <option>Peralatan Laboratorium</option>
+              <option>Alat Medis Rumahan</option>
+              <option>Konsultasi Umum</option>
+            </select>
+          </div>
+          <div class="fgrp">
+            <label>Pesan</label>
+            <textarea placeholder="Ceritakan kebutuhan Anda secara detail — jenis alat, jumlah, anggaran, atau pertanyaan lainnya..."></textarea>
+          </div>
+          <button class="btn-gold" onclick="submitForm(this)" style="width:100%;justify-content:center;font-size:0.82rem;">
+            Kirim Pesan
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M8 3l3.5 3.5L8 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-row">
+    <div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--gold);letter-spacing:0.16em;font-weight:600;line-height:1;">MCA</div>
+      <div class="foot-copy">© 2026 <span>PT Megah Catur Abadi</span>. Semua hak dilindungi.</div>
+    </div>
+    <div class="foot-links">
+      <a href="#tentang">Tentang</a>
+      <a href="#produk">Produk</a>
+      <a href="#keunggulan">Keunggulan</a>
+      <a href="#klien">Klien</a>
+      <a href="#kontak">Kontak</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Navbar scroll effect ──
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
+
+  // ── Scroll reveal ──
+  const rEls = document.querySelectorAll('.r');
+  const rObs = new IntersectionObserver(
+    entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); rObs.unobserve(e.target); } }),
+    { threshold: 0.1, rootMargin: '0px 0px -36px 0px' }
+  );
+  rEls.forEach(el => rObs.observe(el));
+
+  // ── Counter animation ──
+  function runCounter(el, target, suffix) {
+    const dur = 2000; const t0 = performance.now();
+    const tick = now => {
+      const p = Math.min((now - t0) / dur, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.floor(ease * target);
+      if (p < 1) requestAnimationFrame(tick); else el.textContent = target;
+    };
+    requestAnimationFrame(tick);
+  }
+
+  const ctrObs = new IntersectionObserver(
+    entries => entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const t = parseInt(e.target.dataset.t || e.target.dataset.cnt);
+      runCounter(e.target, t);
+      ctrObs.unobserve(e.target);
+    }),
+    { threshold: 0.5 }
+  );
+  document.querySelectorAll('.ctr, [data-cnt]').forEach(el => ctrObs.observe(el));
+
+  // ── Smooth anchors ──
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const href = a.getAttribute('href');
+      if (href.startsWith('#')) {
+        const tgt = document.querySelector(href);
+        if (tgt) { e.preventDefault(); tgt.scrollIntoView({ behavior: 'smooth' }); }
+      }
+    });
+  });
+
+  // ── Mobile nav ──
+  const burger = document.getElementById('burger');
+  const navLinks = document.querySelector('.nav-links');
+  
+  burger.addEventListener('click', function() {
+    const open = navLinks.style.display === 'flex';
+    if (open) {
+      navLinks.removeAttribute('style');
+    } else {
+      navLinks.style.cssText = 'display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:rgba(6,8,16,0.97);padding:2rem 5%;gap:1.5rem;backdrop-filter:blur(18px);border-bottom:1px solid rgba(200,155,60,0.18);';
+    }
+  });
+
+  // Close mobile nav when clicking any link
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 960) {
+        navLinks.removeAttribute('style');
+      }
+    });
+  });
+
+  // ── Form submit ──
+  function submitForm(btn) {
+    const orig = btn.innerHTML;
+    btn.innerHTML = 'Pesan Terkirim ✓';
+    btn.style.background = '#3A7D6B';
+    btn.disabled = true;
+    setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; btn.disabled = false; }, 3500);
+  }
+</script>
+</body>
 </html>

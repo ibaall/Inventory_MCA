@@ -53,11 +53,8 @@ class PurchaseOrderController extends Controller
     public function create()
     {
         $products = Product::with('variants')->orderBy('name')->get();
-        $savedAddresses = PurchaseOrder::whereNotNull('alamat')
-            ->where('alamat', '!=', '')
-            ->distinct()
-            ->pluck('alamat');
-        return view('purchase-orders.create', compact('products', 'savedAddresses'));
+        $suppliers = \App\Models\Supplier::orderBy('name')->get();
+        return view('purchase-orders.create', compact('products', 'suppliers'));
     }
 
     // ===== STORE =====

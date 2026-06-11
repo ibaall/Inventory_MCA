@@ -12,6 +12,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\StockReportController;
 
 // ===== LAPORAN & ORDER (tidak butuh auth karena sudah di resource) =====
 Route::get('/laporan/export', [OrderController::class, 'exportExcel'])->name('laporan.export');
@@ -120,6 +121,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/payments', [\App\Http\Controllers\PaymentController::class, 'store'])->name('payments.store');
     Route::delete('/payments/{id}', [\App\Http\Controllers\PaymentController::class, 'destroy'])->name('payments.destroy');
 
+    // Laporan Stok Barang
+    Route::get('/laporan-stok', [StockReportController::class, 'index'])->name('stock-report.index');
+
     // Kelola Akun (Owner & Admin only)
     Route::middleware('role:owner,admin')->prefix('users')->group(function () {
         Route::get('/', [UserManagementController::class, 'index'])->name('users.index');
@@ -129,6 +133,25 @@ Route::middleware('auth')->group(function () {
         Route::put('/{user}', [UserManagementController::class, 'update'])->name('users.update');
         Route::delete('/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
         Route::post('/{user}/reset-password', [UserManagementController::class, 'resetPassword'])->name('users.resetPassword');
+    });
+
+    // Master Data (Supplier & Customer)
+    Route::prefix('master-data')->group(function () {
+        Route::get('/', [\App\Http\Controllers\MasterDataController::class, 'index'])->name('master-data.index');
+
+        // Supplier CRUD
+        Route::post('/supplier', [\App\Http\Controllers\MasterDataController::class, 'storeSupplier'])->name('master-data.supplier.store');
+        Route::put('/supplier/{supplier}', [\App\Http\Controllers\MasterDataController::class, 'updateSupplier'])->name('master-data.supplier.update');
+        Route::delete('/supplier/{supplier}', [\App\Http\Controllers\MasterDataController::class, 'destroySupplier'])->name('master-data.supplier.destroy');
+
+        // Customer CRUD
+        Route::post('/customer', [\App\Http\Controllers\MasterDataController::class, 'storeCustomer'])->name('master-data.customer.store');
+        Route::put('/customer/{customer}', [\App\Http\Controllers\MasterDataController::class, 'updateCustomer'])->name('master-data.customer.update');
+        Route::delete('/customer/{customer}', [\App\Http\Controllers\MasterDataController::class, 'destroyCustomer'])->name('master-data.customer.destroy');
+
+        // JSON API for dropdowns
+        Route::get('/api/suppliers', [\App\Http\Controllers\MasterDataController::class, 'getSuppliers'])->name('master-data.api.suppliers');
+        Route::get('/api/customers', [\App\Http\Controllers\MasterDataController::class, 'getCustomers'])->name('master-data.api.customers');
     });
 });
 

@@ -16,7 +16,8 @@ private array $satuanList = ['Pcs', 'Pax', 'Rol', 'Set', 'Box', 'Lusin', 'Botol'
 public function create()
 {
     $satuanList = $this->satuanList;
-    return view('products.create', compact('satuanList'));
+    $suppliers = \App\Models\Supplier::orderBy('name')->get();
+    return view('products.create', compact('satuanList', 'suppliers'));
 }
 
 public function store(Request $request)
@@ -100,15 +101,17 @@ public function index(Request $request)
         return Product::whereNotNull('vendor')->distinct()->pluck('vendor');
     });
     $satuanList  = $this->satuanList;
+    $suppliers   = \App\Models\Supplier::orderBy('name')->get();
 
-    return view('products.index', compact('products', 'categories', 'vendors', 'satuanList'));
+    return view('products.index', compact('products', 'categories', 'vendors', 'satuanList', 'suppliers'));
 }
 
 public function edit($id)
 {
     $product    = Product::with('variants')->findOrFail($id);
     $satuanList = $this->satuanList;
-    return view('products.edit', compact('product', 'satuanList'));
+    $suppliers  = \App\Models\Supplier::orderBy('name')->get();
+    return view('products.edit', compact('product', 'satuanList', 'suppliers'));
 }
 
 public function update(Request $request, $id)

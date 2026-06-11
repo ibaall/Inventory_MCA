@@ -25,8 +25,15 @@
 
         <div class="mb-3">
             <label class="form-label">Nama Vendor</label>
-            <input type="text" class="form-control" name="vendor"
-                   value="{{ old('vendor') }}" placeholder="Contoh: PT. Medika Utama">
+            <select class="form-select" name="vendor">
+                <option value="">-- Pilih Vendor --</option>
+                @foreach($suppliers as $supplier)
+                    <option value="{{ $supplier->name }}" {{ old('vendor') == $supplier->name ? 'selected' : '' }}>
+                        {{ $supplier->name }}
+                    </option>
+                @endforeach
+            </select>
+            <small class="text-muted">Kelola vendor di <a href="{{ route('master-data.index') }}">Master Data</a></small>
         </div>
 
         <div class="mb-3">

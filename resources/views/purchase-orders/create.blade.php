@@ -28,8 +28,17 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="supplier_name" class="form-label">Nama Supplier <span class="text-danger">*</span></label>
-                        <input type="text" name="supplier_name" id="supplier_name" class="form-control"
-                               required placeholder="Masukkan nama supplier" value="{{ old('supplier_name') }}">
+                        <select name="supplier_name" id="supplier_name" class="form-select" required onchange="onSupplierChange(this)">
+                            <option value="">-- Pilih Supplier --</option>
+                            @foreach($suppliers as $supplier)
+                                <option value="{{ $supplier->name }}"
+                                        data-alamat="{{ $supplier->alamat }}"
+                                        {{ old('supplier_name') == $supplier->name ? 'selected' : '' }}>
+                                    {{ $supplier->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="text-muted">Kelola supplier di <a href="{{ route('master-data.index') }}">Master Data</a></small>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="catatan" class="form-label">Catatan</label>
@@ -38,18 +47,9 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="alamat_history" class="form-label">Pilih dari Alamat Tersimpan (Opsional)</label>
-                        <select id="alamat_history" class="form-select" onchange="useSavedAddress(this.value)">
-                            <option value="">-- Gunakan Alamat Baru / Ketik Manual --</option>
-                            @foreach($savedAddresses as $savedAddr)
-                                <option value="{{ $savedAddr }}">{{ $savedAddr }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-12 mb-3">
                         <label for="alamat" class="form-label">Alamat Supplier</label>
-                        <textarea name="alamat" id="alamat" class="form-control" rows="2" placeholder="Masukkan alamat supplier (opsional)">{{ old('alamat') }}</textarea>
+                        <textarea name="alamat" id="alamat" class="form-control" rows="2" placeholder="Alamat supplier (otomatis terisi saat pilih supplier)" readonly style="background-color: #e9ecef;">{{ old('alamat') }}</textarea>
                     </div>
                 </div>
                 <div class="form-check form-switch">
@@ -293,8 +293,10 @@
     // Start with one row
     addRow();
 
-    function useSavedAddress(value) {
-        document.getElementById('alamat').value = value;
+    function onSupplierChange(select) {
+        const option = select.options[select.selectedIndex];
+        const alamat = option ? (option.getAttribute('data-alamat') || '') : '';
+        document.getElementById('alamat').value = alamat;
     }
 </script>
 @endsection

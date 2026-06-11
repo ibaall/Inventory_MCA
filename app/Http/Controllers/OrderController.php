@@ -158,11 +158,8 @@ class OrderController extends Controller
     public function edit($id)
     {
         $order = Order::findOrFail($id);
-        $savedAddresses = Order::whereNotNull('alamat')
-            ->where('alamat', '!=', '')
-            ->distinct()
-            ->pluck('alamat');
-        return view('orders.edit', compact('order', 'savedAddresses'));
+        $customers = \App\Models\Customer::orderBy('name')->get();
+        return view('orders.edit', compact('order', 'customers'));
     }
 
     public function update(Request $request, $id)
