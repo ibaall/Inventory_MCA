@@ -643,6 +643,58 @@
                 </div>
             @endif
 
+            {{-- Role Marketing: Akses semua fitur kecuali aksi keranjang --}}
+            @if ($user->role == 'marketing')
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-section-title">Produk</div>
+                    <a class="mobile-nav-item" href="{{ route('products.create') }}">
+                        <i class="bi bi-plus-circle"></i> Tambah Produk
+                    </a>
+                    <a class="mobile-nav-item" href="{{ route('products.index') }}">
+                        <i class="bi bi-box-seam"></i> Lihat Produk
+                    </a>
+                </div>
+
+                <div class="mobile-nav-divider"></div>
+
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-section-title">Transaksi</div>
+                    <a class="mobile-nav-item" href="{{ route('cart.index') }}">
+                        <i class="bi bi-receipt"></i> Lihat Keranjang
+                    </a>
+                    <a class="mobile-nav-item" href="{{ route('orders.index') }}">
+                        <i class="bi bi-list-check"></i> Daftar Invoice
+                    </a>
+                    <a class="mobile-nav-item" href="{{ route('purchase-orders.index') }}">
+                        <i class="bi bi-truck"></i> Purchase Order
+                    </a>
+                </div>
+
+                <div class="mobile-nav-divider"></div>
+
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-section-title">Keuangan</div>
+                    <a class="mobile-nav-item" href="{{ route('laporan.keuangan') }}">
+                        <i class="bi bi-bar-chart-line"></i> Laporan Keuangan
+                    </a>
+                    <a class="mobile-nav-item" href="{{ route('financial-reports.index') }}">
+                        <i class="bi bi-journal-text"></i> Laporan Detail
+                    </a>
+                    <a class="mobile-nav-item" href="{{ route('stock-report.index') }}">
+                        <i class="bi bi-box-seam-fill"></i> Laporan Stok
+                    </a>
+                </div>
+
+                <div class="mobile-nav-divider"></div>
+
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-section-title">Administrasi</div>
+                    <a class="mobile-nav-item" href="{{ route('master-data.index') }}">
+                        <i class="bi bi-database"></i> Master Data
+                    </a>
+                </div>
+            @endif
+
             {{-- Role Karyawan: Akses Terbatas --}}
             @if ($user->role == 'karyawan')
                 <div class="mobile-nav-section">
@@ -696,6 +748,19 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('master-data.index') }}"><i class="bi bi-database"></i> Master Data</a></li>
                     <hr class="text-white w-75 mx-auto my-2">
                     <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}"><i class="bi bi-people"></i> Kelola Akun</a></li>
+                @endif
+
+                {{-- Role Marketing: Akses semua fitur kecuali aksi keranjang --}}
+                @if ($user->role == 'marketing')
+                    <li class="nav-item"><a class="nav-link" href="{{ route('products.create') }}"><i class="bi bi-plus-circle"></i> Tambah Produk</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}"><i class="bi bi-box-seam"></i> Lihat Produk</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('cart.index') }}"><i class="bi bi-receipt"></i> Lihat Keranjang</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('orders.index') }}"><i class="bi bi-list-check"></i> Daftar Invoice</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('purchase-orders.index') }}"><i class="bi bi-truck"></i> Purchase Order</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('laporan.keuangan') }}"><i class="bi bi-bar-chart-line"></i> Laporan Keuangan</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('financial-reports.index') }}"><i class="bi bi-journal-text"></i> Laporan Detail</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('stock-report.index') }}"><i class="bi bi-box-seam-fill"></i> Laporan Stok</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('master-data.index') }}"><i class="bi bi-database"></i> Master Data</a></li>
                 @endif
 
                 {{-- Role Karyawan: Akses Terbatas --}}

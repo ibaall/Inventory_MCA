@@ -11,6 +11,7 @@
     @endif
 
     @if(!empty($cart) && count($cart) > 0)
+        @if(auth()->user()->role !== 'marketing')
         {{-- Floating action bar for bulk actions --}}
         <div id="bulkActionBar" style="
             display: none;
@@ -50,16 +51,19 @@
                 ✕ Batal
             </button>
         </div>
+        @endif
 
         <div class="table-responsive">
             <table class="table table-bordered align-middle">
                 <thead class="table-dark">
                     <tr>
+                        @if(auth()->user()->role !== 'marketing')
                         <th class="text-center" style="width: 40px;">
                             <input type="checkbox" id="selectAll" class="form-check-input"
                                    style="cursor: pointer; width: 18px; height: 18px;"
                                    title="Pilih semua">
                         </th>
+                        @endif
                         <th>No</th>
                         <th>Gambar</th>
                         <th>Kode Barang</th>
@@ -71,7 +75,9 @@
                         <th>Satuan</th>
                         <th>Harga</th>
                         <th>Total</th>
+                        @if(auth()->user()->role !== 'marketing')
                         <th>Aksi</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -85,11 +91,13 @@
                             $total += $subtotal;
                         @endphp
                         <tr id="row-{{ $index }}" class="cart-row">
+                            @if(auth()->user()->role !== 'marketing')
                             <td class="text-center">
                                 <input type="checkbox" data-cart-key="{{ $index }}"
                                        class="form-check-input cart-checkbox"
                                        style="cursor: pointer; width: 18px; height: 18px;">
                             </td>
+                            @endif
                             <td>{{ $loop->iteration }}</td>
 
                             {{-- Gambar --}}
@@ -156,6 +164,7 @@
                                 @endif
                             </td>
                             <td>Rp {{ number_format($subtotal, 0, ',', '.') }}</td>
+                            @if(auth()->user()->role !== 'marketing')
                             <td>
                                 <div class="d-flex flex-column gap-1">
                                     <form action="{{ route('cart.setDiscount', $index) }}" method="POST" class="d-inline">
@@ -174,6 +183,7 @@
                                     </form>
                                 </div>
                             </td>
+                            @endif
                         </tr>
                     @endforeach
 
@@ -181,12 +191,15 @@
                     <tr>
                         <td colspan="11" class="text-end"><strong>Total Keseluruhan</strong></td>
                         <td><strong>Rp {{ number_format($total, 0, ',', '.') }}</strong></td>
+                        @if(auth()->user()->role !== 'marketing')
                         <td></td>
+                        @endif
                     </tr>
                 </tbody>
             </table>
         </div>
 
+        @if(auth()->user()->role !== 'marketing')
         <form action="{{ route('cart.clear') }}" method="POST" class="mb-3">
             @csrf
             @method('DELETE')
@@ -242,6 +255,9 @@
             </div>
             <button type="submit" class="btn btn-primary" onclick="return prepareCheckout()">Checkout</button>
         </form>
+        @else
+        <a href="{{ route('products.index') }}" class="btn btn-secondary mb-3">Kembali ke Produk</a>
+        @endif
 
     @else
         <div class="alert alert-info text-center">

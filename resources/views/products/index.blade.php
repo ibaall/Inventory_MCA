@@ -10,7 +10,7 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    @if(auth()->check() && in_array(auth()->user()->role, ['owner', 'admin']))
+    @if(auth()->check() && in_array(auth()->user()->role, ['owner', 'admin', 'marketing']))
         <a href="{{ route('products.create') }}" class="btn btn-primary mb-3">Tambah Produk</a>
     @endif
 
@@ -174,8 +174,8 @@
                     <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
 
                     <td>
-                        {{-- Tombol Edit (hanya owner/admin) --}}
-                        @if(auth()->check() && in_array(auth()->user()->role, ['owner', 'admin']))
+                        {{-- Tombol Edit (owner/admin/marketing) --}}
+                        @if(auth()->check() && in_array(auth()->user()->role, ['owner', 'admin', 'marketing']))
                         <button class="btn btn-warning btn-sm mb-1"
                                 data-bs-toggle="modal"
                                 data-bs-target="#editModal{{ $product->id }}">
@@ -183,7 +183,8 @@
                         </button>
                         @endif
 
-                        {{-- Tambah ke Keranjang --}}
+                        {{-- Tambah ke Keranjang (tidak untuk marketing) --}}
+                        @if(auth()->user()->role !== 'marketing')
                         @if($product->stock > 0)
                             @if($product->variants->count() > 0)
                                 <button type="button" class="btn btn-success btn-sm mt-1"
@@ -202,6 +203,7 @@
                             @endif
                         @else
                             <span class="badge bg-danger mt-1 d-block">Stok Habis</span>
+                        @endif
                         @endif
                     </td>
                 </tr>
@@ -226,7 +228,7 @@
 </div>
 
 {{-- ===== MODAL EDIT — DI LUAR TABEL ===== --}}
-@if(auth()->check() && in_array(auth()->user()->role, ['owner', 'admin']))
+@if(auth()->check() && in_array(auth()->user()->role, ['owner', 'admin', 'marketing']))
     @foreach ($products as $product)
     <div class="modal fade" id="editModal{{ $product->id }}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">

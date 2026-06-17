@@ -69,8 +69,8 @@ Route::middleware('auth')->group(function () {
     // Produk - Lihat (semua user)
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 
-    // Produk - Kelola (owner & admin only)
-    Route::middleware('role:owner,admin')->prefix('/products')->group(function () {
+    // Produk - Kelola (owner, admin & marketing)
+    Route::middleware('role:owner,admin,marketing')->prefix('/products')->group(function () {
         Route::get('/create', [ProductController::class, 'create'])->name('products.create');
         Route::post('/', [ProductController::class, 'store'])->name('products.store');
         Route::get('/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
@@ -86,12 +86,15 @@ Route::middleware('auth')->group(function () {
     // Keranjang
     Route::prefix('/cart')->group(function () {
         Route::get('/', [CartController::class, 'index'])->name('cart.index');
-        Route::post('/add/{product}', [CartController::class, 'addToCart'])->name('cart.add');
-        Route::post('/set-discount/{cartKey}', [CartController::class, 'setDiscount'])->name('cart.setDiscount');
-        Route::delete('/remove/{productId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
-        Route::delete('/bulk-remove', [CartController::class, 'bulkRemove'])->name('cart.bulkRemove');
-        Route::delete('/clear', [CartController::class, 'clearCart'])->name('cart.clear');
-        Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('checkout.store');
+        // Aksi keranjang (tambah, hapus, checkout) - tidak untuk marketing
+        Route::middleware('role:owner,admin,karyawan')->group(function () {
+            Route::post('/add/{product}', [CartController::class, 'addToCart'])->name('cart.add');
+            Route::post('/set-discount/{cartKey}', [CartController::class, 'setDiscount'])->name('cart.setDiscount');
+            Route::delete('/remove/{productId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
+            Route::delete('/bulk-remove', [CartController::class, 'bulkRemove'])->name('cart.bulkRemove');
+            Route::delete('/clear', [CartController::class, 'clearCart'])->name('cart.clear');
+            Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('checkout.store');
+        });
     });
 
     // Invoice
@@ -114,15 +117,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/{id}/print', [PurchaseOrderController::class, 'printPo'])->name('purchase-orders.print');
     });
 
-    // Laporan Keuangan Detail & Pembayaran
-    Route::get('/laporan-keuangan-detail', [\App\Http\Controllers\FinancialReportController::class, 'index'])->name('financial-reports.index');
-    Route::get('/laporan-keuangan-detail/cetak', [\App\Http\Controllers\FinancialReportController::class, 'printReport'])->name('financial-reports.cetak');
-    Route::get('/laporan-keuangan-detail/pdf', [\App\Http\Controllers\FinancialReportController::class, 'exportPdf'])->name('financial-reports.pdf');
-    Route::post('/payments', [\App\Http\Controllers\PaymentController::class, 'store'])->name('payments.store');
-    Route::delete('/payments/{id}', [\App\Http\Controllers\PaymentController::class, 'destroy'])->name('payments.destroy');
+    // Laporan Keuangan Detail & Pembayaran (tidak untuk karyawan)
+    Route::middleware('role:owner,admin,marketing')->group(function () {
+        Route::get('/laporan-keuangan-detail', [\App\Http\Controllers\FinancialReportController::class, 'index'])->name('financial-reports.index');
+        Route::get('/laporan-keuangan-detail/cetak', [\App\Http\Controllers\FinancialReportController::class, 'printReport'])->name('financial-reports.cetak');
+        Route::get('/laporan-keuangan-detail/pdf', [\App\Http\Controllers\FinancialReportController::class, 'exportPdf'])->name('financial-reports.pdf');
+        Route::post('/payments', [\App\Http\Controllers\PaymentController::class, 'store'])->name('payments.store');
+        Route::delete('/payments/{id}', [\App\Http\Controllers\PaymentController::class, 'destroy'])->name('payments.destroy');
 
-    // Laporan Stok Barang
-    Route::get('/laporan-stok', [StockReportController::class, 'index'])->name('stock-report.index');
+        // Laporan Stok Barang
+        Route::get('/laporan-stok', [StockReportController::class, 'index'])->name('stock-report.index');
+    });
 
     // Kelola Akun (Owner & Admin only)
     Route::middleware('role:owner,admin')->prefix('users')->group(function () {

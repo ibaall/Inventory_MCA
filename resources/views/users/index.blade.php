@@ -44,7 +44,7 @@
                             <td class="text-center">{{ $users->firstItem() + $loop->index }}</td>
                             <td>
                                 <div class="d-flex align-items-center">
-                                    <div class="rounded-circle bg-{{ $user->role === 'owner' ? 'warning' : 'primary' }} text-white d-flex align-items-center justify-content-center me-2" style="width:36px;height:36px;font-size:14px;">
+                                    <div class="rounded-circle bg-{{ $user->role === 'owner' ? 'warning' : ($user->role === 'marketing' ? 'success' : 'primary') }} text-white d-flex align-items-center justify-content-center me-2" style="width:36px;height:36px;font-size:14px;">
                                         {{ strtoupper(substr($user->name, 0, 2)) }}
                                     </div>
                                     <div>
@@ -59,10 +59,11 @@
                             <td class="text-center">
                                 @php
                                     $roleBadge = match($user->role) {
-                                        'owner'    => 'bg-warning text-dark',
-                                        'admin'    => 'bg-danger',
-                                        'karyawan' => 'bg-primary',
-                                        default    => 'bg-secondary',
+                                        'owner'     => 'bg-warning text-dark',
+                                        'admin'     => 'bg-danger',
+                                        'marketing' => 'bg-success',
+                                        'karyawan'  => 'bg-primary',
+                                        default     => 'bg-secondary',
                                     };
                                 @endphp
                                 <span class="badge {{ $roleBadge }} px-3 py-1">{{ strtoupper($user->role) }}</span>

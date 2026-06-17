@@ -42,6 +42,7 @@
                         @php $cr = old('role', $user->role); @endphp
                         <option value="owner" {{ $cr === 'owner' ? 'selected' : '' }}>👑 Owner (Akses Penuh + Kelola Akun)</option>
                         <option value="admin" {{ $cr === 'admin' ? 'selected' : '' }}>🔧 Admin (Akses Penuh + Kelola Akun)</option>
+                        <option value="marketing" {{ $cr === 'marketing' ? 'selected' : '' }}>📊 Marketing (Semua Fitur, Tanpa Aksi Keranjang)</option>
                         <option value="karyawan" {{ $cr === 'karyawan' ? 'selected' : '' }}>👤 Karyawan (Akses Terbatas)</option>
                     </select>
                     @error('role')

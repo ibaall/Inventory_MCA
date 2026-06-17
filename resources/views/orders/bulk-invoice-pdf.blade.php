@@ -48,7 +48,7 @@
         .bottom-table td { vertical-align: top; font-size: 11px; }
         .signature-table { border-collapse: collapse; }
         .signature-table td { border: 1px solid #666; width: 130px; height: 70px; text-align: center; vertical-align: top; padding: 4px 8px; font-size: 11px; }
-        .bank-info { padding-left: 20px; line-height: 1.8; }
+        .bank-info { text-align: center; line-height: 1.8; }
         .bank-name { font-weight: bold; font-size: 12px; }
     </style>
 </head>

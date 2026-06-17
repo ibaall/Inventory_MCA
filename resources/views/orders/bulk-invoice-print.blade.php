@@ -57,7 +57,7 @@
         .bottom-flex { display: flex; justify-content: space-between; align-items: flex-start; }
         .signature-table { border-collapse: collapse; }
         .signature-table td { border: 1px solid #666; width: 130px; height: 72px; text-align: center; vertical-align: top; padding: 5px 8px; font-size: 11px; }
-        .bank-info { padding-left: 24px; line-height: 2; }
+        .bank-info { text-align: center; line-height: 2; width: 50%; }
         .bank-name { font-weight: bold; font-size: 12px; }
 
         @page { size: A4 portrait; margin: 0; }
