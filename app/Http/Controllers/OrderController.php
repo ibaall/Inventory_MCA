@@ -330,6 +330,34 @@ class OrderController extends Controller
             'totalPembelian' => $totalPembelian,
         ];
 
+        // --- Omset bulanan (DPP + PPN) Jan-Des untuk bar chart ---
+        $tahunOmset = $filterTahun ?: now()->year;
+        $omsetRaw = DB::table('orders')
+            ->select(
+                DB::raw('MONTH(ordered_at) as bulan'),
+                DB::raw('SUM(total_price) as total_dpp'),
+                DB::raw('SUM(CASE WHEN use_ppn = 1 OR use_ppn IS NULL THEN ROUND(total_price * 0.11) ELSE 0 END) as total_ppn')
+            )
+            ->whereYear('ordered_at', $tahunOmset)
+            ->groupBy(DB::raw('MONTH(ordered_at)'))
+            ->get()
+            ->keyBy('bulan');
+
+        $omsetLabels = [];
+        $omsetValues = [];
+        $namaBulanFull = [1=>'Jan',2=>'Feb',3=>'Mar',4=>'Apr',5=>'Mei',6=>'Jun',
+                          7=>'Jul',8=>'Agu',9=>'Sep',10=>'Okt',11=>'Nov',12=>'Des'];
+        for ($m = 1; $m <= 12; $m++) {
+            $omsetLabels[] = $namaBulanFull[$m];
+            $row = $omsetRaw->get($m);
+            $omsetValues[] = $row ? (float)$row->total_dpp + (float)$row->total_ppn : 0;
+        }
+        $omsetChartData = [
+            'labels' => $omsetLabels,
+            'values' => $omsetValues,
+            'tahun'  => $tahunOmset,
+        ];
+
         // Backward compat: keep $laporan for old export
         $laporan = $laporanPenjualan;
 
@@ -342,7 +370,7 @@ class OrderController extends Controller
             'totalPenjualan', 'totalPembelian',
             'laporan', 'filters',
             'customers', 'suppliers', 'availableYears',
-            'chartData'
+            'chartData', 'omsetChartData'
         ));
     }
 

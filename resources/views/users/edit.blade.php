@@ -40,10 +40,10 @@
                     <label for="role" class="form-label fw-semibold">Role / Jabatan</label>
                     <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" required>
                         @php $cr = old('role', $user->role); @endphp
-                        <option value="owner" {{ $cr === 'owner' ? 'selected' : '' }}>👑 Owner (Akses Penuh + Kelola Akun)</option>
-                        <option value="admin" {{ $cr === 'admin' ? 'selected' : '' }}>🔧 Admin (Akses Penuh + Kelola Akun)</option>
-                        <option value="marketing" {{ $cr === 'marketing' ? 'selected' : '' }}>📊 Marketing (Semua Fitur, Tanpa Aksi Keranjang)</option>
-                        <option value="karyawan" {{ $cr === 'karyawan' ? 'selected' : '' }}>👤 Karyawan (Akses Terbatas)</option>
+                        <option value="owner" {{ $cr === 'owner' ? 'selected' : '' }}>👑 Owner (Akses Penuh)</option>
+                        <option value="admin" {{ $cr === 'admin' ? 'selected' : '' }}>🔧 Admin (Tanpa Lap. Keuangan, Jurnal, BBM/BBK, Kelola Akun, No. Perkiraan)</option>
+                        <option value="karyawan_gudang" {{ $cr === 'karyawan_gudang' ? 'selected' : '' }}>📦 Karyawan Gudang (Produk, Keranjang, PO, Invoice, Stok)</option>
+                        <option value="karyawan_marketing" {{ $cr === 'karyawan_marketing' ? 'selected' : '' }}>📊 Karyawan Marketing (Laporan Stok)</option>
                     </select>
                     @error('role')
                         <div class="invalid-feedback">{{ $message }}</div>

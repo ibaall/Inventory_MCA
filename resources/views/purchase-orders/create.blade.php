@@ -33,6 +33,7 @@
                             @foreach($suppliers as $supplier)
                                 <option value="{{ $supplier->name }}"
                                         data-alamat="{{ $supplier->alamat }}"
+                                        data-rekening="{{ $supplier->rekening }}"
                                         {{ old('supplier_name') == $supplier->name ? 'selected' : '' }}>
                                     {{ $supplier->name }}
                                 </option>
@@ -47,9 +48,13 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12 mb-3">
+                    <div class="col-md-6 mb-3">
                         <label for="alamat" class="form-label">Alamat Supplier</label>
                         <textarea name="alamat" id="alamat" class="form-control" rows="2" placeholder="Alamat supplier (otomatis terisi saat pilih supplier)" readonly style="background-color: #e9ecef;">{{ old('alamat') }}</textarea>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="rekening" class="form-label">No. Rekening Supplier</label>
+                        <input type="text" id="rekening" class="form-control" readonly style="background-color: #e9ecef;" placeholder="No. rekening (otomatis terisi)" value="{{ old('rekening') }}">
                     </div>
                 </div>
                 <div class="form-check form-switch">
@@ -296,7 +301,9 @@
     function onSupplierChange(select) {
         const option = select.options[select.selectedIndex];
         const alamat = option ? (option.getAttribute('data-alamat') || '') : '';
+        const rekening = option ? (option.getAttribute('data-rekening') || '') : '';
         document.getElementById('alamat').value = alamat;
+        document.getElementById('rekening').value = rekening;
     }
 </script>
 @endsection

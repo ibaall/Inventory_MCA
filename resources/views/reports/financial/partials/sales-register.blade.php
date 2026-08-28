@@ -9,8 +9,8 @@
     <div class="alert alert-warning m-3">
         <i class="bi bi-exclamation-triangle"></i>
         Tidak ada data penjualan pada periode ini.
-        @if($filters['customerName'] ?? null)
-            <br>Customer: <strong>{{ $filters['customerName'] }}</strong>
+        @if($filters['customer_name'] ?? null)
+            <br>Customer: <strong>{{ $filters['customer_name'] }}</strong>
         @endif
     </div>
 @else

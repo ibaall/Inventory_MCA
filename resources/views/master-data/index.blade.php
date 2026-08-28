@@ -42,9 +42,10 @@
                             <thead class="table-secondary">
                                 <tr>
                                     <th style="width:5%">No</th>
-                                    <th style="width:25%">Nama</th>
-                                    <th style="width:35%">Alamat</th>
-                                    <th style="width:15%">Telepon</th>
+                                    <th style="width:20%">Nama</th>
+                                    <th style="width:25%">Alamat</th>
+                                    <th style="width:12%">Telepon</th>
+                                    <th style="width:18%">Rekening</th>
                                     <th style="width:20%" class="text-center">Aksi</th>
                                 </tr>
                             </thead>
@@ -55,6 +56,7 @@
                                         <td class="fw-semibold">{{ $supplier->name }}</td>
                                         <td><small>{{ $supplier->alamat ?? '-' }}</small></td>
                                         <td><small>{{ $supplier->telepon ?? '-' }}</small></td>
+                                        <td><small>{{ $supplier->rekening ?? '-' }}</small></td>
                                         <td class="text-center">
                                             <button type="button" class="btn btn-warning btn-sm"
                                                     data-bs-toggle="modal"
@@ -96,6 +98,10 @@
                                                             <label class="form-label">Telepon</label>
                                                             <input type="text" name="telepon" class="form-control" value="{{ $supplier->telepon }}">
                                                         </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">No. Rekening</label>
+                                                            <input type="text" name="rekening" class="form-control" value="{{ $supplier->rekening }}" placeholder="No. rekening bank (opsional)">
+                                                        </div>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -107,7 +113,7 @@
                                     </div>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center text-muted py-3">Belum ada data supplier.</td>
+                                        <td colspan="6" class="text-center text-muted py-3">Belum ada data supplier.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -231,6 +237,10 @@
                     <div class="mb-3">
                         <label class="form-label">Telepon</label>
                         <input type="text" name="telepon" class="form-control" placeholder="No. telepon (opsional)">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">No. Rekening</label>
+                        <input type="text" name="rekening" class="form-control" placeholder="No. rekening bank (opsional)">
                     </div>
                 </div>
                 <div class="modal-footer">

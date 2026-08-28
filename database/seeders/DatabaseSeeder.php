@@ -21,6 +21,8 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             MasterDataSeeder::class,
             TransactionSeeder::class,
+            NoPerkiraanSeeder::class,
+            AccountingSeeder::class,
         ]);
     }
 }

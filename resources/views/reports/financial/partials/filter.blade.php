@@ -21,16 +21,16 @@
                 <div class="col-md-3">
                     <label for="jenis_laporan" class="form-label fw-semibold">Jenis Laporan</label>
                     <select name="jenis_laporan" id="jenis_laporan" class="form-select">
-                        <option value="purchase_ledger" {{ ($filters['jenisLaporan'] ?? '') == 'purchase_ledger' ? 'selected' : '' }}>
+                        <option value="purchase_ledger" {{ ($filters['jenis_laporan'] ?? '') == 'purchase_ledger' ? 'selected' : '' }}>
                             📋 Laporan Pembelian / Hutang
                         </option>
-                        <option value="sales_ledger" {{ ($filters['jenisLaporan'] ?? '') == 'sales_ledger' ? 'selected' : '' }}>
+                        <option value="sales_ledger" {{ ($filters['jenis_laporan'] ?? '') == 'sales_ledger' ? 'selected' : '' }}>
                             📋 Laporan Penjualan / Piutang
                         </option>
-                        <option value="purchase_register" {{ ($filters['jenisLaporan'] ?? '') == 'purchase_register' ? 'selected' : '' }}>
+                        <option value="purchase_register" {{ ($filters['jenis_laporan'] ?? '') == 'purchase_register' ? 'selected' : '' }}>
                             📝 Register Pembelian
                         </option>
-                        <option value="sales_register" {{ ($filters['jenisLaporan'] ?? '') == 'sales_register' ? 'selected' : '' }}>
+                        <option value="sales_register" {{ ($filters['jenis_laporan'] ?? '') == 'sales_register' ? 'selected' : '' }}>
                             📝 Register Penjualan
                         </option>
                     </select>
@@ -64,14 +64,14 @@
                 <div class="col-md-2">
                     <label for="tanggal_awal" class="form-label fw-semibold">Tanggal Awal <small class="text-muted">(opsional)</small></label>
                     <input type="date" name="tanggal_awal" id="tanggal_awal" class="form-control"
-                           value="{{ $filters['tanggalAwal'] ?? '' }}">
+                           value="{{ $filters['tanggal_awal'] ?? '' }}">
                 </div>
 
                 {{-- Tanggal Akhir (Opsional) --}}
                 <div class="col-md-2">
                     <label for="tanggal_akhir" class="form-label fw-semibold">Tanggal Akhir <small class="text-muted">(opsional)</small></label>
                     <input type="date" name="tanggal_akhir" id="tanggal_akhir" class="form-control"
-                           value="{{ $filters['tanggalAkhir'] ?? '' }}">
+                           value="{{ $filters['tanggal_akhir'] ?? '' }}">
                 </div>
             </div>
 
@@ -82,7 +82,7 @@
                     <select name="supplier_name" id="supplier_name" class="form-select">
                         <option value="">-- Pilih Supplier --</option>
                         @foreach($suppliers as $s)
-                            <option value="{{ $s }}" {{ ($filters['supplierName'] ?? '') == $s ? 'selected' : '' }}>
+                            <option value="{{ $s }}" {{ ($filters['supplier_name'] ?? '') == $s ? 'selected' : '' }}>
                                 {{ $s }}
                             </option>
                         @endforeach
@@ -95,7 +95,7 @@
                     <select name="customer_name" id="customer_name" class="form-select">
                         <option value="">-- Pilih Customer --</option>
                         @foreach($customers as $c)
-                            <option value="{{ $c }}" {{ ($filters['customerName'] ?? '') == $c ? 'selected' : '' }}>
+                            <option value="{{ $c }}" {{ ($filters['customer_name'] ?? '') == $c ? 'selected' : '' }}>
                                 {{ $c }}
                             </option>
                         @endforeach

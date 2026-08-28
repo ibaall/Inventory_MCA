@@ -24,12 +24,13 @@ class MasterDataController extends Controller
     public function storeSupplier(Request $request)
     {
         $request->validate([
-            'name'    => 'required|string|max:255|unique:suppliers,name',
-            'alamat'  => 'nullable|string|max:1000',
-            'telepon' => 'nullable|string|max:50',
+            'name'      => 'required|string|max:255|unique:suppliers,name',
+            'alamat'    => 'nullable|string|max:1000',
+            'telepon'   => 'nullable|string|max:50',
+            'rekening'  => 'nullable|string|max:255',
         ]);
 
-        Supplier::create($request->only('name', 'alamat', 'telepon'));
+        Supplier::create($request->only('name', 'alamat', 'telepon', 'rekening'));
 
         return redirect()->route('master-data.index')->with('success', 'Supplier berhasil ditambahkan.');
     }
@@ -37,12 +38,13 @@ class MasterDataController extends Controller
     public function updateSupplier(Request $request, Supplier $supplier)
     {
         $request->validate([
-            'name'    => 'required|string|max:255|unique:suppliers,name,' . $supplier->id,
-            'alamat'  => 'nullable|string|max:1000',
-            'telepon' => 'nullable|string|max:50',
+            'name'      => 'required|string|max:255|unique:suppliers,name,' . $supplier->id,
+            'alamat'    => 'nullable|string|max:1000',
+            'telepon'   => 'nullable|string|max:50',
+            'rekening'  => 'nullable|string|max:255',
         ]);
 
-        $supplier->update($request->only('name', 'alamat', 'telepon'));
+        $supplier->update($request->only('name', 'alamat', 'telepon', 'rekening'));
 
         return redirect()->route('master-data.index')->with('success', 'Supplier berhasil diperbarui.');
     }

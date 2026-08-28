@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\PurchaseOrder;
+use App\Exports\StockReportExport;
 use Carbon\Carbon;
 
 class StockReportController extends Controller
@@ -164,5 +166,22 @@ class StockReportController extends Controller
         return view('stock-report.index', compact(
             'paginator', 'products', 'customers', 'suppliers', 'filters'
         ));
+    }
+
+    /**
+     * Export stock report to Excel.
+     */
+    public function exportExcel(Request $request)
+    {
+        $filters = [
+            'product_id' => $request->query('product_id'),
+            'customer'   => $request->query('customer'),
+            'supplier'   => $request->query('supplier'),
+            'date_from'  => $request->query('date_from'),
+            'date_to'    => $request->query('date_to'),
+        ];
+
+        $filename = 'laporan_stok_' . now()->format('Ymd_His') . '.xlsx';
+        return Excel::download(new StockReportExport($filters), $filename);
     }
 }

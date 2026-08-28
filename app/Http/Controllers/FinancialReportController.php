@@ -120,11 +120,15 @@ class FinancialReportController extends Controller
                 break;
         }
 
-        $filters = compact(
-            'jenisLaporan', 'bulan', 'tahun',
-            'tanggalAwal', 'tanggalAkhir',
-            'supplierName', 'customerName'
-        );
+        $filters = [
+            'jenis_laporan' => $jenisLaporan,
+            'bulan'         => $bulan,
+            'tahun'         => $tahun,
+            'tanggal_awal'  => $tanggalAwal,
+            'tanggal_akhir' => $tanggalAkhir,
+            'supplier_name' => $supplierName,
+            'customer_name' => $customerName,
+        ];
 
         return view('reports.financial.index', compact(
             'reportData', 'reportTitle', 'periodLabel',

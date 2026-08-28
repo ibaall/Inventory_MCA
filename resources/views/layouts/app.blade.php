@@ -8,6 +8,9 @@
     <!-- Bootstrap CSS & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet">
 
     <style>
         * {
@@ -58,6 +61,137 @@
             flex-grow: 1;
             padding: 20px;
             margin-left: 250px;
+            padding-top: 80px;
+        }
+
+        /* ===== TOP NAVBAR ===== */
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            left: 250px;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.15);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .top-navbar .navbar-greeting {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .top-navbar .greeting-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #ffc107, #ff9800);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #1a1a2e;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .top-navbar .greeting-text h6 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            line-height: 1.3;
+        }
+
+        .top-navbar .greeting-text span {
+            font-size: 11px;
+            color: rgba(255,255,255,0.55);
+        }
+
+        .top-navbar .navbar-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .top-navbar .navbar-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .top-navbar .badge-owner {
+            background: linear-gradient(135deg, #ffc107, #ff9800);
+            color: #1a1a2e;
+        }
+
+        .top-navbar .badge-admin {
+            background: linear-gradient(135deg, #4fc3f7, #29b6f6);
+            color: #0d2137;
+        }
+
+        .top-navbar .badge-karyawan_gudang {
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            color: #fff;
+        }
+
+        .top-navbar .badge-karyawan_marketing {
+            background: linear-gradient(135deg, #ab47bc, #8e24aa);
+            color: #fff;
+        }
+
+        .top-navbar .navbar-clock {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .top-navbar .navbar-clock i {
+            font-size: 14px;
+            color: #ffc107;
+        }
+
+        .top-navbar .navbar-divider {
+            width: 1px;
+            height: 28px;
+            background: rgba(255,255,255,0.12);
+        }
+
+        .top-navbar .navbar-quick-action {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .top-navbar .navbar-quick-action:hover {
+            background: rgba(255,193,7,0.15);
+            color: #ffc107;
+            border-color: rgba(255,193,7,0.3);
+        }
+
+        .top-navbar .navbar-quick-action i {
+            font-size: 14px;
         }
 
         /* ===== MOBILE TOP BAR ===== */
@@ -283,6 +417,12 @@
             .mobile-drawer,
             .mobile-overlay,
             .mobile-topbar {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 991.98px) {
+            .top-navbar {
                 display: none !important;
             }
         }
@@ -547,6 +687,7 @@
                 font-size: 0.72rem;
             }
         }
+
     </style>
 </head>
 <body>
@@ -588,8 +729,8 @@
                 </div>
             </div>
 
-            {{-- Role Owner & Admin: Akses Penuh --}}
-            @if (in_array($user->role, ['owner', 'admin']))
+            {{-- ======= OWNER: Akses Penuh ======= --}}
+            @if ($user->role == 'owner')
                 <div class="mobile-nav-section">
                     <div class="mobile-nav-section-title">Produk</div>
                     <a class="mobile-nav-item" href="{{ route('products.create') }}">
@@ -618,7 +759,40 @@
                 <div class="mobile-nav-divider"></div>
 
                 <div class="mobile-nav-section">
-                    <div class="mobile-nav-section-title">Keuangan</div>
+                    <div class="mobile-nav-section-title">Kas Harian</div>
+                    <a class="mobile-nav-item" href="{{ route('bukti-kas.bkm.index') }}">
+                        <i class="bi bi-cash-coin"></i> BKM (Kas Masuk)
+                    </a>
+                    <a class="mobile-nav-item" href="{{ route('bukti-kas.bkk.index') }}">
+                        <i class="bi bi-cash-stack"></i> BKK (Kas Keluar)
+                    </a>
+                </div>
+
+                <div class="mobile-nav-divider"></div>
+
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-section-title">Bukti Bank</div>
+                    <a class="mobile-nav-item" href="{{ route('bukti-bank.masuk.index') }}">
+                        <i class="bi bi-bank"></i> Bukti Bank Masuk
+                    </a>
+                    <a class="mobile-nav-item" href="{{ route('bukti-bank.keluar.index') }}">
+                        <i class="bi bi-bank2"></i> Bukti Bank Keluar
+                    </a>
+                </div>
+
+                <div class="mobile-nav-divider"></div>
+
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-section-title">Akuntansi</div>
+                    <a class="mobile-nav-item" href="{{ route('jurnal-koreksi.index') }}">
+                        <i class="bi bi-journal-check"></i> Jurnal Koreksi
+                    </a>
+                </div>
+
+                <div class="mobile-nav-divider"></div>
+
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-section-title">Laporan</div>
                     <a class="mobile-nav-item" href="{{ route('laporan.keuangan') }}">
                         <i class="bi bi-bar-chart-line"></i> Laporan Keuangan
                     </a>
@@ -628,6 +802,12 @@
                     <a class="mobile-nav-item" href="{{ route('stock-report.index') }}">
                         <i class="bi bi-box-seam-fill"></i> Laporan Stok
                     </a>
+                    <a class="mobile-nav-item" href="{{ route('laporan-kas.index') }}">
+                        <i class="bi bi-journal-richtext"></i> Laporan Kas
+                    </a>
+                    <a class="mobile-nav-item" href="{{ route('buku-besar.index') }}">
+                        <i class="bi bi-book"></i> Buku Besar
+                    </a>
                 </div>
 
                 <div class="mobile-nav-divider"></div>
@@ -636,15 +816,91 @@
                     <div class="mobile-nav-section-title">Administrasi</div>
                     <a class="mobile-nav-item" href="{{ route('master-data.index') }}">
                         <i class="bi bi-database"></i> Master Data
+                    </a>
+                    <a class="mobile-nav-item" href="{{ route('no-perkiraan.index') }}">
+                        <i class="bi bi-journal-bookmark"></i> No. Perkiraan
                     </a>
                     <a class="mobile-nav-item" href="{{ route('users.index') }}">
                         <i class="bi bi-people"></i> Kelola Akun
                     </a>
                 </div>
+
+                {{-- Mobile Login Tracker Link --}}
+                <div class="mobile-nav-divider"></div>
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-section-title">Monitoring</div>
+                    <a class="mobile-nav-item" href="{{ route('login-tracker.index') }}">
+                        <i class="bi bi-activity"></i> Login Tracker
+                    </a>
+                </div>
             @endif
 
-            {{-- Role Marketing: Akses semua fitur kecuali aksi keranjang --}}
-            @if ($user->role == 'marketing')
+            {{-- ======= ADMIN ======= --}}
+            @if ($user->role == 'admin')
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-section-title">Produk</div>
+                    <a class="mobile-nav-item" href="{{ route('products.index') }}">
+                        <i class="bi bi-box-seam"></i> Lihat Produk
+                    </a>
+                </div>
+
+                <div class="mobile-nav-divider"></div>
+
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-section-title">Transaksi</div>
+                    <a class="mobile-nav-item" href="{{ route('cart.index') }}">
+                        <i class="bi bi-receipt"></i> Lihat Keranjang
+                    </a>
+                    <a class="mobile-nav-item" href="{{ route('orders.index') }}">
+                        <i class="bi bi-list-check"></i> Daftar Invoice
+                    </a>
+                    <a class="mobile-nav-item" href="{{ route('purchase-orders.index') }}">
+                        <i class="bi bi-truck"></i> Purchase Order
+                    </a>
+                </div>
+
+                <div class="mobile-nav-divider"></div>
+
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-section-title">Kas Harian</div>
+                    <a class="mobile-nav-item" href="{{ route('bukti-kas.bkm.index') }}">
+                        <i class="bi bi-cash-coin"></i> BKM (Kas Masuk)
+                    </a>
+                    <a class="mobile-nav-item" href="{{ route('bukti-kas.bkk.index') }}">
+                        <i class="bi bi-cash-stack"></i> BKK (Kas Keluar)
+                    </a>
+                </div>
+
+                <div class="mobile-nav-divider"></div>
+
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-section-title">Laporan</div>
+                    <a class="mobile-nav-item" href="{{ route('laporan.keuangan') }}">
+                        <i class="bi bi-bar-chart-line"></i> Laporan Keuangan
+                    </a>
+                    <a class="mobile-nav-item" href="{{ route('financial-reports.index') }}">
+                        <i class="bi bi-journal-text"></i> Laporan Detail
+                    </a>
+                    <a class="mobile-nav-item" href="{{ route('laporan-kas.index') }}">
+                        <i class="bi bi-journal-richtext"></i> Laporan Kas
+                    </a>
+                </div>
+
+                <div class="mobile-nav-divider"></div>
+
+                <div class="mobile-nav-section">
+                    <div class="mobile-nav-section-title">Administrasi</div>
+                    <a class="mobile-nav-item" href="{{ route('master-data.index') }}">
+                        <i class="bi bi-database"></i> Master Data
+                    </a>
+                    <a class="mobile-nav-item" href="{{ route('no-perkiraan.index') }}">
+                        <i class="bi bi-journal-bookmark"></i> No. Perkiraan
+                    </a>
+                </div>
+            @endif
+
+            {{-- ======= KARYAWAN GUDANG: Produk, Keranjang, PO, Invoice, Laporan Stok ======= --}}
+            @if ($user->role == 'karyawan_gudang')
                 <div class="mobile-nav-section">
                     <div class="mobile-nav-section-title">Produk</div>
                     <a class="mobile-nav-item" href="{{ route('products.create') }}">
@@ -673,43 +929,19 @@
                 <div class="mobile-nav-divider"></div>
 
                 <div class="mobile-nav-section">
-                    <div class="mobile-nav-section-title">Keuangan</div>
-                    <a class="mobile-nav-item" href="{{ route('laporan.keuangan') }}">
-                        <i class="bi bi-bar-chart-line"></i> Laporan Keuangan
-                    </a>
-                    <a class="mobile-nav-item" href="{{ route('financial-reports.index') }}">
-                        <i class="bi bi-journal-text"></i> Laporan Detail
-                    </a>
+                    <div class="mobile-nav-section-title">Laporan</div>
                     <a class="mobile-nav-item" href="{{ route('stock-report.index') }}">
                         <i class="bi bi-box-seam-fill"></i> Laporan Stok
                     </a>
                 </div>
-
-                <div class="mobile-nav-divider"></div>
-
-                <div class="mobile-nav-section">
-                    <div class="mobile-nav-section-title">Administrasi</div>
-                    <a class="mobile-nav-item" href="{{ route('master-data.index') }}">
-                        <i class="bi bi-database"></i> Master Data
-                    </a>
-                </div>
             @endif
 
-            {{-- Role Karyawan: Akses Terbatas --}}
-            @if ($user->role == 'karyawan')
+            {{-- ======= KARYAWAN MARKETING: Hanya Laporan Stok ======= --}}
+            @if ($user->role == 'karyawan_marketing')
                 <div class="mobile-nav-section">
-                    <div class="mobile-nav-section-title">Menu</div>
-                    <a class="mobile-nav-item" href="{{ route('products.index') }}">
-                        <i class="bi bi-box-seam"></i> Lihat Produk
-                    </a>
-                    <a class="mobile-nav-item" href="{{ route('cart.index') }}">
-                        <i class="bi bi-receipt"></i> Lihat Keranjang
-                    </a>
-                    <a class="mobile-nav-item" href="{{ route('orders.index') }}">
-                        <i class="bi bi-list-check"></i> Daftar Invoice
-                    </a>
-                    <a class="mobile-nav-item" href="{{ route('purchase-orders.index') }}">
-                        <i class="bi bi-truck"></i> Purchase Order
+                    <div class="mobile-nav-section-title">Laporan</div>
+                    <a class="mobile-nav-item" href="{{ route('stock-report.index') }}">
+                        <i class="bi bi-box-seam-fill"></i> Laporan Stok
                     </a>
                 </div>
             @endif
@@ -735,40 +967,67 @@
         <ul class="nav flex-column w-100">
 
             @auth
-                {{-- Role Owner & Admin: Akses Penuh --}}
-                @if (in_array($user->role, ['owner', 'admin']))
+                {{-- ======= OWNER: Akses Penuh ======= --}}
+                @if ($user->role == 'owner')
                     <li class="nav-item"><a class="nav-link" href="{{ route('products.create') }}"><i class="bi bi-plus-circle"></i> Tambah Produk</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}"><i class="bi bi-box-seam"></i> Lihat Produk</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('cart.index') }}"><i class="bi bi-receipt"></i> Lihat Keranjang</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('orders.index') }}"><i class="bi bi-list-check"></i> Daftar Invoice</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('purchase-orders.index') }}"><i class="bi bi-truck"></i> Purchase Order</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('master-data.index') }}"><i class="bi bi-database"></i> Master Data</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('no-perkiraan.index') }}"><i class="bi bi-journal-bookmark"></i> No. Perkiraan</a></li>
+                    <hr class="text-white w-75 mx-auto my-2">
+                    <li class="nav-item"><a class="nav-link" href="{{ route('bukti-kas.bkm.index') }}"><i class="bi bi-cash-coin"></i> BKM (Kas Masuk)</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('bukti-kas.bkk.index') }}"><i class="bi bi-cash-stack"></i> BKK (Kas Keluar)</a></li>
+                    <hr class="text-white w-75 mx-auto my-2">
+                    <li class="nav-item"><a class="nav-link" href="{{ route('bukti-bank.masuk.index') }}"><i class="bi bi-bank"></i> Bukti Bank Masuk</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('bukti-bank.keluar.index') }}"><i class="bi bi-bank2"></i> Bukti Bank Keluar</a></li>
+                    <hr class="text-white w-75 mx-auto my-2">
+                    <li class="nav-item"><a class="nav-link" href="{{ route('jurnal-koreksi.index') }}"><i class="bi bi-journal-check"></i> Jurnal Koreksi</a></li>
+                    <hr class="text-white w-75 mx-auto my-2">
                     <li class="nav-item"><a class="nav-link" href="{{ route('laporan.keuangan') }}"><i class="bi bi-bar-chart-line"></i> Laporan Keuangan</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('financial-reports.index') }}"><i class="bi bi-journal-text"></i> Laporan Detail</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('stock-report.index') }}"><i class="bi bi-box-seam-fill"></i> Laporan Stok</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('master-data.index') }}"><i class="bi bi-database"></i> Master Data</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('laporan-kas.index') }}"><i class="bi bi-journal-richtext"></i> Laporan Kas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('buku-besar.index') }}"><i class="bi bi-book"></i> Buku Besar</a></li>
                     <hr class="text-white w-75 mx-auto my-2">
                     <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}"><i class="bi bi-people"></i> Kelola Akun</a></li>
+
+                    {{-- Login Tracker Link --}}
+                    <li class="nav-item"><a class="nav-link" href="{{ route('login-tracker.index') }}"><i class="bi bi-activity"></i> Login Tracker</a></li>
                 @endif
 
-                {{-- Role Marketing: Akses semua fitur kecuali aksi keranjang --}}
-                @if ($user->role == 'marketing')
+                {{-- ======= ADMIN ======= --}}
+                @if ($user->role == 'admin')
+                    <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}"><i class="bi bi-box-seam"></i> Lihat Produk</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('cart.index') }}"><i class="bi bi-receipt"></i> Lihat Keranjang</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('orders.index') }}"><i class="bi bi-list-check"></i> Daftar Invoice</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('purchase-orders.index') }}"><i class="bi bi-truck"></i> Purchase Order</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('master-data.index') }}"><i class="bi bi-database"></i> Master Data</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('no-perkiraan.index') }}"><i class="bi bi-journal-bookmark"></i> No. Perkiraan</a></li>
+                    <hr class="text-white w-75 mx-auto my-2">
+                    <li class="nav-item"><a class="nav-link" href="{{ route('bukti-kas.bkm.index') }}"><i class="bi bi-cash-coin"></i> BKM (Kas Masuk)</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('bukti-kas.bkk.index') }}"><i class="bi bi-cash-stack"></i> BKK (Kas Keluar)</a></li>
+                    <hr class="text-white w-75 mx-auto my-2">
+                    <li class="nav-item"><a class="nav-link" href="{{ route('laporan.keuangan') }}"><i class="bi bi-bar-chart-line"></i> Laporan Keuangan</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('financial-reports.index') }}"><i class="bi bi-journal-text"></i> Laporan Detail</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('laporan-kas.index') }}"><i class="bi bi-journal-richtext"></i> Laporan Kas</a></li>
+                @endif
+
+                {{-- ======= KARYAWAN GUDANG: Produk, Keranjang, PO, Invoice, Laporan Stok ======= --}}
+                @if ($user->role == 'karyawan_gudang')
                     <li class="nav-item"><a class="nav-link" href="{{ route('products.create') }}"><i class="bi bi-plus-circle"></i> Tambah Produk</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}"><i class="bi bi-box-seam"></i> Lihat Produk</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('cart.index') }}"><i class="bi bi-receipt"></i> Lihat Keranjang</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('orders.index') }}"><i class="bi bi-list-check"></i> Daftar Invoice</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('purchase-orders.index') }}"><i class="bi bi-truck"></i> Purchase Order</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('laporan.keuangan') }}"><i class="bi bi-bar-chart-line"></i> Laporan Keuangan</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('financial-reports.index') }}"><i class="bi bi-journal-text"></i> Laporan Detail</a></li>
+                    <hr class="text-white w-75 mx-auto my-2">
                     <li class="nav-item"><a class="nav-link" href="{{ route('stock-report.index') }}"><i class="bi bi-box-seam-fill"></i> Laporan Stok</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('master-data.index') }}"><i class="bi bi-database"></i> Master Data</a></li>
                 @endif
 
-                {{-- Role Karyawan: Akses Terbatas --}}
-                @if ($user->role == 'karyawan')
-                    <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}"><i class="bi bi-box-seam"></i> Lihat Produk</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('cart.index') }}"><i class="bi bi-receipt"></i> Lihat Keranjang</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('orders.index') }}"><i class="bi bi-list-check"></i> Daftar Invoice</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('purchase-orders.index') }}"><i class="bi bi-truck"></i> Purchase Order</a></li>
+                {{-- ======= KARYAWAN MARKETING: Hanya Laporan Stok ======= --}}
+                @if ($user->role == 'karyawan_marketing')
+                    <li class="nav-item"><a class="nav-link" href="{{ route('stock-report.index') }}"><i class="bi bi-box-seam-fill"></i> Laporan Stok</a></li>
                 @endif
 
                 {{-- User Info + Logout --}}
@@ -788,10 +1047,59 @@
         </ul>
     </div>
 
+    <!-- ===== TOP NAVBAR ===== -->
+    @auth
+    <div class="top-navbar">
+        <div class="navbar-greeting">
+            <div class="greeting-avatar">
+                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+            </div>
+            <div class="greeting-text">
+                <h6>Hai, {{ Auth::user()->name }} 👋</h6>
+                <span>Selamat datang di PT MCA</span>
+            </div>
+        </div>
+        <div class="navbar-info">
+            <div class="navbar-clock">
+                <i class="bi bi-calendar3"></i>
+                <span id="navbarDate">{{ now()->translatedFormat('l, d F Y') }}</span>
+            </div>
+            <div class="navbar-divider"></div>
+            <div class="navbar-clock">
+                <i class="bi bi-clock"></i>
+                <span id="navbarTime">{{ now()->format('H:i') }}</span>
+            </div>
+            <div class="navbar-divider"></div>
+            <span class="navbar-badge badge-{{ Auth::user()->role }}">
+                @php
+                    $roleLabels = [
+                        'owner' => 'Owner',
+                        'admin' => 'Admin',
+                        'karyawan_gudang' => 'Gudang',
+                        'karyawan_marketing' => 'Marketing',
+                    ];
+                @endphp
+                <i class="bi bi-shield-check"></i> {{ $roleLabels[Auth::user()->role] ?? Auth::user()->role }}
+            </span>
+            <div class="navbar-divider"></div>
+            <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                @csrf
+                <button type="submit" class="navbar-quick-action" title="Keluar">
+                    <i class="bi bi-box-arrow-right"></i> Keluar
+                </button>
+            </form>
+        </div>
+    </div>
+    @endauth
+
     <!-- Main Content -->
     <div class="content">
         @yield('content')
     </div>
+
+    <!-- jQuery + Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <!-- Bootstrap JS Bundle (global) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -836,6 +1144,23 @@
             }
         })();
     </script>
+
+    <!-- Live Clock -->
+    <script>
+        (function() {
+            const timeEl = document.getElementById('navbarTime');
+            if (timeEl) {
+                setInterval(function() {
+                    const now = new Date();
+                    const h = String(now.getHours()).padStart(2, '0');
+                    const m = String(now.getMinutes()).padStart(2, '0');
+                    const s = String(now.getSeconds()).padStart(2, '0');
+                    timeEl.textContent = h + ':' + m + ':' + s;
+                }, 1000);
+            }
+        })();
+    </script>
+
 
     @yield('scripts')
 </body>

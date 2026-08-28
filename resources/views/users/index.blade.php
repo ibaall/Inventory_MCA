@@ -44,7 +44,7 @@
                             <td class="text-center">{{ $users->firstItem() + $loop->index }}</td>
                             <td>
                                 <div class="d-flex align-items-center">
-                                    <div class="rounded-circle bg-{{ $user->role === 'owner' ? 'warning' : ($user->role === 'marketing' ? 'success' : 'primary') }} text-white d-flex align-items-center justify-content-center me-2" style="width:36px;height:36px;font-size:14px;">
+                                    <div class="rounded-circle bg-{{ $user->role === 'owner' ? 'warning' : ($user->role === 'admin' ? 'danger' : ($user->role === 'karyawan_gudang' ? 'primary' : 'success')) }} text-white d-flex align-items-center justify-content-center me-2" style="width:36px;height:36px;font-size:14px;">
                                         {{ strtoupper(substr($user->name, 0, 2)) }}
                                     </div>
                                     <div>
@@ -59,14 +59,21 @@
                             <td class="text-center">
                                 @php
                                     $roleBadge = match($user->role) {
-                                        'owner'     => 'bg-warning text-dark',
-                                        'admin'     => 'bg-danger',
-                                        'marketing' => 'bg-success',
-                                        'karyawan'  => 'bg-primary',
-                                        default     => 'bg-secondary',
+                                        'owner'              => 'bg-warning text-dark',
+                                        'admin'              => 'bg-danger',
+                                        'karyawan_gudang'    => 'bg-primary',
+                                        'karyawan_marketing' => 'bg-success',
+                                        default              => 'bg-secondary',
+                                    };
+                                    $roleLabel = match($user->role) {
+                                        'owner'              => 'OWNER',
+                                        'admin'              => 'ADMIN',
+                                        'karyawan_gudang'    => 'KARYAWAN GUDANG',
+                                        'karyawan_marketing' => 'KARYAWAN MARKETING',
+                                        default              => strtoupper($user->role),
                                     };
                                 @endphp
-                                <span class="badge {{ $roleBadge }} px-3 py-1">{{ strtoupper($user->role) }}</span>
+                                <span class="badge {{ $roleBadge }} px-3 py-1">{{ $roleLabel }}</span>
                             </td>
                             <td class="text-center">
                                 <small>{{ $user->created_at ? $user->created_at->format('d/m/Y H:i') : '-' }}</small>

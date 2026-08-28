@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\LoginLog;
 use App\Models\OtpCode;
 use App\Models\User;
 use App\Mail\OtpMail;
@@ -31,50 +32,17 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        // Cek credentials manual terlebih dahulu
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return back()->withErrors([
-                'email' => 'Email atau password salah.',
-            ])->onlyInput('email');
-        }
-
-        // Jika karyawan -> kirim OTP dulu, jangan login langsung
-        if ($user->role === 'karyawan') {
-            // Generate OTP 6 digit
-            $otpCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-
-            // Hapus OTP lama yang belum dipakai
-            OtpCode::where('user_id', $user->id)->where('is_used', false)->delete();
-
-            // Simpan OTP baru (berlaku 5 menit)
-            OtpCode::create([
-                'user_id'    => $user->id,
-                'code'       => $otpCode,
-                'expires_at' => now()->addMinutes(5),
-            ]);
-
-            // Kirim OTP ke email
-            try {
-                Mail::to($user->email)->send(new OtpMail($otpCode, $user->name));
-            } catch (\Throwable $e) {
-                // Log error
-                logger()->error('Gagal mengirim email OTP: ' . $e->getMessage());
-                return back()->withInput()->withErrors(['email' => 'Gagal mengirim email OTP. Silakan hubungi admin atau coba lagi nanti.']);
-            }
-
-            // Simpan user_id di session untuk verifikasi
-            $request->session()->put('otp_user_id', $user->id);
-            $request->session()->put('otp_email', $user->email);
-
-            return redirect()->route('otp.show')
-                ->with('otp_success', 'Kode OTP telah dikirim ke email Anda.');
-        }
-
-        // Untuk owner/admin: login langsung
+        // Login langsung untuk semua role (tanpa OTP)
         $request->authenticate();
         $request->session()->regenerate();
+
+        // Record login log
+        LoginLog::create([
+            'user_id'      => Auth::id(),
+            'ip_address'   => $request->ip(),
+            'user_agent'   => $request->userAgent(),
+            'logged_in_at' => now(),
+        ]);
 
         return redirect()->intended(route('dashboard', absolute: false));
     }

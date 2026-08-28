@@ -8,7 +8,7 @@
     $saldoAkhir = $data['saldo_akhir'] ?? 0;
 @endphp
 
-@if(!($filters['supplierName'] ?? null))
+@if(!($filters['supplier_name'] ?? null))
     <div class="alert alert-info m-3">
         <i class="bi bi-info-circle"></i>
         Silakan pilih <strong>Supplier</strong> terlebih dahulu untuk melihat laporan hutang.
@@ -16,7 +16,7 @@
 @elseif($entries->isEmpty())
     <div class="alert alert-warning m-3">
         <i class="bi bi-exclamation-triangle"></i>
-        Tidak ada transaksi untuk <strong>{{ $filters['supplierName'] }}</strong> pada periode ini.
+        Tidak ada transaksi untuk <strong>{{ $filters['supplier_name'] }}</strong> pada periode ini.
         <br><small class="text-muted">Saldo Awal: Rp {{ number_format($saldoAwal, 0, ',', '.') }}</small>
     </div>
 @else

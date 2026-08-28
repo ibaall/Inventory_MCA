@@ -40,18 +40,19 @@
                     <label for="role" class="form-label fw-semibold">Role / Jabatan</label>
                     <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" required>
                         <option value="" disabled selected>-- Pilih Role --</option>
-                        <option value="owner" {{ old('role') === 'owner' ? 'selected' : '' }}>👑 Owner (Akses Penuh + Kelola Akun)</option>
-                        <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>🔧 Admin (Akses Penuh + Kelola Akun)</option>
-                        <option value="marketing" {{ old('role') === 'marketing' ? 'selected' : '' }}>📊 Marketing (Semua Fitur, Tanpa Aksi Keranjang)</option>
-                        <option value="karyawan" {{ old('role') === 'karyawan' ? 'selected' : '' }}>👤 Karyawan (Akses Terbatas)</option>
+                        <option value="owner" {{ old('role') === 'owner' ? 'selected' : '' }}>👑 Owner (Akses Penuh)</option>
+                        <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>🔧 Admin (Tanpa Lap. Keuangan, Jurnal, BBM/BBK, Kelola Akun, No. Perkiraan)</option>
+                        <option value="karyawan_gudang" {{ old('role') === 'karyawan_gudang' ? 'selected' : '' }}>📦 Karyawan Gudang (Produk, Keranjang, PO, Invoice, Stok)</option>
+                        <option value="karyawan_marketing" {{ old('role') === 'karyawan_marketing' ? 'selected' : '' }}>📊 Karyawan Marketing (Laporan Stok)</option>
                     </select>
                     @error('role')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                     <div class="form-text">
-                        <strong>Owner/Admin</strong> = akses penuh + kelola akun &bull;
-                        <strong>Marketing</strong> = semua fitur kecuali aksi keranjang &bull;
-                        <strong>Karyawan</strong> = hanya lihat produk, keranjang, invoice, PO
+                        <strong>Owner</strong> = akses penuh semua fitur &bull;
+                        <strong>Admin</strong> = semua kecuali lap. keuangan, jurnal koreksi, BBM/BBK, kelola akun, no. perkiraan &bull;
+                        <strong>Karyawan Gudang</strong> = produk, keranjang, PO, invoice, laporan stok &bull;
+                        <strong>Karyawan Marketing</strong> = hanya laporan stok
                     </div>
                 </div>
 

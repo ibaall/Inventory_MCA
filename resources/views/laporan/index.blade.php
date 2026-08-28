@@ -97,30 +97,14 @@
             </div>
         </div>
 
-        {{-- Chart 1: Perbandingan Penjualan vs Pembelian --}}
-        <div class="col-lg-4">
+        {{-- Chart: Omset Bulanan (DPP + PPN) --}}
+        <div class="col-lg-8">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white border-0 fw-semibold text-center pt-3 pb-0">
-                    Ratio Penjualan vs Pembelian
+                    📊 Total Omset Bulanan (DPP + PPN) — Tahun {{ $omsetChartData['tahun'] }}
                 </div>
-                <div class="card-body d-flex align-items-center justify-content-center" style="min-height: 240px;">
-                    <div style="width: 100%; max-width: 220px; height: 220px;">
-                        <canvas id="pieChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Chart 2: Status Pembayaran Penjualan --}}
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white border-0 fw-semibold text-center pt-3 pb-0">
-                    Status Pembayaran Penjualan (DPP)
-                </div>
-                <div class="card-body d-flex align-items-center justify-content-center" style="min-height: 240px;">
-                    <div style="width: 100%; max-width: 220px; height: 220px;">
-                        <canvas id="statusChart"></canvas>
-                    </div>
+                <div class="card-body d-flex align-items-center justify-content-center" style="min-height: 260px;">
+                    <canvas id="omsetChart"></canvas>
                 </div>
             </div>
         </div>
@@ -312,65 +296,56 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const cd = @json($chartData);
-    
-    // Hitung status pembayaran penjualan (Lunas vs Belum Lunas) dari data order yang ada
-    @php
-        $totalLunas = $recentOrders->where('status_pembayaran', 'lunas')->sum('total_price');
-        $totalBelum = $recentOrders->where('status_pembayaran', '!=', 'lunas')->sum('total_price');
-    @endphp
+    const omsetData = @json($omsetChartData);
 
-    // Chart 1: Ratio Penjualan vs Pembelian
-    const ctx = document.getElementById('pieChart').getContext('2d');
+    const ctx = document.getElementById('omsetChart').getContext('2d');
+
+    // Gradient fill
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(25, 135, 84, 0.85)');
+    gradient.addColorStop(1, 'rgba(25, 135, 84, 0.25)');
+
     new Chart(ctx, {
-        type: 'doughnut',
+        type: 'bar',
         data: {
-            labels: ['Penjualan (DPP)', 'Pembelian (PO)'],
+            labels: omsetData.labels,
             datasets: [{
-                data: [cd.totalPenjualan, cd.totalPembelian],
-                backgroundColor: ['#198754', '#dc3545'],
-                borderWidth: 1.5, borderColor: '#fff',
-                hoverOffset: 6
+                label: 'Total Omset (DPP + PPN)',
+                data: omsetData.values,
+                backgroundColor: gradient,
+                borderColor: 'rgba(25, 135, 84, 1)',
+                borderWidth: 1,
+                borderRadius: 6,
+                borderSkipped: false,
             }]
         },
         options: {
-            responsive: true, 
+            responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'bottom', labels: { boxWidth: 12, padding: 8, font: { size: 10 } } },
-                tooltip: {
-                    callbacks: {
-                        label: function(ctx) {
-                            return ctx.label + ': Rp ' + ctx.raw.toLocaleString('id-ID');
-                        }
-                    }
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            if (value >= 1000000) return 'Rp ' + (value / 1000000).toFixed(1) + ' Jt';
+                            if (value >= 1000) return 'Rp ' + (value / 1000).toFixed(0) + ' Rb';
+                            return 'Rp ' + value;
+                        },
+                        font: { size: 11 }
+                    },
+                    grid: { color: 'rgba(0,0,0,0.06)' }
+                },
+                x: {
+                    ticks: { font: { size: 11, weight: '600' } },
+                    grid: { display: false }
                 }
-            }
-        }
-    });
-
-    // Chart 2: Status Pembayaran Penjualan
-    const ctxStatus = document.getElementById('statusChart').getContext('2d');
-    new Chart(ctxStatus, {
-        type: 'doughnut',
-        data: {
-            labels: ['Lunas', 'Belum Dibayar'],
-            datasets: [{
-                data: [{{ $totalLunas }}, {{ $totalBelum }}],
-                backgroundColor: ['#0d6efd', '#ffc107'],
-                borderWidth: 1.5, borderColor: '#fff',
-                hoverOffset: 6
-            }]
-        },
-        options: {
-            responsive: true, 
-            maintainAspectRatio: false,
+            },
             plugins: {
-                legend: { position: 'bottom', labels: { boxWidth: 12, padding: 8, font: { size: 10 } } },
+                legend: { display: false },
                 tooltip: {
                     callbacks: {
                         label: function(ctx) {
-                            return ctx.label + ': Rp ' + ctx.raw.toLocaleString('id-ID');
+                            return 'Omset: Rp ' + ctx.raw.toLocaleString('id-ID');
                         }
                     }
                 }
