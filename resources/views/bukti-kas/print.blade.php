@@ -100,8 +100,8 @@
         </div>
         <div class="doc-header-right">
             <table class="doc-meta">
-                <tr><td>No. Bukti</td><td>:</td><td></td></tr>
-                <tr><td>Tanggal</td><td></td><td class="meta-value">{{ $bukti->tanggal->format('d/m/y') }}</td></tr>
+                <tr><td>No. Bukti</td><td>:</td><td class="meta-value">{{ $bukti->no_bukti }}</td></tr>
+                <tr><td>Tanggal</td><td>:</td><td class="meta-value">{{ $bukti->tanggal->format('d/m/y') }}</td></tr>
             </table>
         </div>
     </div>

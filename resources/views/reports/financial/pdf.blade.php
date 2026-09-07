@@ -449,7 +449,7 @@
     @endif
 
     <div class="footer">
-        Dicetak pada: {{ $tanggalCetak }} | PT MCA - Sistem Laporan Keuangan
+        Dicetak pada: {{ $tanggalCetak }} | PT MCA - Sistem Laporan Detail
     </div>
 </body>
 </html>

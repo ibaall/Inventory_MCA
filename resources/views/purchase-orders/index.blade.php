@@ -55,6 +55,14 @@
                         <td class="text-center">
                             @if($po->status === 'diterima')
                                 <span class="badge bg-success">Diterima</span>
+                            @elseif($po->status === 'retur')
+                                <span class="badge bg-danger">Retur</span>
+                            @elseif($po->status === 'diterima/retur')
+                                <span class="badge bg-success">Diterima</span>
+                                <span class="badge bg-danger ms-1">Retur</span>
+                            @elseif($po->status === 'pending/retur')
+                                <span class="badge bg-warning text-dark">Pending</span>
+                                <span class="badge bg-danger ms-1">Retur</span>
                             @else
                                 <span class="badge bg-warning text-dark">Pending</span>
                             @endif

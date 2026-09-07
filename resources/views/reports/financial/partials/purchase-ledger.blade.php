@@ -116,10 +116,9 @@
                 @if($entry['type'] === 'purchase' && $subPayCount > 0)
                     @foreach($subPayments as $sp)
                     <tr class="table-success" style="background-color: #e8f5e9 !important;">
-                        {{-- Kolom No, Tanggal, Nomor, Keterangan, Saldo Awal sudah di-rowspan --}}
-                        {{-- Kolom Pembelian: kosong --}}
+                        {{-- Kolom Pembelian: tampilkan tanggal pembayaran --}}
                         <td class="text-end text-muted" style="font-size: 11px;">
-                            <i class="bi bi-arrow-return-right"></i> {{ Carbon\Carbon::parse($sp['date'])->format('d/m/Y') }}
+                            <i class="bi bi-arrow-return-right"></i> {{ \Carbon\Carbon::parse($sp['date'])->format('d/m/Y') }}
                         </td>
                         {{-- Kolom Pembayaran --}}
                         <td class="text-end text-success fw-semibold" style="font-size: 12px;">
@@ -127,6 +126,55 @@
                             @if($sp['note'])
                                 <br><small class="text-muted fst-italic">{{ $sp['note'] }}</small>
                             @endif
+                            <br>
+                            <button type="button"
+                                class="btn btn-xs btn-outline-warning mt-1"
+                                style="font-size:10px; padding: 1px 6px;"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editPaymentModal{{ $sp['id'] }}">
+                                <i class="bi bi-pencil-fill"></i> Edit
+                            </button>
+
+                            {{-- Modal Edit Pembayaran --}}
+                            <div class="modal fade" id="editPaymentModal{{ $sp['id'] }}" tabindex="-1" aria-labelledby="editPaymentModalLabel{{ $sp['id'] }}" aria-hidden="true">
+                                <div class="modal-dialog modal-sm">
+                                    <div class="modal-content">
+                                        <form action="{{ route('payments.update', $sp['id']) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="modal-header py-2">
+                                                <h6 class="modal-title" id="editPaymentModalLabel{{ $sp['id'] }}">
+                                                    <i class="bi bi-pencil-fill text-warning"></i> Edit Pembayaran
+                                                </h6>
+                                                <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body text-start">
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold" style="font-size:12px;">Tanggal Pembayaran</label>
+                                                    <input type="date" name="payment_date" class="form-control form-control-sm"
+                                                           value="{{ \Carbon\Carbon::parse($sp['date'])->format('Y-m-d') }}" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold" style="font-size:12px;">Nominal (Rp)</label>
+                                                    <input type="number" name="amount" class="form-control form-control-sm"
+                                                           value="{{ $sp['amount'] }}" min="1" required>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <label class="form-label fw-semibold" style="font-size:12px;">Catatan</label>
+                                                    <input type="text" name="note" class="form-control form-control-sm"
+                                                           value="{{ $sp['note'] ?? '' }}" maxlength="255">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer py-2">
+                                                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                <button type="submit" class="btn btn-sm btn-warning">
+                                                    <i class="bi bi-save"></i> Simpan
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                         {{-- Kolom Saldo Akhir: sudah di-rowspan --}}
                     </tr>
@@ -182,3 +230,4 @@
         </div>
     </div>
 @endif
+

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Laporan Keuangan Detail')
+@section('title', 'Laporan Detail')
 
 @section('content')
 <div class="container-fluid">
@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="mb-1">
-                <i class="bi bi-graph-up-arrow text-primary"></i> Laporan Keuangan
+                <i class="bi bi-graph-up-arrow text-primary"></i> Laporan Detail
             </h2>
             <p class="text-muted mb-0">Laporan hutang, piutang, dan register transaksi</p>
         </div>

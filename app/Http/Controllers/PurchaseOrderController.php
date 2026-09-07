@@ -167,6 +167,72 @@ class PurchaseOrderController extends Controller
             ->with('success', 'Barang diterima! Stok produk/varian telah diperbarui.');
     }
 
+    // ===== RETUR ITEM =====
+    public function returItem(Request $request, $itemId)
+    {
+        $item = PurchaseOrderItem::with('purchaseOrder', 'product', 'variant')->findOrFail($itemId);
+
+        // Hanya bisa retur jika PO sudah diterima, sebagian retur, atau status kombinasi
+        $allowedStatuses = ['diterima', 'retur', 'diterima/retur', 'pending/retur'];
+        if (!in_array($item->purchaseOrder->status, $allowedStatuses)) {
+            return redirect()->back()->with('error', 'Item belum diterima, tidak bisa diretur.');
+        }
+
+        if ($item->status === 'retur') {
+            return redirect()->back()->with('error', 'Item ini sudah diretur.');
+        }
+
+        // Kurangi stok barang karena dikembalikan ke supplier
+        if ($item->product_variant_id && $item->variant) {
+            $item->variant->decrement('stock', $item->quantity);
+            
+            $product = $item->product;
+            if ($product) {
+                $totalVariantStock = $product->variants()->sum('stock');
+                $product->update(['stock' => $totalVariantStock]);
+            }
+        } else {
+            $product = $item->product;
+            if ($product) {
+                $product->decrement('stock', $item->quantity);
+            }
+        }
+
+        // Ubah status item
+        $item->update(['status' => 'retur']);
+
+        // Tentukan status PO induk berdasarkan kondisi semua item
+        $po = $item->purchaseOrder;
+        $po->refresh();
+        $allItems = $po->items;
+
+        $totalItems    = $allItems->count();
+        $returCount    = $allItems->where('status', 'retur')->count();
+        $nonReturItems = $allItems->where('status', '!=', 'retur');
+
+        if ($returCount === $totalItems) {
+            // Semua item diretur
+            $newPoStatus = 'retur';
+        } else {
+            // Ada item yang belum diretur — tentukan status asal PO sebelum ada retur
+            // Cek apakah item yang tersisa ada yang sudah 'diterima' (tidak punya status retur)
+            // Jika PO sebelumnya 'diterima', sisa item dianggap diterima
+            // Gunakan status PO saat ini (sebelum update ini) sebagai acuan
+            $prevStatus = $po->getOriginal('status') ?? $po->status;
+
+            // Tentukan prefix status berdasarkan status asal
+            if (str_contains($prevStatus, 'diterima') || $prevStatus === 'diterima/retur') {
+                $newPoStatus = 'diterima/retur';
+            } else {
+                $newPoStatus = 'pending/retur';
+            }
+        }
+
+        $po->update(['status' => $newPoStatus]);
+
+        return redirect()->back()->with('success', 'Barang berhasil diretur. Stok telah dikurangi (dikembalikan ke supplier).');
+    }
+
     // ===== DELETE =====
     public function destroy($id)
     {

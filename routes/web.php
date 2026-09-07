@@ -132,9 +132,22 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [PurchaseOrderController::class, 'store'])->name('purchase-orders.store');
         Route::get('/{id}', [PurchaseOrderController::class, 'show'])->name('purchase-orders.show');
         Route::post('/{id}/terima', [PurchaseOrderController::class, 'terima'])->name('purchase-orders.terima');
+        Route::post('/items/{id}/retur', [PurchaseOrderController::class, 'returItem'])->name('purchase-orders.items.retur');
         Route::delete('/{id}', [PurchaseOrderController::class, 'destroy'])->name('purchase-orders.destroy');
         Route::get('/{id}/pdf', [PurchaseOrderController::class, 'exportPdf'])->name('purchase-orders.pdf');
         Route::get('/{id}/print', [PurchaseOrderController::class, 'printPo'])->name('purchase-orders.print');
+    });
+
+    // ===================================================================
+    // KONSINYASI (owner, admin, karyawan_gudang)
+    // ===================================================================
+    Route::middleware('role:owner,admin,karyawan_gudang')->prefix('/consignments')->group(function () {
+        Route::get('/', [\App\Http\Controllers\ConsignmentController::class, 'index'])->name('consignments.index');
+        Route::get('/create', [\App\Http\Controllers\ConsignmentController::class, 'create'])->name('consignments.create');
+        Route::post('/', [\App\Http\Controllers\ConsignmentController::class, 'store'])->name('consignments.store');
+        Route::get('/{id}', [\App\Http\Controllers\ConsignmentController::class, 'show'])->name('consignments.show');
+        Route::post('/{id}/usage', [\App\Http\Controllers\ConsignmentController::class, 'storeUsage'])->name('consignments.usage');
+        Route::get('/{id}/surat-jalan', [\App\Http\Controllers\ConsignmentController::class, 'printSuratJalan'])->name('consignments.print');
     });
 
     // ===================================================================
@@ -198,6 +211,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/laporan-keuangan-detail/cetak', [\App\Http\Controllers\FinancialReportController::class, 'cetak'])->name('financial-reports.cetak');
         Route::get('/laporan-keuangan-detail/pdf', [\App\Http\Controllers\FinancialReportController::class, 'pdf'])->name('financial-reports.pdf');
         Route::post('/payments', [\App\Http\Controllers\PaymentController::class, 'store'])->name('payments.store');
+        Route::put('/payments/{id}', [\App\Http\Controllers\PaymentController::class, 'update'])->name('payments.update');
         Route::delete('/payments/{id}', [\App\Http\Controllers\PaymentController::class, 'destroy'])->name('payments.destroy');
     });
 

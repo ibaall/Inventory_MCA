@@ -91,6 +91,8 @@
                             <td>
                                 @if($po->status === 'diterima')
                                     <span class="badge bg-success fs-6">✅ Diterima</span>
+                                @elseif($po->status === 'retur')
+                                    <span class="badge bg-danger fs-6">❌ Retur</span>
                                 @else
                                     <span class="badge bg-warning text-dark fs-6">⏳ Pending</span>
                                 @endif
@@ -135,6 +137,7 @@
                             <th class="text-center">SAT.</th>
                             <th class="text-end">Harga</th>
                             <th class="text-end">Subtotal</th>
+                            <th class="text-center">Aksi/Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -152,6 +155,20 @@
                             <td class="text-center">{{ $item->product->satuan ?? 'Pcs' }}</td>
                             <td class="text-end">Rp {{ number_format($item->price, 0, ',', '.') }}</td>
                             <td class="text-end">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                            <td class="text-center">
+                                @if($item->status === 'retur')
+                                    <span class="badge bg-danger">Diretur</span>
+                                @elseif($po->status === 'diterima' || $po->status === 'retur')
+                                    <form action="{{ route('purchase-orders.items.retur', $item->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Retur barang ini? Stok akan dikurangi (dikembalikan ke supplier).')">
+                                            Retur
+                                        </button>
+                                    </form>
+                                @else
+                                    -
+                                @endif
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -159,16 +176,19 @@
                         <tr>
                             <td colspan="6" class="text-end fw-semibold">DPP</td>
                             <td class="text-end">Rp {{ number_format($po->total_price, 0, ',', '.') }}</td>
+                            <td></td>
                         </tr>
                         @if($po->use_ppn ?? true)
                         <tr>
                             <td colspan="6" class="text-end fw-semibold">PPN 11%</td>
                             <td class="text-end">Rp {{ number_format($ppnAmount, 0, ',', '.') }}</td>
+                            <td></td>
                         </tr>
                         @endif
                         <tr class="fw-bold table-warning">
                             <td colspan="6" class="text-end">TOTAL</td>
                             <td class="text-end text-danger">Rp {{ number_format($po->total_price + $ppnAmount, 0, ',', '.') }}</td>
+                            <td></td>
                         </tr>
                     </tfoot>
                 </table>

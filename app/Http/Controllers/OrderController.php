@@ -145,6 +145,15 @@ class OrderController extends Controller
     public function destroy($id)
     {
         $order = Order::findOrFail($id);
+        
+        // Kembalikan stok
+        foreach ($order->items as $item) {
+            $product = $item->product;
+            if ($product) {
+                $product->increment('stock', $item->quantity);
+            }
+        }
+
         $order->items()->delete();
         $order->delete();
 
@@ -213,11 +222,16 @@ class OrderController extends Controller
                 ->distinct()->orderBy('supplier_name')->pluck('supplier_name');
         });
 
-        $availableYears = Cache::remember('laporan_available_years', 600, function () {
+        // Cek driver DB untuk raw query fungsi tanggal
+        $isSqlite = DB::connection()->getDriverName() === 'sqlite';
+        $yearSql = $isSqlite ? "strftime('%Y', ordered_at)" : "YEAR(ordered_at)";
+        $monthSql = $isSqlite ? "CAST(strftime('%m', ordered_at) AS INTEGER)" : "MONTH(ordered_at)";
+
+        $availableYears = Cache::remember('laporan_available_years', 600, function () use ($yearSql) {
             return DB::table('orders')
-                ->select(DB::raw('YEAR(ordered_at) as tahun'))
+                ->select(DB::raw("$yearSql as tahun"))
                 ->union(
-                    DB::table('purchase_orders')->select(DB::raw('YEAR(ordered_at) as tahun'))
+                    DB::table('purchase_orders')->select(DB::raw("$yearSql as tahun"))
                 )
                 ->distinct()
                 ->orderBy('tahun', 'desc')
@@ -225,16 +239,16 @@ class OrderController extends Controller
         });
 
         // --- Helper: Apply month range filter ---
-        $applyMonthRange = function ($query) use ($filterBulanDari, $filterBulanSampai) {
+        $applyMonthRange = function ($query) use ($filterBulanDari, $filterBulanSampai, $monthSql) {
             if ($filterBulanDari && $filterBulanSampai) {
                 if ($filterBulanDari <= $filterBulanSampai) {
-                    $query->whereRaw('MONTH(ordered_at) >= ?', [$filterBulanDari])
-                          ->whereRaw('MONTH(ordered_at) <= ?', [$filterBulanSampai]);
+                    $query->whereRaw("$monthSql >= ?", [$filterBulanDari])
+                          ->whereRaw("$monthSql <= ?", [$filterBulanSampai]);
                 } else {
                     // Edge case: wrap around (e.g. Nov-Feb) — unlikely but safe
-                    $query->where(function($q) use ($filterBulanDari, $filterBulanSampai) {
-                        $q->whereRaw('MONTH(ordered_at) >= ?', [$filterBulanDari])
-                           ->orWhereRaw('MONTH(ordered_at) <= ?', [$filterBulanSampai]);
+                    $query->where(function($q) use ($filterBulanDari, $filterBulanSampai, $monthSql) {
+                        $q->whereRaw("$monthSql >= ?", [$filterBulanDari])
+                           ->orWhereRaw("$monthSql <= ?", [$filterBulanSampai]);
                     });
                 }
             } elseif ($filterBulanDari) {
@@ -263,27 +277,27 @@ class OrderController extends Controller
         // --- Ringkasan penjualan per bulan (filtered) ---
         $laporanPenjualan = $applyOrderFilters(DB::table('orders'))
             ->select(
-                DB::raw('MONTH(ordered_at) as bulan'),
-                DB::raw('YEAR(ordered_at) as tahun'),
+                DB::raw("$monthSql as bulan"),
+                DB::raw("$yearSql as tahun"),
                 DB::raw('COUNT(*) as jumlah_transaksi'),
                 DB::raw('SUM(total_price) as total')
             )
-            ->groupBy(DB::raw('YEAR(ordered_at)'), DB::raw('MONTH(ordered_at)'))
-            ->orderBy(DB::raw('YEAR(ordered_at)'), 'desc')
-            ->orderBy(DB::raw('MONTH(ordered_at)'), 'desc')
+            ->groupBy(DB::raw($yearSql), DB::raw($monthSql))
+            ->orderBy(DB::raw($yearSql), 'desc')
+            ->orderBy(DB::raw($monthSql), 'desc')
             ->get();
 
         // --- Ringkasan pembelian (PO) per bulan (filtered) ---
         $laporanPembelian = $applyPoFilters(DB::table('purchase_orders'))
             ->select(
-                DB::raw('MONTH(ordered_at) as bulan'),
-                DB::raw('YEAR(ordered_at) as tahun'),
+                DB::raw("$monthSql as bulan"),
+                DB::raw("$yearSql as tahun"),
                 DB::raw('COUNT(*) as jumlah_transaksi'),
                 DB::raw('SUM(total_price) as total')
             )
-            ->groupBy(DB::raw('YEAR(ordered_at)'), DB::raw('MONTH(ordered_at)'))
-            ->orderBy(DB::raw('YEAR(ordered_at)'), 'desc')
-            ->orderBy(DB::raw('MONTH(ordered_at)'), 'desc')
+            ->groupBy(DB::raw($yearSql), DB::raw($monthSql))
+            ->orderBy(DB::raw($yearSql), 'desc')
+            ->orderBy(DB::raw($monthSql), 'desc')
             ->get();
 
         // --- Transaksi penjualan terbaru (detail, filtered, paginated) ---
@@ -334,12 +348,12 @@ class OrderController extends Controller
         $tahunOmset = $filterTahun ?: now()->year;
         $omsetRaw = DB::table('orders')
             ->select(
-                DB::raw('MONTH(ordered_at) as bulan'),
+                DB::raw("$monthSql as bulan"),
                 DB::raw('SUM(total_price) as total_dpp'),
                 DB::raw('SUM(CASE WHEN use_ppn = 1 OR use_ppn IS NULL THEN ROUND(total_price * 0.11) ELSE 0 END) as total_ppn')
             )
             ->whereYear('ordered_at', $tahunOmset)
-            ->groupBy(DB::raw('MONTH(ordered_at)'))
+            ->groupBy(DB::raw($monthSql))
             ->get()
             ->keyBy('bulan');
 

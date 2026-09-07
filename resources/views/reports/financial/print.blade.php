@@ -387,7 +387,7 @@
 
     <div class="mt-4 text-muted" style="font-size:10px;">
         <hr>
-        Dicetak pada: {{ $tanggalCetak }} | PT MCA - Sistem Laporan Keuangan
+        Dicetak pada: {{ $tanggalCetak }} | PT MCA - Sistem Laporan Detail
     </div>
 </body>
 </html>

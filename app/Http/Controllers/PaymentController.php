@@ -72,6 +72,61 @@ class PaymentController extends Controller
     }
 
     /**
+     * Update the specified payment.
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'payment_date' => 'required|date',
+            'amount' => 'required|numeric|min:0.01',
+            'note' => 'nullable|string|max:255',
+        ]);
+
+        return DB::transaction(function () use ($request, $id) {
+            $payment = Payment::findOrFail($id);
+            $type = $payment->transaction_type;
+            $txId = $payment->transaction_id;
+            $oldAmount = $payment->amount;
+            $newAmount = $request->amount;
+
+            if ($type === 'purchase') {
+                $tx = PurchaseOrder::findOrFail($txId);
+            } else {
+                $tx = Order::findOrFail($txId);
+            }
+
+            // Hitung ulang tagihan maksimal yang bisa dibayar
+            // (sisa saat ini + nominal yang sebelumnya sudah dibayarkan di pembayaran ini)
+            $maxPayable = $tx->remaining + $oldAmount;
+            
+            if ($newAmount > $maxPayable) {
+                return redirect()->back()->withErrors([
+                    'amount' => 'Nominal pembayaran tidak boleh melebihi total tagihan yang belum terbayar (Rp ' . number_format($maxPayable, 0, '.', ',') . ')'
+                ]);
+            }
+
+            // Update payment
+            $payment->update([
+                'payment_date' => $request->payment_date,
+                'amount' => $newAmount,
+                'note' => $request->note,
+            ]);
+
+            // Update tx status
+            $newRemaining = max(0, $maxPayable - $newAmount);
+            if ($type === 'purchase') {
+                $tx->status = $newRemaining <= 0 ? 'lunas' : 'belum lunas';
+                $tx->save();
+            } else {
+                $tx->status_pembayaran = $newRemaining <= 0 ? 'lunas' : 'belum dibayar';
+                $tx->save();
+            }
+
+            return redirect()->back()->with('success', 'Pembayaran berhasil diperbarui.');
+        });
+    }
+
+    /**
      * Remove the specified payment.
      */
     public function destroy($id)

@@ -748,6 +748,9 @@
                     <a class="mobile-nav-item" href="{{ route('cart.index') }}">
                         <i class="bi bi-receipt"></i> Lihat Keranjang
                     </a>
+                    <a class="mobile-nav-item" href="{{ route('consignments.index') }}">
+                        <i class="bi bi-arrow-left-right"></i> Konsinyasi
+                    </a>
                     <a class="mobile-nav-item" href="{{ route('orders.index') }}">
                         <i class="bi bi-list-check"></i> Daftar Invoice
                     </a>
@@ -851,6 +854,9 @@
                     <a class="mobile-nav-item" href="{{ route('cart.index') }}">
                         <i class="bi bi-receipt"></i> Lihat Keranjang
                     </a>
+                    <a class="mobile-nav-item" href="{{ route('consignments.index') }}">
+                        <i class="bi bi-arrow-left-right"></i> Konsinyasi
+                    </a>
                     <a class="mobile-nav-item" href="{{ route('orders.index') }}">
                         <i class="bi bi-list-check"></i> Daftar Invoice
                     </a>
@@ -918,6 +924,9 @@
                     <a class="mobile-nav-item" href="{{ route('cart.index') }}">
                         <i class="bi bi-receipt"></i> Lihat Keranjang
                     </a>
+                    <a class="mobile-nav-item" href="{{ route('consignments.index') }}">
+                        <i class="bi bi-arrow-left-right"></i> Konsinyasi
+                    </a>
                     <a class="mobile-nav-item" href="{{ route('orders.index') }}">
                         <i class="bi bi-list-check"></i> Daftar Invoice
                     </a>
@@ -972,6 +981,7 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('products.create') }}"><i class="bi bi-plus-circle"></i> Tambah Produk</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}"><i class="bi bi-box-seam"></i> Lihat Produk</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('cart.index') }}"><i class="bi bi-receipt"></i> Lihat Keranjang</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('consignments.index') }}"><i class="bi bi-arrow-left-right"></i> Konsinyasi</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('orders.index') }}"><i class="bi bi-list-check"></i> Daftar Invoice</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('purchase-orders.index') }}"><i class="bi bi-truck"></i> Purchase Order</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('master-data.index') }}"><i class="bi bi-database"></i> Master Data</a></li>
@@ -1001,6 +1011,7 @@
                 @if ($user->role == 'admin')
                     <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}"><i class="bi bi-box-seam"></i> Lihat Produk</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('cart.index') }}"><i class="bi bi-receipt"></i> Lihat Keranjang</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('consignments.index') }}"><i class="bi bi-arrow-left-right"></i> Konsinyasi</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('orders.index') }}"><i class="bi bi-list-check"></i> Daftar Invoice</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('purchase-orders.index') }}"><i class="bi bi-truck"></i> Purchase Order</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('master-data.index') }}"><i class="bi bi-database"></i> Master Data</a></li>
@@ -1019,6 +1030,7 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('products.create') }}"><i class="bi bi-plus-circle"></i> Tambah Produk</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}"><i class="bi bi-box-seam"></i> Lihat Produk</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('cart.index') }}"><i class="bi bi-receipt"></i> Lihat Keranjang</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('consignments.index') }}"><i class="bi bi-arrow-left-right"></i> Konsinyasi</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('orders.index') }}"><i class="bi bi-list-check"></i> Daftar Invoice</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('purchase-orders.index') }}"><i class="bi bi-truck"></i> Purchase Order</a></li>
                     <hr class="text-white w-75 mx-auto my-2">
