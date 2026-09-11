@@ -86,8 +86,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/products', [ProductController::class, 'index'])->name('products.index');
     });
 
-    // Produk - Kelola (owner, karyawan_gudang)
-    Route::middleware('role:owner,karyawan_gudang')->prefix('/products')->group(function () {
+    // Produk - Kelola (owner, admin, karyawan_gudang)
+    Route::middleware('role:owner,admin,karyawan_gudang')->prefix('/products')->group(function () {
         Route::get('/create', [ProductController::class, 'create'])->name('products.create');
         Route::post('/', [ProductController::class, 'store'])->name('products.store');
         Route::get('/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
@@ -165,6 +165,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/customer', [\App\Http\Controllers\MasterDataController::class, 'storeCustomer'])->name('master-data.customer.store');
         Route::put('/customer/{customer}', [\App\Http\Controllers\MasterDataController::class, 'updateCustomer'])->name('master-data.customer.update');
         Route::delete('/customer/{customer}', [\App\Http\Controllers\MasterDataController::class, 'destroyCustomer'])->name('master-data.customer.destroy');
+
+        // Product CRUD
+        Route::post('/product', [\App\Http\Controllers\MasterDataController::class, 'storeProduct'])->name('master-data.product.store');
+        Route::put('/product/{product}', [\App\Http\Controllers\MasterDataController::class, 'updateProduct'])->name('master-data.product.update');
+        Route::delete('/product/{product}', [\App\Http\Controllers\MasterDataController::class, 'destroyProduct'])->name('master-data.product.destroy');
 
         // JSON API for dropdowns
         Route::get('/api/suppliers', [\App\Http\Controllers\MasterDataController::class, 'getSuppliers'])->name('master-data.api.suppliers');

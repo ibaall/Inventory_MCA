@@ -69,7 +69,7 @@
                             <option value="">Semua</option>
                             <option value="available" {{ request('stock_status') === 'available' ? 'selected' : '' }}>Tersedia</option>
                             <option value="low"       {{ request('stock_status') === 'low'       ? 'selected' : '' }}>Stok Rendah (&lt;6)</option>
-                            <option value="empty"     {{ request('stock_status') === 'empty'     ? 'selected' : '' }}>Habis</option>
+                            <option value="empty"     {{ request('stock_status') === 'empty'     ? 'selected' : '' }}>Kosong</option>
                         </select>
                     </div>
 
@@ -159,7 +159,9 @@
                     </td>
 
                     <td>
-                        @if($product->stock == 0)
+                        @if(is_null($product->stock))
+                            {{-- Produk baru, belum pernah ada stok --}}
+                        @elseif($product->stock == 0)
                             <span class="badge bg-danger">Habis</span>
                         @elseif($product->stock < 6)
                             <span class="badge bg-warning text-dark">{{ $product->stock }} (Rendah)</span>
@@ -201,8 +203,6 @@
                                     </div>
                                 </form>
                             @endif
-                        @else
-                            <span class="badge bg-danger mt-1 d-block">Stok Habis</span>
                         @endif
                         @endif
                     </td>
@@ -389,7 +389,7 @@
                                                 <div class="small text-muted">
                                                     Stok: {{ $variant->stock }}
                                                     @if($variant->stock == 0)
-                                                        <span class="badge bg-danger">Habis</span>
+                                                        <span class="badge bg-danger">Kosong</span>
                                                     @endif
                                                 </div>
                                                 @if($variant->price)
