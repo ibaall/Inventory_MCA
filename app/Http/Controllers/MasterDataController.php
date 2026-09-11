@@ -167,7 +167,7 @@ class MasterDataController extends Controller
             'name'        => $request->name,
             'kode_barang' => $request->kode_barang,
             'vendor'      => $request->vendor,
-            'stock'       => $request->stock ?? 0,
+            'stock'       => $request->has('stock') ? (int) $request->stock : null,
             'satuan'      => $request->satuan,
             'price'       => $request->price,
             'image'       => $imagePath,

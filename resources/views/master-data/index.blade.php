@@ -273,8 +273,10 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if($product->stock == 0)
-                                                <span class="badge bg-danger">Kosong</span>
+                                            @if(is_null($product->stock))
+                                                <span class="text-muted">—</span>
+                                            @elseif($product->stock == 0)
+                                                <span class="badge bg-danger">Habis</span>
                                             @elseif($product->stock < 6)
                                                 <span class="badge bg-warning text-dark">{{ $product->stock }} (Rendah)</span>
                                             @else
@@ -339,7 +341,11 @@
                                                         </div>
                                                         <div class="mb-3">
                                                             <label class="form-label">Stok</label>
-                                                            <input type="number" name="stock" class="form-control" value="{{ $product->stock }}" min="0">
+                                                            <select class="form-select mb-2 edit-stock-type" data-product-id="{{ $product->id }}">
+                                                                <option value="none" {{ is_null($product->stock) ? 'selected' : '' }}>NONE</option>
+                                                                <option value="input" {{ !is_null($product->stock) ? 'selected' : '' }}>Isi Stok</option>
+                                                            </select>
+                                                            <input type="number" name="stock" class="form-control edit-stock-input-{{ $product->id }}" value="{{ $product->stock ?? '' }}" min="0" placeholder="Masukkan jumlah stok" style="{{ is_null($product->stock) ? 'display:none' : '' }}">
                                                         </div>
                                                         <div class="mb-3">
                                                             <label class="form-label">Satuan <span class="text-danger">*</span></label>
@@ -503,7 +509,11 @@
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Stok</label>
-                            <input type="number" name="stock" class="form-control" min="0" placeholder="Kosongkan jika belum ada stok">
+                            <select class="form-select mb-2" id="addStockType">
+                                <option value="none" selected>NONE</option>
+                                <option value="input">Isi Stok</option>
+                            </select>
+                            <input type="number" name="stock" id="addStockInput" class="form-control" min="0" placeholder="Masukkan jumlah stok" style="display:none">
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Satuan <span class="text-danger">*</span></label>
@@ -535,4 +545,52 @@
         </div>
     </div>
 </div>
+<script>
+    // Toggle stock input visibility for Tambah Produk modal
+    document.getElementById('addStockType').addEventListener('change', function() {
+        const stockInput = document.getElementById('addStockInput');
+        if (this.value === 'none') {
+            stockInput.style.display = 'none';
+            stockInput.value = '';
+            stockInput.removeAttribute('name');
+        } else {
+            stockInput.style.display = '';
+            stockInput.setAttribute('name', 'stock');
+            stockInput.value = '0';
+            stockInput.focus();
+        }
+    });
+    // Initialize: remove name attribute when NONE is default
+    (function() {
+        const sel = document.getElementById('addStockType');
+        const inp = document.getElementById('addStockInput');
+        if (sel.value === 'none') {
+            inp.removeAttribute('name');
+        }
+    })();
+
+    // Toggle stock input visibility for Edit Produk modals
+    document.querySelectorAll('.edit-stock-type').forEach(function(select) {
+        select.addEventListener('change', function() {
+            const productId = this.getAttribute('data-product-id');
+            const stockInput = document.querySelector('.edit-stock-input-' + productId);
+            if (this.value === 'none') {
+                stockInput.style.display = 'none';
+                stockInput.value = '';
+                stockInput.removeAttribute('name');
+            } else {
+                stockInput.style.display = '';
+                stockInput.setAttribute('name', 'stock');
+                if (stockInput.value === '') stockInput.value = '0';
+                stockInput.focus();
+            }
+        });
+        // Initialize: remove name attribute if NONE is selected
+        if (select.value === 'none') {
+            const productId = select.getAttribute('data-product-id');
+            const stockInput = document.querySelector('.edit-stock-input-' + productId);
+            stockInput.removeAttribute('name');
+        }
+    });
+</script>
 @endsection

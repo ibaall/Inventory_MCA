@@ -160,7 +160,7 @@
 
                     <td>
                         @if(is_null($product->stock))
-                            {{-- Produk baru, belum pernah ada stok --}}
+                            <span class="text-muted">—</span>
                         @elseif($product->stock == 0)
                             <span class="badge bg-danger">Habis</span>
                         @elseif($product->stock < 6)
