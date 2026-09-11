@@ -93,6 +93,12 @@
                                     <span class="badge bg-success fs-6">✅ Diterima</span>
                                 @elseif($po->status === 'retur')
                                     <span class="badge bg-danger fs-6">❌ Retur</span>
+                                @elseif($po->status === 'diterima/retur')
+                                    <span class="badge bg-success fs-6">✅ Diterima</span>
+                                    <span class="badge bg-danger fs-6">❌ Sebagian Retur</span>
+                                @elseif($po->status === 'pending/retur')
+                                    <span class="badge bg-warning text-dark fs-6">⏳ Pending</span>
+                                    <span class="badge bg-danger fs-6">❌ Sebagian Retur</span>
                                 @else
                                     <span class="badge bg-warning text-dark fs-6">⏳ Pending</span>
                                 @endif
@@ -158,7 +164,7 @@
                             <td class="text-center">
                                 @if($item->status === 'retur')
                                     <span class="badge bg-danger">Diretur</span>
-                                @elseif($po->status === 'diterima' || $po->status === 'retur')
+                                @elseif(in_array($po->status, ['diterima', 'retur', 'diterima/retur', 'pending/retur']))
                                     <form action="{{ route('purchase-orders.items.retur', $item->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Retur barang ini? Stok akan dikurangi (dikembalikan ke supplier).')">
